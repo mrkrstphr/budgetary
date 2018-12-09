@@ -5,10 +5,39 @@ class Transaction {
     this.conn = conn;
   }
 
-  filterTransactions(filter) {
+  calculateSumForMonths(months, type) {
+    const month = `to_char(date, 'YYYY-MM')`;
+
+    return this.conn('transactions AS t')
+      .select(
+        this.conn.raw(`DISTINCT ${month} AS month, SUM(ta.amount) AS total`),
+      )
+      .join('transaction_accounts AS ta', 'ta.transaction_id', 't.id')
+      .join('accounts AS a', 'a.id', 'ta.account_id')
+      .where('a.type', type)
+      .whereIn(this.conn.raw(month), months)
+      .groupBy(this.conn.raw(month))
+      .orderBy(this.conn.raw(`${month}`), 'DESC');
+  }
+
+  fetchUniqueMonths() {
+    const month = `to_char(date, 'YYYY-MM')`;
+
     return this.conn('transactions')
+      .select(this.conn.raw(`DISTINCT ${month} AS name`))
+      .orderBy(this.conn.raw(month));
+  }
+
+  filterTransactions(filters = {}) {
+    const query = this.conn('transactions')
       .select('*')
       .orderBy('date', 'DESC');
+
+    if ('month' in filters) {
+      query.where(this.conn.raw(`to_char(date, 'YYYY-MM')`), filters.month);
+    }
+
+    return query;
   }
 
   findCategoriesForTransactionByIds(ids) {

@@ -16,20 +16,30 @@ export default {
     accounts(root, args, context) {
       return context.dbal.accounts.fetchAccounts();
     },
-    transactions(root, { filters, paging }, context) {
+    months(root, args, context) {
+      return context.dbal.transactions.fetchUniqueMonths();
+    },
+    transactions(root, args, context) {
       return context.dbal.transactions
-        .filterTransactions(filters)
-        .then(r => ({ items: r })); // TODO: FIXME:
+        .filterTransactions(args.filters)
+        .then(r => ({ items: r })); // TODO: FIXME: pagination type stuff
+    },
+  },
+  Month: {
+    totalExpenses({ name: month }, args, context) {
+      return context.dataloaders.calculateExpensesByMonth
+        .load(month)
+        .then(data => (data ? data.total : 0));
+    },
+    totalIncome({ name: month }, args, context) {
+      return context.dataloaders.calculateIncomeByMonth
+        .load(month)
+        .then(data => (data ? data.total : 0));
     },
   },
   Transaction: {
     accounts({ id }, params, context) {
-      return context.dataloaders.findCategoriesForTransaction
-        .load(id)
-        .then(d => {
-          console.log(d);
-          return d;
-        });
+      return context.dataloaders.findCategoriesForTransaction.load(id);
     },
   },
 };

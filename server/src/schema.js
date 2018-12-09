@@ -67,9 +67,8 @@ export default gql`
   }
 
   input TransactionFilterInput {
-    start: Date
-    end: Date
-    accountId: ID!
+    month: String
+    accountId: ID
   }
 
   type TransactionPayload {
@@ -88,11 +87,18 @@ export default gql`
     accounts: [CreateTransactionAccountInput]
   }
 
+  type Month {
+    name: String!
+    totalExpenses: Float!
+    totalIncome: Float!
+  }
+
   type Query {
     account: Account
     accounts(filter: String): [Account]
+    months: [Month]
     transactions(
-      filter: TransactionFilterInput
+      filters: TransactionFilterInput
       paging: PagingInput
     ): TransactionCollection
   }

@@ -25,7 +25,7 @@ class Transaction {
 
     return this.conn('transactions')
       .select(this.conn.raw(`DISTINCT ${month} AS name`))
-      .orderBy(this.conn.raw(month));
+      .orderBy(this.conn.raw(month), 'DESC');
   }
 
   filterTransactions(filters = {}) {

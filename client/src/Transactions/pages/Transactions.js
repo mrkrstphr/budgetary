@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React, { useState } from 'react';
 import AddTransactionForm from '../components/AddTransactionForm';
 import TransactionList from '../components/TransactionList';
@@ -14,20 +15,26 @@ function TransactionsPage({ months }) {
 
   return (
     <div>
-      <h2>Transactions</h2>
+      <div style={{ alignItems: 'center', display: 'flex' }}>
+        <h2 style={{ flex: 1 }}>
+          {moment(`${selectedMonth.name + '-01'}`).format('MMMM YYYY')}
+        </h2>
 
-      <Select
-        options={months.map(month => ({
-          ...month,
-          label: month.name,
-          value: month.name,
-        }))}
-        onChange={selected => {
-          selectMonth(selected);
-        }}
-        value={selectedMonth}
-      />
-
+        <div style={{ fontSize: '0.75em', width: 220 }}>
+          Switch Month:
+          <Select
+            options={months.map(month => ({
+              ...month,
+              label: month.name,
+              value: month.name,
+            }))}
+            onChange={selected => {
+              selectMonth(selected);
+            }}
+            value={selectedMonth}
+          />
+        </div>
+      </div>
       <Statistics month={selectedMonth} />
 
       <AddTransactionForm />

@@ -15,7 +15,7 @@ async function up(db) {
       table.uuid('id').primary();
       table.date('date').notNullable();
       table.string('description').notNullable();
-      table.float('amount', 10, 2).notNullable();
+      table.decimal('amount', 20, 2).notNullable();
       table.timestamps(false, true);
     }),
   ]);
@@ -23,6 +23,7 @@ async function up(db) {
     table.uuid('id').primary();
     table
       .uuid('transaction_id')
+      .notNullable()
       .references('id')
       .inTable('transactions')
       .onDelete('CASCADE');
@@ -31,7 +32,7 @@ async function up(db) {
       .references('id')
       .inTable('accounts')
       .onDelete('CASCADE');
-    // TODO: FIXME: add amount numeric(20, 2)
+    table.decimal('amount', 20, 2).notNullable();
   });
 }
 

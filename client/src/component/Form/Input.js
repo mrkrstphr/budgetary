@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const rawStyles = `
+export const rawStyles = `
   line-height: 1.5;
   color: rgb(33, 37, 41);
   background-color: rgb(255, 255, 255);
@@ -21,8 +21,6 @@ const rawStyles = `
   }
 `;
 
-export default styled.input`
+export const Input = styled.input`
   ${rawStyles}
 `;
-
-export { rawStyles };

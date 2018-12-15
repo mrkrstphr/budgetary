@@ -1,94 +1,132 @@
-import React /*, { useState }*/ from 'react';
-import styled from 'styled-components';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import moment from 'moment';
+import React from 'react';
 import { Button } from 'component/Button';
-import { Form, InputText, Select } from 'component/Form';
+import { Dialog } from 'component/Dialog';
+import { DatePicker, Input, Label, Select } from 'component/Form';
 import CreateTransaction from '../containers/CreateTransaction';
 import WithCategories from '../containers/WithCategories';
 
-// function useCounter(defaultValue = 0) {
-//   const [currentValue, setCurrentValue] = useState((defaultValue = 0));
+const AddTransactionForm = ({ categories, createTransaction, onClose }) => {
+  const initialValues = {
+    date: new Date(),
+    description: '',
+    splits: [{ accountId: null, amount: '' }],
+  };
 
-//   return [
-//     currentValue,
-//     () => setCurrentValue(currentValue - 1),
-//     () => setCurrentValue(currentValue + 1),
-//   ];
-// }
-
-const Window = styled.div`
-  background-color: #fff;
-  padding: 14px;
-`;
-
-const Title = styled.div`
-  background-color: blue;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-  color: #fff;
-  margin: 10px 0;
-  padding: 8px 14px;
-`;
-
-const AddTransactionForm = ({ categories, createTransaction }) => {
   return (
-    <Window style={{ width: 400 }}>
-      <Title>Add Transaction</Title>
+    <Formik
+      initialValues={initialValues}
+      validate={values => {
+        let errors = {};
+        return errors;
+      }}
+      onSubmit={(
+        { date, description, splits },
+        { setSubmitting, resetForm },
+      ) => {
+        const preparedSplits = splits.map(split => ({
+          ...split,
+          accountId: split.accountId ? split.accountId.value : null,
+          amount: parseFloat(split.amount),
+        }));
 
-      <Form
-        debug
-        prepareValuesForSubmit={values => {
-          // TODO: FIXME: Find a better way to format numeric, etc values...
-          values.splits = values.splits.map(split => ({
-            ...split,
-            amount: parseFloat(split.amount),
-          }));
-          return values;
-        }}
-        onSubmit={({ date, description, splits }) => {
-          return createTransaction(date, description, splits);
-        }}
-        render={({ container, submit }) => (
-          <div>
-            <InputText
-              name="date"
-              label="Date: "
-              autoFocus
-              container={container}
-            />
-            <InputText
-              name="description"
-              label="Description: "
-              container={container}
-            />
-            <Select
-              name="splits[0].accountId"
-              label="Category:"
-              autoFocus
-              options={categories.map(category => ({
-                value: category.id,
-                label: category.name,
-              }))}
-              container={container}
-            />
-
-            <InputText
-              name="splits[0].amount"
-              label="Amount: "
-              container={container}
-            />
-
+        return createTransaction(
+          moment(date).format('YYYY-MM-DD'),
+          description,
+          preparedSplits,
+        ).then(() => {
+          setSubmitting(false);
+          resetForm({ ...initialValues, date });
+        });
+      }}
+    >
+      {({
+        handleSubmit,
+        isSubmitting,
+        setFieldTouched,
+        setFieldValue,
+        values,
+      }) => (
+        <Dialog
+          header="Add Transaction"
+          onClose={onClose}
+          footer={
             <div>
-              <Button type="button" onClick={() => null}>
-                Cancel
+              <Button danger type="button" onClick={onClose}>
+                Close
               </Button>
-              <Button type="button" onClick={submit}>
+              <Button
+                primary
+                type="button"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+              >
                 Save
               </Button>
             </div>
-          </div>
-        )}
-      />
-    </Window>
+          }
+        >
+          <Form>
+            <Field
+              name="date"
+              render={({ field }) => (
+                <>
+                  <Label htmlFor={field.name}>Transaction Date</Label>
+                  <DatePicker
+                    name="date"
+                    onChange={setFieldValue}
+                    value={values.date}
+                  />
+                </>
+              )}
+            />
+            <ErrorMessage name="date" component="div" />
+
+            <Field
+              name="description"
+              render={({ field }) => (
+                <>
+                  <Label htmlFor={field.name}>Description</Label>
+                  <Input id={field.name} {...field} type="text" autoFocus />
+                </>
+              )}
+            />
+            <ErrorMessage name="description" component="div" />
+
+            <Field
+              name="splits[0].accountId"
+              render={({ field }) => (
+                <>
+                  <Label htmlFor={field.name}>Category</Label>
+                  <Select
+                    {...field}
+                    onChange={setFieldValue}
+                    onBlur={setFieldTouched}
+                    options={categories.map(category => ({
+                      value: category.id,
+                      label: category.name,
+                    }))}
+                  />
+                </>
+              )}
+            />
+            <ErrorMessage name="splits[0].accountId" component="div" />
+
+            <Field
+              name="splits[0].amount"
+              render={({ field }) => (
+                <>
+                  <Label htmlFor={field.name}>Amount</Label>
+                  <Input id={field.name} {...field} type="text" />
+                </>
+              )}
+            />
+            <ErrorMessage name="splits[0].amount" component="div" />
+          </Form>
+        </Dialog>
+      )}
+    </Formik>
   );
 };
 

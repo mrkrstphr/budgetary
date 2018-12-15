@@ -1,8 +1,10 @@
 import makeUuid from 'uuid/v4';
+import Account from './Account';
 
 class Transaction {
   constructor(conn) {
     this.conn = conn;
+    this.account = new Account(conn);
   }
 
   calculateSumForMonths(months, type) {
@@ -76,9 +78,14 @@ class Transaction {
       .then(r => r[0]);
 
     await Promise.all(
-      splits.map(split =>
-        this.createSplit(transaction.id, split.accountId, split.amount),
-      ),
+      splits.map(async split => {
+        const account = await this.account.fetchById(split.accountId);
+        return this.createSplit(
+          transaction.id,
+          split.accountId,
+          account.type === 'expense' ? split.amount * -1 : split.amount,
+        );
+      }),
     );
 
     return transaction;

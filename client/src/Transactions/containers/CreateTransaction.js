@@ -18,22 +18,27 @@ const createTransaction = gql`
   }
 `;
 
-export default WrappedComponent => ({ ...props }) => (
-  <Mutation
-    mutation={createTransaction}
-    refetchQueries={[{ query: fetchTransactions }]}
-  >
-    {createTransaction => {
-      return (
-        <WrappedComponent
-          {...props}
-          createTransaction={(date, description, accounts) =>
-            createTransaction({
-              variables: { transaction: { date, description, accounts } },
-            })
-          }
-        />
-      );
-    }}
-  </Mutation>
-);
+export default WrappedComponent => ({ currentMonth: month, ...props }) => {
+  console.log(month);
+  return (
+    <Mutation
+      mutation={createTransaction}
+      refetchQueries={[
+        { query: fetchTransactions, variables: { filters: { month } } },
+      ]}
+    >
+      {createTransaction => {
+        return (
+          <WrappedComponent
+            {...props}
+            createTransaction={(date, description, accounts) =>
+              createTransaction({
+                variables: { transaction: { date, description, accounts } },
+              })
+            }
+          />
+        );
+      }}
+    </Mutation>
+  );
+};

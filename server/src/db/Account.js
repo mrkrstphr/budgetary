@@ -16,6 +16,13 @@ class Account {
       .select('*')
       .orderBy('name', 'ASC');
   }
+
+  fetchById(id) {
+    return this.conn('accounts')
+      .select('*')
+      .where('id', id)
+      .then(v => v[0]);
+  }
 }
 
 export default Account;

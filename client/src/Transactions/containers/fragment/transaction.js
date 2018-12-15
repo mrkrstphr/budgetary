@@ -4,6 +4,7 @@ export default `
   description
   amount
   accounts {
+    id
     account {
       id
       name

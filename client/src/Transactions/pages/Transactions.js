@@ -12,11 +12,22 @@ function TransactionsPage({ months }) {
     label: months[0].name,
     value: months[0].name,
   });
+  const [addOpen, setAddOpen] = useState(false);
+
+  const toggleAddOpen = () => setAddOpen(!addOpen);
 
   return (
     <div>
-      <div style={{ alignItems: 'center', display: 'flex' }}>
-        <h2 style={{ flex: 1 }}>
+      <div
+        style={{
+          borderBottom: '1px solid #eee',
+          alignItems: 'center',
+          display: 'flex',
+          marginBottom: 10,
+          paddingBottom: 10,
+        }}
+      >
+        <h2 style={{ flex: 1, margin: 0 }}>
           {moment(`${selectedMonth.name + '-01'}`).format('MMMM YYYY')}
         </h2>
 
@@ -37,8 +48,16 @@ function TransactionsPage({ months }) {
       </div>
       <Statistics month={selectedMonth} />
 
-      <AddTransactionForm />
-      <TransactionList month={selectedMonth.value} />
+      {addOpen && (
+        <AddTransactionForm
+          onClose={toggleAddOpen}
+          currentMonth={selectedMonth.name}
+        />
+      )}
+      <TransactionList
+        month={selectedMonth.value}
+        onAddTransaction={toggleAddOpen}
+      />
     </div>
   );
 }

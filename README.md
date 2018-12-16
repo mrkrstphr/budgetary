@@ -1,1 +1,2 @@
-# finance-tracking
+# spend-tracking
+

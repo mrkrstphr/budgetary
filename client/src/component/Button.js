@@ -1,8 +1,6 @@
-import React from 'react';
 import { darken } from 'polished';
 import styled from 'styled-components';
 import styledMap from 'styled-map';
-import Icon from './Icon';
 
 const danger = '#dd3245';
 const primary = '#0077fa';
@@ -64,10 +62,3 @@ export const Button = styled.button`
     cursor: default;
   }
 `;
-
-export const IconButton = ({ children, icon, ...props }) => (
-  <Button {...props}>
-    <Icon className="icon" icon={icon} />
-    {children && <span className="label">{children}</span>}
-  </Button>
-);

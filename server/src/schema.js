@@ -27,6 +27,13 @@ export default gql`
     parent: Account
     name: String!
     type: String!
+
+    thisMonth: Float!
+    lastMonth: Float!
+    thisYear: Float!
+    total: Float!
+
+    transactions: [Transaction]
   }
 
   type AccountPayload {
@@ -94,12 +101,13 @@ export default gql`
   }
 
   type SpendingCategory {
+    id: ID!
     category: String!
     amount: Float!
   }
 
   type Query {
-    account: Account
+    account(id: ID!): Account
     accounts(filter: String): [Account]
     months: [Month]
     transactions(

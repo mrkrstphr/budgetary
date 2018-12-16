@@ -24,14 +24,73 @@ class Transaction {
 
   categoryBreakdownForMonth(month) {
     return this.conn('transaction_accounts AS ta')
-      .select('a.name AS category')
+      .select(['a.id', 'a.name AS category'])
       .sum('ta.amount AS amount')
       .join('transactions AS t', 't.id', 'ta.transaction_id')
       .join('accounts AS a', 'a.id', 'ta.account_id')
       .where(this.conn.raw(`to_char(date, 'YYYY-MM')`), month)
       .andWhere('a.type', 'expense')
-      .groupBy('a.name')
+      .groupBy(['a.id', 'a.name'])
       .orderBy('a.name');
+  }
+
+  countAccountTransactionsForPeriod(accountId, period) {
+    const query = this.conn('transaction_accounts AS ta')
+      .select(this.conn.raw('COALESCE(SUM(ta.amount), 0) AS total'))
+      .join('transactions AS t', 't.id', 'ta.transaction_id')
+      .where('ta.account_id', accountId);
+
+    const conn = this.conn;
+
+    switch (period.toLowerCase()) {
+      case 'thismonth':
+        query.andWhere(function() {
+          this.where(
+            't.date',
+            '>=',
+            conn.raw(`date_trunc('month', now())`),
+          ).andWhere(
+            't.date',
+            '<',
+            conn.raw(
+              `date_trunc('month', date_trunc('month', now()) + '1 month'::interval)`,
+            ),
+          );
+        });
+        break;
+
+      case 'lastmonth':
+        query.andWhere(function() {
+          this.where(
+            't.date',
+            '>=',
+            conn.raw(
+              `date_trunc('month', date_trunc('month', now()) - '1 month'::interval)`,
+            ),
+          ).andWhere('t.date', '<', conn.raw(`date_trunc('month', now())`));
+        });
+        break;
+
+      case 'year':
+        query.andWhere(function() {
+          this.where(
+            't.date',
+            '>=',
+            conn.raw(`date_trunc('year', now())`),
+          ).andWhere(
+            't.date',
+            '<',
+            conn.raw(`(date_part('year', now()) || '-12-31')::date`),
+          );
+        });
+        break;
+
+      case 'total':
+      default:
+      // do nothing...
+    }
+
+    return query.then(v => (v.length ? v[0].total : 0));
   }
 
   fetchUniqueMonths() {

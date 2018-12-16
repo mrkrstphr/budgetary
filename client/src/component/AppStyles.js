@@ -7,6 +7,10 @@ export default createGlobalStyle`
     box-sizing: border-box;
   }
 
+  a, a:visited {
+    color: #f6993f;
+  }
+
   html {
     margin: 0;
     padding: 0;
@@ -19,10 +23,11 @@ export default createGlobalStyle`
   }
 
   a, a:visited {
-    color: blue;
+    color: #cc1f1a;
     text-decoration: none;
+
     &:hover {
-      color: darkblue;
+      color: #621b18;
     }
   }
 `;

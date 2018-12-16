@@ -1,5 +1,6 @@
 import { sortBy } from 'lodash';
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Cell, Header, Row, Table } from 'component/SimpleTable';
 import WithSpendingBreakdown from '../containers/WithSpendingBreakdown';
 
@@ -29,12 +30,16 @@ const SpendBreakdown = ({ categories }) => {
           </tr>
         </thead>
         <tbody>
-          {sortBy(categories, sortedBy).map(({ category, amount }, index) => (
-            <Row key={`category--total--${category}`} odd={index % 2 === 1}>
-              <Cell>{category}</Cell>
-              <Cell right>{amount.toFixed(2)}</Cell>
-            </Row>
-          ))}
+          {sortBy(categories, sortedBy).map(
+            ({ id, category, amount }, index) => (
+              <Row key={`category--total--${category}`} odd={index % 2 === 1}>
+                <Cell>
+                  <Link to={`/category/${id}`}>{category}</Link>
+                </Cell>
+                <Cell right>{amount.toFixed(2)}</Cell>
+              </Row>
+            ),
+          )}
         </tbody>
       </Table>
     </div>

@@ -1,5 +1,6 @@
 import moment from 'moment';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from 'component/Button';
 import { Cell, Header, Row, Table } from 'component/SimpleTable';
 import WithTransactions from '../containers/WithTransactions';
@@ -38,7 +39,11 @@ const Transactions = ({ transactions, onAddTransaction }) => {
                   {accountIndex === 0 && formatDate(transaction.date)}
                 </Cell>
                 <Cell>{accountIndex === 0 && transaction.description}</Cell>
-                <Cell>{account.account.name}</Cell>
+                <Cell>
+                  <Link to={`/categories/${account.account.id}`}>
+                    {account.account.name}
+                  </Link>
+                </Cell>
                 <Cell right>{account.amount.toFixed(2)}</Cell>
               </Row>
             ));

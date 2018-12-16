@@ -19,7 +19,6 @@ const createTransaction = gql`
 `;
 
 export default WrappedComponent => ({ currentMonth: month, ...props }) => {
-  console.log(month);
   return (
     <Mutation
       mutation={createTransaction}

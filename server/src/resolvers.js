@@ -13,6 +13,9 @@ export default {
     },
   },
   Query: {
+    account(root, { id }, context) {
+      return context.dbal.accounts.fetchById(id);
+    },
     accounts(root, args, context) {
       return context.dbal.accounts.fetchAccounts();
     },
@@ -26,6 +29,32 @@ export default {
       return context.dbal.transactions
         .filterTransactions(args.filters)
         .then(r => ({ items: r })); // TODO: FIXME: pagination type stuff
+    },
+  },
+  Account: {
+    thisMonth(account, args, context) {
+      return context.dbal.transactions.countAccountTransactionsForPeriod(
+        account.id,
+        'thisMonth',
+      );
+    },
+    lastMonth(account, args, context) {
+      return context.dbal.transactions.countAccountTransactionsForPeriod(
+        account.id,
+        'lastMonth',
+      );
+    },
+    thisYear(account, args, context) {
+      return context.dbal.transactions.countAccountTransactionsForPeriod(
+        account.id,
+        'year',
+      );
+    },
+    total(account, args, context) {
+      return context.dbal.transactions.countAccountTransactionsForPeriod(
+        account.id,
+        'total',
+      );
     },
   },
   Month: {

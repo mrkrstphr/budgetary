@@ -31,8 +31,8 @@ const Transactions = ({ transactions, onAddTransaction }) => {
           </tr>
         </thead>
         <tbody>
-          {transactions.items.map((transaction, index) =>
-            transaction.accounts.map((account, accountIndex) => (
+          {transactions.items.map((transaction, index) => {
+            const rows = transaction.accounts.map((account, accountIndex) => (
               <Row key={account.id} odd={index % 2 === 1}>
                 <Cell>
                   {accountIndex === 0 && formatDate(transaction.date)}
@@ -41,8 +41,23 @@ const Transactions = ({ transactions, onAddTransaction }) => {
                 <Cell>{account.account.name}</Cell>
                 <Cell right>{account.amount.toFixed(2)}</Cell>
               </Row>
-            )),
-          )}
+            ));
+
+            if (rows.length > 1) {
+              rows.push(
+                <Row key={`${transaction.id}--totals`} odd={index % 2 === 1}>
+                  <Cell colSpan="3" right>
+                    <strong>Total:</strong>
+                  </Cell>
+                  <Cell right>
+                    <strong>{transaction.amount.toFixed(2)}</strong>
+                  </Cell>
+                </Row>,
+              );
+            }
+
+            return rows;
+          })}
         </tbody>
       </Table>
     </div>

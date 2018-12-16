@@ -3,7 +3,7 @@ import { StatisticTile } from 'component/StatisticTile';
 import { currencyFormatter } from 'lib/currencyFormatter';
 
 export default ({ month }) => {
-  const cashflow = month.totalIncome - Math.abs(month.totalExpenses);
+  const cashflow = month.totalIncome + month.totalExpenses;
 
   return (
     <div style={{ alignItems: 'center', display: 'flex' }}>

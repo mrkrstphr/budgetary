@@ -1,9 +1,11 @@
 import moment from 'moment';
 import React, { useState } from 'react';
+import { TabPanel } from 'component/TabPanel';
 import AddTransactionForm from '../components/AddTransactionForm';
 import TransactionList from '../components/TransactionList';
 import WithMonths from '../containers/WithMonths';
 import Select from 'react-select';
+import SpendBreakdown from '../components/SpendBreakdown';
 import Statistics from '../components/Statistics';
 
 function TransactionsPage({ months }) {
@@ -46,6 +48,7 @@ function TransactionsPage({ months }) {
           />
         </div>
       </div>
+
       <Statistics month={selectedMonth} />
 
       {addOpen && (
@@ -54,9 +57,17 @@ function TransactionsPage({ months }) {
           currentMonth={selectedMonth.name}
         />
       )}
-      <TransactionList
-        month={selectedMonth.value}
-        onAddTransaction={toggleAddOpen}
+
+      <TabPanel
+        tabs={[{ label: 'Transactions' }, { label: 'Spending Breakdown' }]}
+        contents={[
+          <TransactionList
+            month={selectedMonth.value}
+            onAddTransaction={toggleAddOpen}
+          />,
+          <SpendBreakdown month={selectedMonth.value} />,
+        ]}
+        style={{ marginTop: 20 }}
       />
     </div>
   );

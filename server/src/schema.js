@@ -93,6 +93,11 @@ export default gql`
     totalIncome: Float!
   }
 
+  type SpendingCategory {
+    category: String!
+    amount: Float!
+  }
+
   type Query {
     account: Account
     accounts(filter: String): [Account]
@@ -101,6 +106,7 @@ export default gql`
       filters: TransactionFilterInput
       paging: PagingInput
     ): TransactionCollection
+    spendingBreakdown(month: String): [SpendingCategory]
   }
 
   type Mutation {

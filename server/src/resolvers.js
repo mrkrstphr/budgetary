@@ -19,6 +19,9 @@ export default {
     months(root, args, context) {
       return context.dbal.transactions.fetchUniqueMonths();
     },
+    spendingBreakdown(root, { month }, context) {
+      return context.dbal.transactions.categoryBreakdownForMonth(month);
+    },
     transactions(root, args, context) {
       return context.dbal.transactions
         .filterTransactions(args.filters)

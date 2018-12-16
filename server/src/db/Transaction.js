@@ -22,6 +22,18 @@ class Transaction {
       .orderBy(this.conn.raw(`${month}`), 'DESC');
   }
 
+  categoryBreakdownForMonth(month) {
+    return this.conn('transaction_accounts AS ta')
+      .select('a.name AS category')
+      .sum('ta.amount AS amount')
+      .join('transactions AS t', 't.id', 'ta.transaction_id')
+      .join('accounts AS a', 'a.id', 'ta.account_id')
+      .where(this.conn.raw(`to_char(date, 'YYYY-MM')`), month)
+      .andWhere('a.type', 'expense')
+      .groupBy('a.name')
+      .orderBy('a.name');
+  }
+
   fetchUniqueMonths() {
     const month = `to_char(date, 'YYYY-MM')`;
 

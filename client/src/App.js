@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import Router from './Router';
 import AppStyles from 'component/AppStyles';
+import Header from 'component/Header';
 import Layout from 'component/Layout';
 
 export default () => (
@@ -9,7 +10,7 @@ export default () => (
     <BrowserRouter>
       <div>
         <AppStyles />
-        <h1>Tracking</h1>
+        <Header />
         <Layout>
           <Router />
         </Layout>

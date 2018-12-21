@@ -3,7 +3,7 @@ import React from 'react';
 import { Query } from 'react-apollo';
 
 export const fetchSpendingBreakdown = gql`
-  query fetchSpendingBreakdown($month: String) {
+  query fetchSpendingBreakdown($month: String!) {
     spendingBreakdown(month: $month) {
       id
       category

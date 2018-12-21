@@ -34,7 +34,7 @@ const SpendBreakdown = ({ categories }) => {
             ({ id, category, amount }, index) => (
               <Row key={`category--total--${category}`} odd={index % 2 === 1}>
                 <Cell>
-                  <Link to={`/category/${id}`}>{category}</Link>
+                  <Link to={`/categories/${id}`}>{category}</Link>
                 </Cell>
                 <Cell right>{amount.toFixed(2)}</Cell>
               </Row>

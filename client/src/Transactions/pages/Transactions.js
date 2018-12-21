@@ -1,5 +1,6 @@
 import moment from 'moment';
 import React, { useState } from 'react';
+import { withRouter } from 'react-router-dom';
 import { TabPanel } from 'component/TabPanel';
 import AddTransactionForm from '../components/AddTransactionForm';
 import TransactionList from '../components/TransactionList';
@@ -8,13 +9,20 @@ import Select from 'react-select';
 import SpendBreakdown from '../components/SpendBreakdown';
 import Statistics from '../components/Statistics';
 
-function TransactionsPage({ months }) {
-  const [selectedMonth, selectMonth] = useState({
-    ...months[0],
-    label: months[0].name,
-    value: months[0].name,
-  });
+function TransactionsPage({ history, match, months }) {
   const [addOpen, setAddOpen] = useState(false);
+
+  let selectedMonth = months[0];
+  if (match.params.month) {
+    const matchedMonths = months.filter(m => m.name === match.params.month);
+    if (matchedMonths.length) {
+      selectedMonth = {
+        ...matchedMonths[0],
+        label: matchedMonths[0].name,
+        value: matchedMonths[0].name,
+      };
+    }
+  }
 
   const toggleAddOpen = () => setAddOpen(!addOpen);
 
@@ -42,9 +50,13 @@ function TransactionsPage({ months }) {
               value: month.name,
             }))}
             onChange={selected => {
-              selectMonth(selected);
+              history.push(`/transactions/${selected.name}`);
             }}
-            value={selectedMonth}
+            value={{
+              ...selectedMonth,
+              label: selectedMonth.name,
+              value: selectedMonth.name,
+            }}
           />
         </div>
       </div>
@@ -62,10 +74,10 @@ function TransactionsPage({ months }) {
         tabs={[{ label: 'Transactions' }, { label: 'Spending Breakdown' }]}
         contents={[
           <TransactionList
-            month={selectedMonth.value}
+            month={selectedMonth.name}
             onAddTransaction={toggleAddOpen}
           />,
-          <SpendBreakdown month={selectedMonth.value} />,
+          <SpendBreakdown month={selectedMonth.name} />,
         ]}
         style={{ marginTop: 20 }}
       />
@@ -73,4 +85,4 @@ function TransactionsPage({ months }) {
   );
 }
 
-export default WithMonths(TransactionsPage);
+export default withRouter(WithMonths(TransactionsPage));

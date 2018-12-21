@@ -114,7 +114,7 @@ export default gql`
       filters: TransactionFilterInput
       paging: PagingInput
     ): TransactionCollection
-    spendingBreakdown(month: String): [SpendingCategory]
+    spendingBreakdown(month: String!): [SpendingCategory]
   }
 
   type Mutation {

@@ -36,6 +36,12 @@ class DataLoaders {
         .findCategoriesForTransactionByIds(ids)
         .then(data => organizeMultipleResultsById(data, ids, 'transaction_id')),
     );
+
+    this.findUserById = new DL(ids =>
+      dbal.users
+        .findUserByIds(ids)
+        .then(data => organizeResultsById(data, ids)),
+    );
   }
 }
 

@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
 import React from 'react';
 import { Query } from 'react-apollo';
+import { getMutationContext } from 'lib';
 
 export const fetchSpendingBreakdown = gql`
   query fetchSpendingBreakdown($month: String!) {
@@ -13,7 +14,11 @@ export const fetchSpendingBreakdown = gql`
 `;
 
 export default WrappedComponent => ({ month, ...props }) => (
-  <Query query={fetchSpendingBreakdown} variables={{ month }}>
+  <Query
+    query={fetchSpendingBreakdown}
+    variables={{ month }}
+    context={getMutationContext()}
+  >
     {({ data, loading }) => {
       if (loading) return null;
       return (

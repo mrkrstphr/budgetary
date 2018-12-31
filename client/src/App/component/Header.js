@@ -1,13 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
 import Icon from 'component/Icon';
+import { AppContext } from '../Context';
 
-const Styles = styled.h1`
+const Styles = styled.div`
+  align-items: center;
   color: #555;
+  display: flex;
+
+  .menu {
+    flex: 1;
+    text-align: right;
+  }
 `;
 
 const DEFAULT_ICON = 'usd-circle';
-
 const holidayHeaderIcons = [
   {
     start: new Date(`${new Date().getFullYear()}-10-20`),
@@ -45,6 +52,19 @@ function getHeaderIcon() {
 
 export default () => (
   <Styles>
-    Spend <Icon icon={getHeaderIcon()} color="#555" /> Tracking
+    <div className="header">
+      <h1>
+        Spend <Icon icon={getHeaderIcon()} color="#555" /> Tracking
+      </h1>
+    </div>
+    <AppContext.Consumer>
+      {({ user, logout }) => (
+        <div className="menu">
+          <span className="logout" onClick={logout}>
+            Logout
+          </span>
+        </div>
+      )}
+    </AppContext.Consumer>
   </Styles>
 );

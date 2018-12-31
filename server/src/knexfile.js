@@ -20,10 +20,10 @@ module.exports = {
     database: DATABASE_NAME,
   },
   migrations: {
-    directory: './db/migrations',
+    directory: './src/db/migrations',
   },
   seeds: {
-    directory: './db/seeds',
+    directory: './src/db/seeds',
   },
 };
 

@@ -1,5 +1,14 @@
 export default {
   Mutation: {
+    async createToken(root, { email, password }, context) {
+      const user = await context.dbal.users.findOneBy({ email });
+      if (!user) {
+        return { errors: { password: ['Authentication failed'] } };
+      }
+
+      const token = await context.dbal.users.createToken(user);
+      return { token };
+    },
     createTransaction(
       root,
       {
@@ -67,6 +76,11 @@ export default {
       return context.dataloaders.calculateIncomeByMonth
         .load(month)
         .then(data => (data ? data.total : 0));
+    },
+  },
+  Token: {
+    user({ user_id: userId }, params, context) {
+      return context.dataloaders.findUserById.load(userId);
     },
   },
   Transaction: {

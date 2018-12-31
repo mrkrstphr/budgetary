@@ -2,7 +2,10 @@ import { gql } from 'apollo-server';
 
 export default gql`
   scalar Date
+  scalar DateTime
   scalar JSON
+
+  directive @protected on FIELD_DEFINITION
 
   type ErrorDetails {
     field: String!
@@ -106,20 +109,41 @@ export default gql`
     amount: Float!
   }
 
+  type User {
+    id: ID!
+    email: String!
+  }
+
+  type Token {
+    id: ID!
+    token: String!
+    expires: DateTime!
+    user: User!
+  }
+
+  type TokenPayload {
+    token: Token
+    errors: JSON
+  }
+
   type Query {
-    account(id: ID!): Account
-    accounts(filter: String): [Account]
-    months: [Month]
+    account(id: ID!): Account @protected
+    accounts(filter: String): [Account] @protected
+    months: [Month] @protected
     transactions(
       filters: TransactionFilterInput
       paging: PagingInput
-    ): TransactionCollection
-    spendingBreakdown(month: String!): [SpendingCategory]
+    ): TransactionCollection @protected
+    spendingBreakdown(month: String!): [SpendingCategory] @protected
   }
 
   type Mutation {
-    createAccount(account: CreateAccountInput!): AccountPayload!
-    createTransaction(transaction: CreateTransactionInput!): TransactionPayload!
+    createAccount(account: CreateAccountInput!): AccountPayload! @protected
+    createToken(email: String!, password: String): TokenPayload
+    createTransaction(
+      transaction: CreateTransactionInput!
+    ): TransactionPayload! @protected
     updateAccount(id: ID!, account: UpdateAccountInput!): AccountPayload!
+      @protected
   }
 `;

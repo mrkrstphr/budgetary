@@ -25,10 +25,14 @@ export default WrappedComponent => ({ currentMonth: month, ...props }) => {
     <Mutation
       mutation={createTransaction}
       refetchQueries={[
-        { query: fetchTransactions, variables: { filters: { month } } },
-        { query: fetchMonths },
+        {
+          query: fetchTransactions,
+          variables: { filters: { month } },
+          context: getMutationContext(),
+        },
+        { query: fetchMonths, context: getMutationContext() },
       ]}
-      context={getMutationContext}
+      context={getMutationContext()}
     >
       {createTransaction => {
         return (

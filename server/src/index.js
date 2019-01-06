@@ -11,9 +11,16 @@ import User from './db/User';
 import conn from './db/conn';
 import ProtectedDirective from './directives/ProtectedDirective';
 import resolvers from './resolvers';
-import configurations from '../../config.json';
 
 const environment = process.env.NODE_ENV || 'production';
+
+let configurations;
+if (environment === 'development') {
+  configurations = require('../../config.json');
+} else {
+  configurations = require('./config.json');
+}
+
 const config = configurations[environment];
 
 class Context {

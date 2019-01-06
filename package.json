@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "build": "bin/build.sh",
     "client": "cd client && npm start",
     "server": "cd server && npm start",
     "start": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\""

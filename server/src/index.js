@@ -11,17 +11,7 @@ import User from './db/User';
 import conn from './db/conn';
 import ProtectedDirective from './directives/ProtectedDirective';
 import resolvers from './resolvers';
-
-const environment = process.env.NODE_ENV || 'production';
-
-let configurations;
-if (environment === 'development') {
-  configurations = require('../../config.json');
-} else {
-  configurations = require('./config.json');
-}
-
-const config = configurations[environment];
+import config from './config';
 
 class Context {
   constructor(request) {
@@ -61,7 +51,7 @@ const apollo = new ApolloServer({
 const app = express();
 apollo.applyMiddleware({ app });
 
-if (environment === 'production') {
+if (config.environment === 'production') {
   app.use(express.static(path.join(__dirname, 'public')));
 
   app.get('/*', function(req, res) {
@@ -73,8 +63,8 @@ var server;
 if (config.ssl) {
   server = https.createServer(
     {
-      key: fs.readFileSync(`./ssl/${environment}/server.key`),
-      cert: fs.readFileSync(`./ssl/${environment}/server.crt`),
+      key: fs.readFileSync(config.ssl.key),
+      cert: fs.readFileSync(config.ssl.cert),
     },
     app,
   );

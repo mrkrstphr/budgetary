@@ -16,7 +16,7 @@
     "migrate:latest": "babel-node ./node_modules/.bin/knex migrate:latest --knexfile=src/knexfile.js",
     "migrations:make": "babel-node ./node_modules/.bin/knex migrate:make --knexfile=src/knexfile.js",
     "migrate:rollback": "babel-node ./node_modules/.bin/knex migrate:rollback --knexfile=src/knexfile.js",
-    "start": "babel-watch src/index.js"
+    "start": "NODE_ENV=development babel-watch src/index.js"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

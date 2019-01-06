@@ -1,5 +1,10 @@
-import dotenv from 'dotenv';
-import path from 'path';
+const environment = process.env.NODE_ENV || 'production';
 
-const configPath = path.resolve(__dirname, '..', '.env');
-const config = dotenv.config({ path: configPath });
+let configurations;
+if (environment === 'development') {
+  configurations = require('../../config.json');
+} else {
+  configurations = require('./config.json');
+}
+
+export default configurations[environment];

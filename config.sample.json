@@ -1,0 +1,30 @@
+{
+  "development": {
+    "hostname": "localhost",
+    "path": "/graphql",
+    "port": 4000,
+    "ssl": false,
+    "db": {
+      "debug": false,
+      "host": "localhost",
+      "port": 5432,
+      "name": "finances",
+      "user": "finances",
+      "password": "finances"
+    }
+  },
+  "production": {
+    "hostname": "example.com",
+    "path": "/graphql",
+    "port": 443,
+    "ssl": true,
+    "db": {
+      "debug": false,
+      "host": "localhost",
+      "port": 5432,
+      "name": "finances",
+      "user": "finances",
+      "password": "finances"
+    }
+  }
+}

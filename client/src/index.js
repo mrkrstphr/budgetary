@@ -5,10 +5,11 @@ import React from 'react';
 import { ApolloProvider } from 'react-apollo';
 import { render } from 'react-dom';
 import App from './App';
+import config from './config';
 
 const client = new ApolloClient({
   link: createHttpLink({
-    uri: 'http://localhost:4000/graphql',
+    uri: config.ApiUrl,
   }),
   cache: new InMemoryCache(),
 });

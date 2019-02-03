@@ -126,6 +126,13 @@ export default gql`
     errors: JSON
   }
 
+  type NetIncomeStats {
+    thisMonth: Float!
+    lastMonth: Float!
+    threeMonths: Float!
+    twelveMonths: Float!
+  }
+
   type Query {
     account(id: ID!): Account @protected
     accounts(filter: String): [Account] @protected
@@ -135,6 +142,7 @@ export default gql`
       paging: PagingInput
     ): TransactionCollection @protected
     spendingBreakdown(month: String!): [SpendingCategory] @protected
+    netIncomeStats: NetIncomeStats!
   }
 
   type Mutation {

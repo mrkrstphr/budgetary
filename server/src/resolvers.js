@@ -31,6 +31,10 @@ export default {
     months(root, args, context) {
       return context.dbal.transactions.fetchUniqueMonths();
     },
+    netIncomeStats() {
+      // This is hacky...
+      return {};
+    },
     spendingBreakdown(root, { month }, context) {
       return context.dbal.transactions.categoryBreakdownForMonth(month);
     },
@@ -76,6 +80,20 @@ export default {
       return context.dataloaders.calculateIncomeByMonth
         .load(month)
         .then(data => (data ? data.total : 0));
+    },
+  },
+  NetIncomeStats: {
+    thisMonth(root, args, context) {
+      return context.dbal.transactions.countTransactionsForPeriod('thisMonth');
+    },
+    lastMonth(root, args, context) {
+      return context.dbal.transactions.countTransactionsForPeriod('lastMonth');
+    },
+    threeMonths(root, args, context) {
+      return context.dbal.transactions.countTransactionsForPeriod('lastThree');
+    },
+    twelveMonths(root, args, context) {
+      return context.dbal.transactions.countTransactionsForPeriod('lastTwelve');
     },
   },
   Token: {

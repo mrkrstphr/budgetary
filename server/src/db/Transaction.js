@@ -93,6 +93,74 @@ class Transaction {
     return query.then(v => (v.length ? v[0].total : 0));
   }
 
+  countTransactionsForPeriod(period) {
+    const query = this.conn('transaction_accounts AS ta')
+      .select(this.conn.raw('COALESCE(SUM(ta.amount), 0) AS total'))
+      .join('transactions AS t', 't.id', 'ta.transaction_id');
+
+    const conn = this.conn;
+
+    switch (period.toLowerCase()) {
+      case 'thismonth':
+        query.where(function() {
+          this.where(
+            't.date',
+            '>=',
+            conn.raw(`date_trunc('month', now())`),
+          ).andWhere(
+            't.date',
+            '<',
+            conn.raw(
+              `date_trunc('month', date_trunc('month', now()) + '1 month'::interval)`,
+            ),
+          );
+        });
+        break;
+
+      case 'lastmonth':
+        query.where(function() {
+          this.where(
+            't.date',
+            '>=',
+            conn.raw(
+              `date_trunc('month', date_trunc('month', now()) - '1 month'::interval)`,
+            ),
+          ).andWhere('t.date', '<', conn.raw(`date_trunc('month', now())`));
+        });
+        break;
+
+      case 'lastthree':
+        query.where(function() {
+          this.where(
+            't.date',
+            '>=',
+            conn.raw(
+              `date_trunc('month', date_trunc('month', now()) - '3 month'::interval)`,
+            ),
+          ).andWhere('t.date', '<', conn.raw(`date_trunc('month', now())`));
+        });
+        break;
+
+      case 'lasttwelve':
+        query.where(function() {
+          this.where(
+            't.date',
+            '>=',
+            conn.raw(
+              `date_trunc('month', date_trunc('month', now()) - '12 month'::interval)`,
+            ),
+          ).andWhere('t.date', '<', conn.raw(`date_trunc('month', now())`));
+        });
+        break;
+
+      case 'total':
+      default:
+      // do nothing...
+    }
+
+    return query.then(v => (v.length ? v[0].total : 0));
+  }
+
   fetchUniqueMonths() {
     const month = `to_char(date, 'YYYY-MM')`;
 

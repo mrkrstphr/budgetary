@@ -1,5 +1,6 @@
 import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
+import fs from 'fs';
 import https from 'https';
 import http from 'http';
 import path from 'path';
@@ -59,7 +60,7 @@ if (config.environment === 'production') {
   });
 }
 
-var server;
+let server;
 if (config.ssl) {
   server = https.createServer(
     {

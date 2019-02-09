@@ -3,7 +3,7 @@ import React from 'react';
 import { Query } from 'react-apollo';
 import { getMutationContext } from 'lib';
 
-const filterCategories = gql`
+export const filterCategoriesQuery = gql`
   query fetchAllAccounts($filter: String) {
     accounts(filter: $filter) {
       id
@@ -19,7 +19,7 @@ const filterCategories = gql`
 
 export default WrappedComponent => ({ filter, ...props }) => (
   <Query
-    query={filterCategories}
+    query={filterCategoriesQuery}
     variables={{ filter }}
     context={getMutationContext()}
   >

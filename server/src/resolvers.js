@@ -4,6 +4,13 @@ export default {
   Date: GraphQLDate,
   DateTime: GraphQLDateTime,
   Mutation: {
+    createAccount(root, { account: accountInput }, context) {
+      const { type, name } = accountInput;
+
+      return context.dbal.accounts
+        .createAccount(type, name)
+        .then(account => ({ account }));
+    },
     async createToken(root, { email, password }, context) {
       const user = await context.dbal.users.findOneBy({ email });
       if (!user) {

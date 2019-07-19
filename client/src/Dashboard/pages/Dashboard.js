@@ -2,7 +2,6 @@ import gql from 'graphql-tag';
 import React from 'react';
 import { Query } from 'react-apollo';
 import { Link } from 'react-router-dom';
-import { getMutationContext } from 'lib';
 import NetIncomeChart from '../components/NetIncomeChart';
 import Statistics from '../components/Statistics';
 
@@ -38,7 +37,7 @@ const Dashboard = ({ months }) => (
 );
 
 const WithMonths = ({ children }) => (
-  <Query query={fetchMonths} context={getMutationContext()}>
+  <Query query={fetchMonths}>
     {({ data, loading }) => {
       if (loading) return null;
       return children(data.months);

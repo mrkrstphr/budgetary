@@ -1,7 +1,6 @@
 import gql from 'graphql-tag';
 import React from 'react';
 import { Query } from 'react-apollo';
-import { getMutationContext } from 'lib';
 
 export const filterCategoriesQuery = gql`
   query fetchAllAccounts($filter: String) {
@@ -18,11 +17,7 @@ export const filterCategoriesQuery = gql`
 `;
 
 export default WrappedComponent => ({ filter, ...props }) => (
-  <Query
-    query={filterCategoriesQuery}
-    variables={{ filter }}
-    context={getMutationContext()}
-  >
+  <Query query={filterCategoriesQuery} variables={{ filter }}>
     {({ data, loading }) => {
       if (loading) return null;
       return <WrappedComponent {...props} categories={data.accounts} />;

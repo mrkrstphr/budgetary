@@ -1,7 +1,6 @@
 import gql from 'graphql-tag';
 import React from 'react';
 import { Mutation } from 'react-apollo';
-import { getMutationContext } from 'lib';
 import { filterCategoriesQuery } from './WithCategories';
 
 const createAccountMutation = gql`
@@ -31,10 +30,8 @@ export default ({ children }) => {
       refetchQueries={[
         {
           query: filterCategoriesQuery,
-          context: getMutationContext(),
         },
       ]}
-      context={getMutationContext()}
     >
       {createAccount => {
         return children(account =>

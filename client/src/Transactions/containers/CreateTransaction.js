@@ -1,7 +1,6 @@
 import gql from 'graphql-tag';
 import React from 'react';
 import { Mutation } from 'react-apollo';
-import { getMutationContext } from 'lib';
 import transaction from './fragment/transaction';
 import { fetchMonths } from './WithMonths';
 import { fetchTransactions } from './WithTransactions';
@@ -28,11 +27,9 @@ export default WrappedComponent => ({ currentMonth: month, ...props }) => {
         {
           query: fetchTransactions,
           variables: { filters: { month } },
-          context: getMutationContext(),
         },
-        { query: fetchMonths, context: getMutationContext() },
+        { query: fetchMonths },
       ]}
-      context={getMutationContext()}
     >
       {createTransaction => {
         return (

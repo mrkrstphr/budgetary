@@ -1,7 +1,6 @@
 import gql from 'graphql-tag';
 import React from 'react';
 import { Query } from 'react-apollo';
-import { getMutationContext } from 'lib';
 
 export const netIncomeStats = gql`
   query netIncomeStats {
@@ -15,10 +14,9 @@ export const netIncomeStats = gql`
 `;
 
 export const NetIncomeStats = ({ children }) => (
-  <Query query={netIncomeStats} context={getMutationContext()}>
+  <Query query={netIncomeStats}>
     {({ data, loading }) => {
       if (loading) return null;
-      console.log({ data });
       return children(data.netIncomeStats);
     }}
   </Query>

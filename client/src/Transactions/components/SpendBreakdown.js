@@ -1,7 +1,7 @@
+import { HTMLTable } from '@blueprintjs/core';
 import { sortBy } from 'lodash';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Cell, Header, Row, Table } from 'component/SimpleTable';
 import WithSpendingBreakdown from '../containers/WithSpendingBreakdown';
 
 const SpendBreakdown = ({ categories }) => {
@@ -10,38 +10,35 @@ const SpendBreakdown = ({ categories }) => {
   return (
     <div>
       <h3 style={{}}>Spending Breakdown</h3>
-      <Table>
+      <HTMLTable striped interactive style={{ width: '100%' }}>
         <thead>
           <tr>
-            <Header
-              left
+            <th
               onClick={() => setSortBy('category')}
               style={{ cursor: 'pointer' }}
             >
               Category
-            </Header>
-            <Header
-              right
+            </th>
+            <th
+              className="right"
               onClick={() => setSortBy('amount')}
               style={{ cursor: 'pointer' }}
             >
               Amount
-            </Header>
+            </th>
           </tr>
         </thead>
         <tbody>
-          {sortBy(categories, sortedBy).map(
-            ({ id, category, amount }, index) => (
-              <Row key={`category--total--${category}`} odd={index % 2 === 1}>
-                <Cell>
-                  <Link to={`/categories/${id}`}>{category}</Link>
-                </Cell>
-                <Cell right>{amount.toFixed(2)}</Cell>
-              </Row>
-            ),
-          )}
+          {sortBy(categories, sortedBy).map(({ id, category, amount }) => (
+            <tr key={`category--total--${category}`}>
+              <td>
+                <Link to={`/categories/${id}`}>{category}</Link>
+              </td>
+              <td className="right">{amount.toFixed(2)}</td>
+            </tr>
+          ))}
         </tbody>
-      </Table>
+      </HTMLTable>
     </div>
   );
 };

@@ -146,6 +146,7 @@ export default gql`
   }
 
   type Mutation {
+    bulkImport(transactions: [CreateTransactionInput]!): Boolean
     createAccount(account: CreateAccountInput!): AccountPayload! @protected
     createToken(email: String!, password: String): TokenPayload
     createTransaction(

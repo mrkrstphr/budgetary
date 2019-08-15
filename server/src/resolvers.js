@@ -4,6 +4,17 @@ export default {
   Date: GraphQLDate,
   DateTime: GraphQLDateTime,
   Mutation: {
+    bulkImport(root, { transactions }, context) {
+      return Promise.all(
+        transactions.map(({ date, description, accounts: splits }) =>
+          context.dbal.transactions.createTransaction(
+            date,
+            description,
+            splits,
+          ),
+        ),
+      ).then(() => true);
+    },
     createAccount(root, { account: accountInput }, context) {
       const { type, name } = accountInput;
 

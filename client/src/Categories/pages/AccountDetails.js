@@ -6,6 +6,7 @@ const AccountDetails = ({ account }) => (
   <div>
     <h2>{account.name}</h2>
     <Statistics account={account} />
+    <h3>Recent Transactions</h3>
   </div>
 );
 

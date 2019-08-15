@@ -1,4 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
+import '@blueprintjs/core/lib/css/blueprint.css';
+import '@blueprintjs/icons/lib/css/blueprint-icons.css';
 
 export default createGlobalStyle`
   @import url('https://fonts.googleapis.com/css?family=Noto+Serif+TC');
@@ -18,7 +20,7 @@ export default createGlobalStyle`
 
   body {
     background-image: url("https://www.toptal.com/designers/subtlepatterns/patterns/circuit.png");
-    font-family: 'Noto Serif TC', serif;
+    /* font-family: 'Noto Serif TC', serif; */
     padding: 0px 20px;
   }
 
@@ -30,4 +32,25 @@ export default createGlobalStyle`
       color: #621b18;
     }
   }
+
+  .bp3-select-popover .bp3-popover-content {
+    padding: 5px;
+  }
+
+  .bp3-select-popover .bp3-menu {
+    max-width: 400px;
+    max-height: 300px;
+    overflow: auto;
+    padding: 0;
+}
+
+.bp3-select-popover .bp3-menu:not(:first-child) {
+    padding-top: 5px;
+}
+
+.bp3-html-table {
+  th.right, td.right {
+    text-align: right;
+  }
+}
 `;

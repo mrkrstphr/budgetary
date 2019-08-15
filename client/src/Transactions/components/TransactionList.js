@@ -1,13 +1,30 @@
+import {
+  Button,
+  ButtonGroup,
+  HTMLTable,
+  Menu,
+  MenuItem,
+  Popover,
+  Position,
+} from '@blueprintjs/core';
 import moment from 'moment';
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from 'component/Button';
-import { Cell, Header, Row, Table } from 'component/SimpleTable';
+import { Link, withRouter } from 'react-router-dom';
 import WithTransactions from '../containers/WithTransactions';
 
 function formatDate(date) {
   return moment(date).format('M/D/YYYY');
 }
+
+const AddMenu = withRouter(({ history }) => (
+  <Menu>
+    <MenuItem
+      onClick={() => history.push('/import-transactions')}
+      text="Import Transactions"
+      icon="import"
+    />
+  </Menu>
+));
 
 const Transactions = ({ transactions, onAddTransaction }) => {
   return (
@@ -20,51 +37,57 @@ const Transactions = ({ transactions, onAddTransaction }) => {
         }}
       >
         <h3 style={{ flex: 1, margin: 0 }}>Transactions</h3>
-        <Button onClick={onAddTransaction}>Add Transaction</Button>
+
+        <ButtonGroup style={{ minWidth: 120 }}>
+          <Button icon="add" intent="success" onClick={onAddTransaction}>
+            Add Transaction
+          </Button>
+          <Popover content={<AddMenu />} position={Position.BOTTOM}>
+            <Button icon={'caret-down'} intent="success" />
+          </Popover>
+        </ButtonGroup>
       </div>
-      <Table>
+      <HTMLTable striped interactive style={{ width: '100%' }}>
         <thead>
           <tr>
-            <Header>Date</Header>
-            <Header>Description</Header>
-            <Header>Category</Header>
-            <Header right>Amount</Header>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th className="right">Amount</th>
           </tr>
         </thead>
         <tbody>
           {transactions.items.map((transaction, index) => {
             const rows = transaction.accounts.map((account, accountIndex) => (
-              <Row key={account.id} odd={index % 2 === 1}>
-                <Cell>
-                  {accountIndex === 0 && formatDate(transaction.date)}
-                </Cell>
-                <Cell>{accountIndex === 0 && transaction.description}</Cell>
-                <Cell>
+              <tr key={account.id}>
+                <td>{accountIndex === 0 && formatDate(transaction.date)}</td>
+                <td>{accountIndex === 0 && transaction.description}</td>
+                <td>
                   <Link to={`/categories/${account.account.id}`}>
                     {account.account.name}
                   </Link>
-                </Cell>
-                <Cell right>{account.amount.toFixed(2)}</Cell>
-              </Row>
+                </td>
+                <td className="right">{account.amount.toFixed(2)}</td>
+              </tr>
             ));
 
             if (rows.length > 1) {
               rows.push(
-                <Row key={`${transaction.id}--totals`} odd={index % 2 === 1}>
-                  <Cell colSpan="3" right>
+                <tr key={`${transaction.id}--totals`} odd={index % 2 === 1}>
+                  <td colSpan="3" className="right">
                     <strong>Total:</strong>
-                  </Cell>
-                  <Cell right>
+                  </td>
+                  <td className="right">
                     <strong>{transaction.amount.toFixed(2)}</strong>
-                  </Cell>
-                </Row>,
+                  </td>
+                </tr>,
               );
             }
 
             return rows;
           })}
         </tbody>
-      </Table>
+      </HTMLTable>
     </div>
   );
 };

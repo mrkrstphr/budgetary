@@ -32,7 +32,9 @@ function getMappingOptionsFor(state, columnName) {
     <>
       <option> </option>
       {columns.map(column => (
-        <option key={`trans-account-option-${column}`}>{column}</option>
+        <option key={`trans-account-option-${column}`} value={column}>
+          {column}
+        </option>
       ))}
     </>
   );
@@ -257,9 +259,8 @@ function TransactionsTable({ bulkImport, categories, dispatch, state }) {
                 onCancel={() => dispatch({ type: 'toggleConfirmFinish' })}
                 onConfirm={async () => {
                   const transactions = getTransactionsToImport(state);
+                  await bulkImport(transactions);
                   console.log({ transactions });
-                  const results = await bulkImport(transactions);
-                  console.log({ results });
                   dispatch({ type: 'toggleConfirmFinish' });
                   toaster.show({
                     icon: 'tick-circle',

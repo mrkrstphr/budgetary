@@ -1,6 +1,7 @@
 import { Button, MenuItem } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
 import React from 'react';
+import { useAccountsQuery } from 'query';
 
 function escapeRegExpChars(text) {
   return text.replace(/([.*+?^=!:${}()|[\]/\\])/g, '\\$1');
@@ -53,12 +54,14 @@ export const filterCategories = (query, category, _index, exactMatch) => {
   }
 };
 
-export default function SelectCategory({ categories, onChange, value }) {
+export default function SelectCategory({ onChange, value }) {
+  const { loading: accountsLoading, accounts } = useAccountsQuery();
+
   return (
     <Select
       itemsEqual={itemsEqual}
       onItemSelect={onChange}
-      items={categories}
+      items={accountsLoading ? [] : accounts}
       itemPredicate={filterCategories}
       itemRenderer={(category, { handleClick, modifiers, query }) => {
         if (!modifiers.matchesPredicate) {

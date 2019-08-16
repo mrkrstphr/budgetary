@@ -1,16 +1,49 @@
 import moment from 'moment';
 import React, { useState } from 'react';
-import { withRouter } from 'react-router-dom';
+import MonthSwitcher from 'component/MonthSwitcher';
 import { TabPanel } from 'component/TabPanel';
-import AddTransactionForm from '../components/AddTransactionForm';
-import TransactionList from '../components/TransactionList';
-import WithMonths from '../containers/WithMonths';
-import Select from 'react-select';
-import SpendBreakdown from '../components/SpendBreakdown';
-import Statistics from '../components/Statistics';
+import AddTransactionForm from './components/AddTransactionForm';
+import SpendBreakdown from './components/SpendBreakdown';
+import Statistics from './components/Statistics';
+import AddImportTransactionButton from 'component/AddImportTransactionButton';
+import TransactionsList from 'component/TransactionList';
+import { useMonthsQuery, useTransactionsQuery } from 'query';
 
-function TransactionsPage({ history, match, months }) {
+function TransactionsTab({ onAddTransaction, month }) {
+  const { error, loading, transactions } = useTransactionsQuery({
+    filters: { month },
+  });
+
+  if (error || loading) {
+    return null; // TODO FIXME
+  }
+
+  return (
+    <div>
+      <div
+        style={{
+          alignItems: 'center',
+          display: 'flex',
+          padding: '10px 0',
+        }}
+      >
+        <h3 style={{ flex: 1, margin: 0 }}>Transactions</h3>
+
+        <AddImportTransactionButton onAddTransaction={onAddTransaction} />
+      </div>
+
+      <TransactionsList transactions={transactions.items} />
+    </div>
+  );
+}
+
+function TransactionsPage({ match }) {
   const [addOpen, setAddOpen] = useState(false);
+  const { error, loading, months } = useMonthsQuery();
+
+  if (loading) {
+    return null;
+  }
 
   let selectedMonth = months[0];
   if (match.params.month) {
@@ -41,24 +74,7 @@ function TransactionsPage({ history, match, months }) {
           {moment(`${selectedMonth.name + '-01'}`).format('MMMM YYYY')}
         </h2>
 
-        <div style={{ fontSize: '0.75em', width: 220 }}>
-          Switch Month:
-          <Select
-            options={months.map(month => ({
-              ...month,
-              label: month.name,
-              value: month.name,
-            }))}
-            onChange={selected => {
-              history.push(`/transactions/${selected.name}`);
-            }}
-            value={{
-              ...selectedMonth,
-              label: selectedMonth.name,
-              value: selectedMonth.name,
-            }}
-          />
-        </div>
+        <MonthSwitcher months={months} selectedMonth={selectedMonth} />
       </div>
 
       <Statistics month={selectedMonth} />
@@ -73,7 +89,7 @@ function TransactionsPage({ history, match, months }) {
       <TabPanel
         tabs={[{ label: 'Transactions' }, { label: 'Spending Breakdown' }]}
         contents={[
-          <TransactionList
+          <TransactionsTab
             month={selectedMonth.name}
             onAddTransaction={toggleAddOpen}
           />,
@@ -85,4 +101,4 @@ function TransactionsPage({ history, match, months }) {
   );
 }
 
-export default withRouter(WithMonths(TransactionsPage));
+export default TransactionsPage;

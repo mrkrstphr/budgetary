@@ -4,9 +4,9 @@ import React, { useReducer } from 'react';
 import { Button } from 'component/Button';
 import { Dialog } from 'component/Dialog';
 import { CreateableSelect, DatePicker, Input, Label } from 'component/Form';
+import { useCreateTransaction } from 'mutation';
+import { useAccountsQuery } from 'query';
 import AddCategoryForm from './AddCategoryForm';
-import CreateTransaction from '../containers/CreateTransaction';
-import WithCategories from '../containers/WithCategories';
 
 const initialState = {
   isAddCategoryOpen: false,
@@ -29,8 +29,10 @@ function reducer(state, action) {
   }
 }
 
-const AddTransactionForm = ({ categories, createTransaction, onClose }) => {
+const AddTransactionForm = ({ categories, onClose }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const { loading, error, accounts } = useAccountsQuery();
+  const [createTransaction] = useCreateTransaction();
 
   const initialValues = {
     date: new Date(),
@@ -131,10 +133,14 @@ const AddTransactionForm = ({ categories, createTransaction, onClose }) => {
                       {...field}
                       onChange={setFieldValue}
                       onBlur={setFieldTouched}
-                      options={categories.map(category => ({
-                        value: category.id,
-                        label: category.name,
-                      }))}
+                      options={
+                        loading || error
+                          ? []
+                          : accounts.map(account => ({
+                              value: account.id,
+                              label: account.name,
+                            }))
+                      }
                       onCreateOption={newValue => {
                         dispatch({
                           type: 'open',
@@ -171,4 +177,4 @@ const AddTransactionForm = ({ categories, createTransaction, onClose }) => {
   );
 };
 
-export default CreateTransaction(WithCategories(AddTransactionForm));
+export default AddTransactionForm;

@@ -1,13 +1,16 @@
 import React from 'react';
-import { Switch } from 'react-router-dom';
-import { routes as dashboard } from 'Dashboard';
+import { Route, Switch } from 'react-router-dom';
 import { routes as categories } from 'Categories';
-import { routes as transactions } from 'Transactions';
+import DashboardPage from 'pages/Dashboard';
+import TransactionsByMonth from 'pages/TransactionsByMonth';
+import ImportTransactions from 'pages/ImportTransactions';
 
 export default () => (
   <Switch>
-    {dashboard}
+    <Route path="/" exact component={DashboardPage} />
     {categories}
-    {transactions}
+    <Route path="/transactions" exact component={TransactionsByMonth} />
+    <Route path="/transactions/:month" exact component={TransactionsByMonth} />
+    <Route path="/import-transactions" exact component={ImportTransactions} />
   </Switch>
 );

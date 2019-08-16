@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import ImportTransactions from './ImportTransactions';
+import ImportTransactions from './components/ImportTransactions';
 
 function TransactionsPage() {
   return (

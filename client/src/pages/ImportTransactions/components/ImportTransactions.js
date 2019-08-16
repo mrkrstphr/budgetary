@@ -9,10 +9,9 @@ import {
 import moment from 'moment';
 import Papa from 'papaparse';
 import React, { useReducer } from 'react';
-import WithCategories from '../../containers/WithCategories';
 import ImportTarget from './ImportTarget';
 import SelectCategory from '../../../component/SelectCategory';
-import { initialState, reducer } from './reducer';
+import { initialState, reducer } from '../reducer';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import useReactRouter from 'use-react-router';
@@ -174,7 +173,7 @@ function BulkImport({ children }) {
   );
 }
 
-function TransactionsTable({ bulkImport, categories, dispatch, state }) {
+function TransactionsTable({ dispatch, state }) {
   const { history } = useReactRouter();
 
   return (
@@ -235,7 +234,6 @@ function TransactionsTable({ bulkImport, categories, dispatch, state }) {
                       <td>
                         <SelectCategory
                           value={state.transactionAccountMappings[index]}
-                          categories={categories}
                           onChange={category => {
                             dispatch({
                               type: 'mapTransaction',
@@ -291,7 +289,7 @@ function TransactionsTable({ bulkImport, categories, dispatch, state }) {
   );
 }
 
-export default WithCategories(function ImportTransactions({ categories }) {
+export default function ImportTransactions() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   function fileSelected(details) {
@@ -316,7 +314,6 @@ export default WithCategories(function ImportTransactions({ categories }) {
           <>
             <ImportOptions dispatch={dispatch} state={state} />
             <TransactionsTable
-              categories={categories}
               rows={state.rows}
               selectAll={state.selectAll}
               firstRowAsHeaders={state.firstRowAsHeaders}
@@ -328,4 +325,4 @@ export default WithCategories(function ImportTransactions({ categories }) {
       </div>
     </div>
   );
-});
+}

@@ -2,10 +2,11 @@ import { HTMLTable } from '@blueprintjs/core';
 import { sortBy } from 'lodash';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import WithSpendingBreakdown from '../containers/WithSpendingBreakdown';
+import { useSpendingBreakdown } from 'query';
 
-const SpendBreakdown = ({ categories }) => {
+export default function SpendBreakdown({ month }) {
   const [sortedBy, setSortBy] = useState('amount');
+  const { spendingBreakdown } = useSpendingBreakdown({ month });
 
   return (
     <div>
@@ -29,18 +30,18 @@ const SpendBreakdown = ({ categories }) => {
           </tr>
         </thead>
         <tbody>
-          {sortBy(categories, sortedBy).map(({ id, category, amount }) => (
-            <tr key={`category--total--${category}`}>
-              <td>
-                <Link to={`/categories/${id}`}>{category}</Link>
-              </td>
-              <td className="right">{amount.toFixed(2)}</td>
-            </tr>
-          ))}
+          {sortBy(spendingBreakdown, sortedBy).map(
+            ({ id, category, amount }) => (
+              <tr key={`category--total--${category}`}>
+                <td>
+                  <Link to={`/categories/${id}`}>{category}</Link>
+                </td>
+                <td className="right">{amount.toFixed(2)}</td>
+              </tr>
+            ),
+          )}
         </tbody>
       </HTMLTable>
     </div>
   );
-};
-
-export default WithSpendingBreakdown(SpendBreakdown);
+}

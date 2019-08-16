@@ -32,9 +32,9 @@ export default function SpendBreakdown({ month }) {
         <tbody>
           {sortBy(spendingBreakdown, sortedBy).map(
             ({ id, category, amount }) => (
-              <tr key={`category--total--${category}`}>
+              <tr key={`account--total--${category}`}>
                 <td>
-                  <Link to={`/categories/${id}`}>{category}</Link>
+                  <Link to={`/account/${id}`}>{category}</Link>
                 </td>
                 <td className="right">{amount.toFixed(2)}</td>
               </tr>

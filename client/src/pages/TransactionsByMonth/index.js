@@ -39,7 +39,7 @@ function TransactionsTab({ onAddTransaction, month }) {
 
 function TransactionsPage({ match }) {
   const [addOpen, setAddOpen] = useState(false);
-  const { error, loading, months } = useMonthsQuery();
+  const { loading, months } = useMonthsQuery();
 
   if (loading) {
     return null;

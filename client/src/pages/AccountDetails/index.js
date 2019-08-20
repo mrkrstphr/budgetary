@@ -1,9 +1,13 @@
 import React from 'react';
 import Statistics from './components/Statistics';
-import { useAccountDetailsQuery } from 'query';
+import TransactionList from 'component/TransactionList';
+import { useAccountDetailsQuery, useTransactionsQuery } from 'query';
 
 function AccountDetails({ id }) {
   const { account, loading } = useAccountDetailsQuery(id);
+  const { transactions, loading: transactionsLoading } = useTransactionsQuery({
+    filters: { accountId: id },
+  });
 
   if (loading) {
     return null;
@@ -13,7 +17,16 @@ function AccountDetails({ id }) {
     <div>
       <h2>{account.name}</h2>
       <Statistics account={account} />
+      <p>Balance: ${account.currentBalance}</p>
       <h3>Recent Transactions</h3>
+      {!transactionsLoading && (
+        <TransactionList
+          transactions={transactions.items.map(t => ({
+            ...t,
+            accounts: t.accounts.filter(a => a.account.id !== id),
+          }))}
+        />
+      )}
     </div>
   );
 }

@@ -31,6 +31,8 @@ export default gql`
     name: String!
     type: String!
 
+    currentBalance: Float!
+
     thisMonth: Float!
     lastMonth: Float!
     thisYear: Float!

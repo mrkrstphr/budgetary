@@ -170,12 +170,18 @@ class Transaction {
   }
 
   filterTransactions(filters = {}) {
-    const query = this.conn('transactions')
-      .select('*')
-      .orderBy('date', 'DESC');
+    const query = this.conn('transactions AS t')
+      .distinct('t.*')
+      .orderBy('t.date', 'DESC');
 
     if ('month' in filters) {
-      query.where(this.conn.raw(`to_char(date, 'YYYY-MM')`), filters.month);
+      query.where(this.conn.raw(`to_char(t.date, 'YYYY-MM')`), filters.month);
+    }
+
+    if ('accountId' in filters) {
+      query
+        .join('transaction_accounts AS ta', 'ta.transaction_id', 't.id')
+        .andWhere('account_id', filters.accountId);
     }
 
     return query;

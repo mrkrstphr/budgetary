@@ -5,6 +5,22 @@ class Account {
     this.conn = conn;
   }
 
+  async calculateCurrentBalance(accountId) {
+    const [initialBalance, transactions] = await Promise.all([
+      this.conn('accounts')
+        .select('initial_balance')
+        .where({ id: accountId })
+        .then(v => v[0])
+        .then(v => v.initial_balance),
+      this.conn('transaction_accounts')
+        .select(this.conn.raw('COALESCE(SUM(amount), 0) AS sum'))
+        .where({ account_id: accountId })
+        .then(v => v[0])
+        .then(v => v.sum),
+    ]);
+    return parseFloat(initialBalance) + parseFloat(transactions);
+  }
+
   createAccount(type, name) {
     return this.conn('accounts')
       .insert({ id: makeUuid(), type, name }, '*')

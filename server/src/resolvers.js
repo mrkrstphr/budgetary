@@ -67,6 +67,9 @@ export default {
     },
   },
   Account: {
+    currentBalance({ id }, args, context) {
+      return context.dbal.accounts.calculateCurrentBalance(id);
+    },
     thisMonth(account, args, context) {
       return context.dbal.transactions.countAccountTransactionsForPeriod(
         account.id,

@@ -7,7 +7,7 @@ export const fetchAccountDetailsQuery = gql`
       id
       name
       type
-
+      currentBalance
       thisMonth
       lastMonth
       thisYear

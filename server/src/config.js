@@ -1,4 +1,4 @@
 const environment = process.env.NODE_ENV || 'production';
 
-const configurations = require('../../config.json');
+const configurations = require('../config.json');
 export default configurations[environment];

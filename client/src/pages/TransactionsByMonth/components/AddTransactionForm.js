@@ -1,8 +1,9 @@
+import { Button } from '@blueprintjs/core';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import moment from 'moment';
 import React, { useReducer } from 'react';
-import { Button } from 'component/Button';
 import { Dialog } from 'component/Dialog';
+import { FieldColumn, FieldRow } from 'component/Form';
 import { CreateableSelect, DatePicker, Input, Label } from 'component/Form';
 import { useCreateTransaction } from 'mutation';
 import { useAccountsQuery } from 'query';
@@ -12,10 +13,21 @@ const initialState = {
   isAddCategoryOpen: false,
   categoryName: '',
   onSaveEvent: null,
+  transactionCount: 2,
 };
 
 function reducer(state, action) {
   switch (action.type) {
+    case 'addTransaction':
+      return {
+        ...state,
+        transactionCount: state.transactionCount + 1,
+      };
+    case 'removeTransaction':
+      return {
+        ...state,
+        transactionCount: Math.max(2, state.transactionCount - 1),
+      };
     case 'open':
       return {
         isAddCategoryOpen: true,
@@ -25,11 +37,11 @@ function reducer(state, action) {
     case 'close':
       return { isAddCategoryOpen: false, categoryName: '', onSaveEvent: null };
     default:
-      throw new Error();
+      return state;
   }
 }
 
-const AddTransactionForm = ({ categories, onClose }) => {
+export default function AddTransactionForm({ onClose }) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { loading, error, accounts } = useAccountsQuery();
   const [createTransaction] = useCreateTransaction();
@@ -37,7 +49,11 @@ const AddTransactionForm = ({ categories, onClose }) => {
   const initialValues = {
     date: new Date(),
     description: '',
-    splits: [{ accountId: null, amount: '' }],
+    splits: [...Array(state.transactionCount)].map((e, index) => ({
+      accountId: null,
+      increase: '',
+      decrease: '',
+    })),
   };
 
   return (
@@ -56,10 +72,13 @@ const AddTransactionForm = ({ categories, onClose }) => {
           { setSubmitting, resetForm },
         ) => {
           const preparedSplits = splits.map(split => ({
-            ...split,
             accountId: split.accountId ? split.accountId.value : null,
-            amount: parseFloat(split.amount),
+            amount: split.increase
+              ? Math.abs(parseFloat(split.increase))
+              : Math.abs(parseFloat(split.decrease)) * -1,
           }));
+
+          console.log({ splits, preparedSplits });
 
           return createTransaction(
             moment(date).format('YYYY-MM-DD'),
@@ -83,12 +102,12 @@ const AddTransactionForm = ({ categories, onClose }) => {
             onClose={onClose}
             footer={
               <div>
-                <Button danger type="button" onClick={onClose}>
+                <Button intent="danger" minimal onClick={onClose}>
                   Close
-                </Button>
+                </Button>{' '}
                 <Button
-                  primary
-                  type="button"
+                  intent="primary"
+                  minimal
                   onClick={handleSubmit}
                   disabled={isSubmitting}
                 >
@@ -124,57 +143,118 @@ const AddTransactionForm = ({ categories, onClose }) => {
               />
               <ErrorMessage name="description" component="div" />
 
-              <Field
-                name="splits[0].accountId"
-                render={({ field }) => (
-                  <>
-                    <Label htmlFor={field.name}>Category</Label>
-                    <CreateableSelect
-                      {...field}
-                      onChange={setFieldValue}
-                      onBlur={setFieldTouched}
-                      options={
-                        loading || error
-                          ? []
-                          : accounts.map(account => ({
-                              value: account.id,
-                              label: account.name,
-                            }))
-                      }
-                      onCreateOption={newValue => {
-                        dispatch({
-                          type: 'open',
-                          name: newValue,
-                          onSaveEvent: account => {
-                            setFieldValue('splits[0].accountId', {
-                              value: account.id,
-                              label: account.name,
-                            });
-                          },
-                        });
-                      }}
-                    />
-                  </>
-                )}
-              />
-              <ErrorMessage name="splits[0].accountId" component="div" />
+              <FieldRow>
+                <FieldColumn flex={2}>Category</FieldColumn>
+                <FieldColumn>Increase</FieldColumn>
+                <FieldColumn>Decrease</FieldColumn>
+                <FieldColumn />
+              </FieldRow>
 
-              <Field
-                name="splits[0].amount"
-                render={({ field }) => (
-                  <>
-                    <Label htmlFor={field.name}>Amount</Label>
-                    <Input id={field.name} {...field} type="text" />
-                  </>
-                )}
-              />
-              <ErrorMessage name="splits[0].amount" component="div" />
+              {[...Array(state.transactionCount)].map((e, index) => (
+                <FieldRow key={`transaction-row-${index}`}>
+                  <FieldColumn flex={3}>
+                    <Field
+                      name={`splits[${index}].accountId`}
+                      render={({ field }) => (
+                        <>
+                          <CreateableSelect
+                            {...field}
+                            onChange={setFieldValue}
+                            onBlur={setFieldTouched}
+                            options={
+                              loading || error
+                                ? []
+                                : accounts.map(account => ({
+                                    value: account.id,
+                                    label: account.name,
+                                  }))
+                            }
+                            onCreateOption={newValue => {
+                              dispatch({
+                                type: 'open',
+                                name: newValue,
+                                onSaveEvent: account => {
+                                  setFieldValue(`splits[${index}].accountId`, {
+                                    value: account.id,
+                                    label: account.name,
+                                  });
+                                },
+                              });
+                            }}
+                          />
+                        </>
+                      )}
+                    />
+                    <ErrorMessage
+                      name={`splits[${index}].accountId`}
+                      component="div"
+                    />
+                  </FieldColumn>
+                  <FieldColumn flex={2}>
+                    <Field
+                      name={`splits[${index}].increase`}
+                      render={({ field }) => (
+                        <>
+                          <Input
+                            id={field.name}
+                            {...field}
+                            type="text"
+                            size="5"
+                          />
+                        </>
+                      )}
+                    />
+                    <ErrorMessage
+                      name={`splits[${index}].increase`}
+                      component="div"
+                    />
+                  </FieldColumn>
+                  <FieldColumn flex={2}>
+                    <Field
+                      name={`splits[${index}].decrease`}
+                      render={({ field }) => (
+                        <>
+                          <Input
+                            id={field.name}
+                            {...field}
+                            type="text"
+                            size="5"
+                          />
+                        </>
+                      )}
+                    />
+                    <ErrorMessage
+                      name={`splits[${index}].decrease`}
+                      component="div"
+                    />
+                  </FieldColumn>
+                  <FieldColumn>
+                    {index === state.transactionCount - 1 && (
+                      <Button
+                        icon="plus"
+                        minimal
+                        intent="primary"
+                        onClick={() => dispatch({ type: 'addTransaction' })}
+                      />
+                    )}
+                    {index === state.transactionCount - 1 &&
+                      state.transactionCount > 2 && (
+                        <Button
+                          icon="cross"
+                          minimal
+                          intent="danger"
+                          onClick={() =>
+                            dispatch({ type: 'removeTransaction' })
+                          }
+                        />
+                      )}
+                  </FieldColumn>
+                </FieldRow>
+              ))}
             </Form>
           </Dialog>
         )}
       </Formik>
     </>
   );
-};
-
-export default AddTransactionForm;
+}

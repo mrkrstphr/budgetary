@@ -154,6 +154,9 @@ export default gql`
     createTransaction(
       transaction: CreateTransactionInput!
     ): TransactionPayload! @protected
+
+    deleteTransaction(id: ID!): Boolean
+
     updateAccount(id: ID!, account: UpdateAccountInput!): AccountPayload!
       @protected
   }

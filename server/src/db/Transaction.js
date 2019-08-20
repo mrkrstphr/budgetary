@@ -224,11 +224,12 @@ class Transaction {
 
     await Promise.all(
       splits.map(async split => {
-        const account = await this.account.fetchById(split.accountId);
+        // const account = await this.account.fetchById(split.accountId);
         return this.createSplit(
           transaction.id,
           split.accountId,
-          account.type === 'expense' ? split.amount * -1 : split.amount,
+          split.amount,
+          // account.type === 'expense' ? split.amount * -1 : split.amount,
         );
       }),
     );

@@ -19,7 +19,6 @@ export default createGlobalStyle`
   }
 
   body {
-    background-image: url("https://www.toptal.com/designers/subtlepatterns/patterns/circuit.png");
     /* font-family: 'Noto Serif TC', serif; */
     padding: 0px 20px;
   }

@@ -12,7 +12,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div>
+    <>
       <h2 style={{ flex: 1, margin: '0 0 10px 0' }}>Dashboard</h2>
 
       <Statistics statistics={{}} />
@@ -29,7 +29,7 @@ const Dashboard = () => {
         </div>
       </div>
       <p>...</p>
-    </div>
+    </>
   );
 };
 

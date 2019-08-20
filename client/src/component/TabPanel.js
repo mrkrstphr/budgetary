@@ -10,7 +10,7 @@ const ContainerStyles = styled.div`
   }
 
   .tabContentContainer {
-    background-color: #fff;
+    background-color: ${({ theme }) => theme.bodyContentBgColor};
     padding: 10px;
   }
 `;
@@ -21,7 +21,7 @@ const TabStyles = styled.div`
 
   &.active,
   &:hover {
-    background-color: #fff;
+    background-color: ${({ theme }) => theme.bodyContentBgColor};
     border-bottom-color: #1b7bf7;
   }
 `;

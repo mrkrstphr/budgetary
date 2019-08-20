@@ -1,68 +1,59 @@
+import {
+  Button,
+  Popover,
+  Menu,
+  MenuDivider,
+  MenuItem,
+} from '@blueprintjs/core';
 import React from 'react';
 import styled from 'styled-components';
-import Icon from 'component/Icon';
 import { AppContext } from '../Context';
+import Logo from './Logo';
 
 const Styles = styled.div`
+  background-color: #1e2129;
   align-items: center;
+  height: 48px;
   color: #555;
   display: flex;
+  margin: 0 -20px 20px -20px;
+  padding: 10px;
 
   .menu {
     flex: 1;
     text-align: right;
+
+    .bp3-icon {
+      color: #fff;
+    }
   }
 `;
 
-const DEFAULT_ICON = 'usd-circle';
-const holidayHeaderIcons = [
-  {
-    start: new Date(`${new Date().getFullYear()}-10-20`),
-    end: new Date(`${new Date().getFullYear()}-10-31`),
-    icon: 'jack-o-lantern',
-  },
-  {
-    start: new Date(`${new Date().getFullYear()}-11-20`),
-    end: new Date(`${new Date().getFullYear()}-11-30`),
-    icon: 'turkey',
-  },
-  {
-    start: new Date(`${new Date().getFullYear()}-12-06`),
-    end: new Date(`${new Date().getFullYear()}-12-29`),
-    icon: 'tree-christmas',
-  },
-  {
-    start: new Date(`${new Date().getFullYear()}-12-30`),
-    end: new Date(`${new Date().getFullYear()}-01-03`),
-    icon: 'glass-cheers',
-  },
-];
-
-function getHeaderIcon() {
-  const now = new Date();
-
-  for (const candidate of holidayHeaderIcons) {
-    if (now >= candidate.start && now <= candidate.end) {
-      return candidate.icon;
-    }
-  }
-
-  return DEFAULT_ICON;
-}
-
-export default () => (
+export default ({ sidebarOpen }) => (
   <Styles>
-    <div className="header">
-      <h1>
-        Spend <Icon icon={getHeaderIcon()} color="#555" /> Tracking
-      </h1>
-    </div>
+    {!sidebarOpen && (
+      <>
+        <Logo />
+      </>
+    )}
     <AppContext.Consumer>
-      {({ user, logout }) => (
+      {({ logout, theme, toggleTheme, user }) => (
         <div className="menu">
-          <span className="logout" onClick={logout}>
-            Logout
-          </span>
+          <Popover
+            content={
+              <Menu>
+                <MenuItem
+                  icon={theme.name === 'dark' ? 'lightbulb' : 'moon'}
+                  text={theme.name === 'dark' ? 'Light Theme' : 'Dark Theme'}
+                  onClick={toggleTheme}
+                />
+                <MenuDivider />
+                <MenuItem icon="log-out" text="Log Out" onClick={logout} />
+              </Menu>
+            }
+          >
+            <Button icon="user" minimal />
+          </Popover>
         </div>
       )}
     </AppContext.Consumer>

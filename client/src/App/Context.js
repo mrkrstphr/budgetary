@@ -1,9 +1,15 @@
 import React from 'react';
+import { ThemeProvider } from 'styled-components';
 
 export const AppContext = React.createContext();
 
+const themes = {
+  light: { name: 'light', appBgColor: '#fff' },
+  dark: { name: 'dark', appBgColor: '#2f404d' },
+};
+
 class Context extends React.Component {
-  state = { user: null, token: null };
+  state = { theme: themes.light, token: null, user: null };
 
   componentDidMount() {
     const storedState = localStorage.getItem('appContext');
@@ -30,6 +36,11 @@ class Context extends React.Component {
     this.persist();
   };
 
+  toggleTheme = () =>
+    this.setState({
+      theme: this.state.theme.name === 'dark' ? themes.light : themes.dark,
+    });
+
   persist = () => {
     localStorage.setItem('appContext', JSON.stringify(this.state));
   };
@@ -43,10 +54,14 @@ class Context extends React.Component {
           isAuthenticated: this.isAuthenticated,
           logout: this.logout,
           setToken: this.setToken,
+          theme: this.state.theme,
+          toggleTheme: this.toggleTheme,
           user: this.state.user,
         }}
       >
-        {this.isAuthenticated() ? router() : login()}
+        <ThemeProvider theme={this.state.theme}>
+          {this.isAuthenticated() ? router() : login()}
+        </ThemeProvider>
       </AppContext.Provider>
     );
   }

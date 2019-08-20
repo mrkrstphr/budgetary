@@ -4,7 +4,7 @@ import styledMap from 'styled-map';
 
 const tileColorMap = styledMap`
   danger: #e3342f;
-  success: #38c172;
+  success: #0F9960;
 `;
 
 const Styles = styled.div`

@@ -1,15 +1,25 @@
+import { Toaster } from '@blueprintjs/core';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
 
 export const AppContext = React.createContext();
 
 const themes = {
-  light: { name: 'light', appBgColor: '#fff' },
+  light: {
+    name: 'light',
+    appBgColor: '#f9fafa',
+    appFgColor: '#111',
+    bodyBgColor: '#fff',
+    textMutedColor: '#9f9a9c',
+  },
   dark: { name: 'dark', appBgColor: '#2f404d' },
 };
 
 class Context extends React.Component {
-  state = { theme: themes.light, token: null, user: null };
+  state = { theme: 'light', token: null, user: null };
+
+  toaster = null;
+  toasterRef = ref => (this.toaster = ref);
 
   componentDidMount() {
     const storedState = localStorage.getItem('appContext');
@@ -38,12 +48,15 @@ class Context extends React.Component {
 
   toggleTheme = () =>
     this.setState({
-      theme: this.state.theme.name === 'dark' ? themes.light : themes.dark,
+      theme: this.state.theme.name === 'dark' ? 'light' : 'dark',
     });
 
   persist = () => {
     localStorage.setItem('appContext', JSON.stringify(this.state));
   };
+
+  notify = (message, intent = 'success') =>
+    this.toaster.show({ message, intent });
 
   render() {
     const { login, router } = this.props;
@@ -53,14 +66,18 @@ class Context extends React.Component {
         value={{
           isAuthenticated: this.isAuthenticated,
           logout: this.logout,
+          notify: this.notify,
           setToken: this.setToken,
           theme: this.state.theme,
           toggleTheme: this.toggleTheme,
           user: this.state.user,
         }}
       >
-        <ThemeProvider theme={this.state.theme}>
-          {this.isAuthenticated() ? router() : login()}
+        <ThemeProvider theme={themes[this.state.theme]}>
+          <>
+            <Toaster ref={this.toasterRef} />
+            {this.isAuthenticated() ? router() : login()}
+          </>
         </ThemeProvider>
       </AppContext.Provider>
     );

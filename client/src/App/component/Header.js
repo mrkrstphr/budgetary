@@ -8,15 +8,14 @@ import {
 import React from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../Context';
-import Logo from './Logo';
 
 const Styles = styled.div`
-  background-color: #1e2129;
+  background-color: ${({ theme }) => theme.appBgColor};
   align-items: center;
   height: 48px;
-  color: #555;
+  color: ${({ theme }) => theme.appFgColor};
   display: flex;
-  margin: 0 -20px 20px -20px;
+  margin: 0 -20px 5px -20px;
   padding: 10px;
 
   .menu {
@@ -24,18 +23,13 @@ const Styles = styled.div`
     text-align: right;
 
     .bp3-icon {
-      color: #fff;
+      color: ${({ theme }) => theme.appFgColor};
     }
   }
 `;
 
-export default ({ sidebarOpen }) => (
+export default () => (
   <Styles>
-    {!sidebarOpen && (
-      <>
-        <Logo />
-      </>
-    )}
     <AppContext.Consumer>
       {({ logout, theme, toggleTheme, user }) => (
         <div className="menu">

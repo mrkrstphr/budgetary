@@ -21,10 +21,14 @@ function AccountDetails({ id }) {
       <h3>Recent Transactions</h3>
       {!transactionsLoading && (
         <TransactionList
-          transactions={transactions.items.map(t => ({
-            ...t,
-            accounts: t.accounts.filter(a => a.account.id !== id),
-          }))}
+          filters={{ accountId: id }}
+          transactions={transactions.items}
+          /*formatSplits={splits => {
+            const newSplits = splits.filter(a => a.account.id !== id);
+            newSplits[0].amount = newSplits[0].amount * -1;
+
+            return newSplits;
+          }}*/
         />
       )}
     </div>

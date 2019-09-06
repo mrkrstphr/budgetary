@@ -3,7 +3,7 @@ import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/icons/lib/css/blueprint-icons.css';
 
 export default createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css?family=Noto+Serif+TC');
+  @import url('https://fonts.googleapis.com/css?family=Lato:300,400|Lora:400,700&display=swap');
 
   * {
     box-sizing: border-box;
@@ -19,7 +19,7 @@ export default createGlobalStyle`
   }
 
   body {
-    /* font-family: 'Noto Serif TC', serif; */
+    font-family: 'Lato', serif;
     padding: 0px 20px;
   }
 
@@ -50,6 +50,14 @@ export default createGlobalStyle`
 .bp3-html-table {
   th.right, td.right {
     text-align: right;
+  }
+
+  &.valignMiddle td {
+    vertical-align: middle !important;
+  }
+
+  tr.even td {
+    background-color: rgba(191, 204, 214, 0.15);
   }
 }
 `;

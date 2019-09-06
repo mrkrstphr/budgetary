@@ -1,21 +1,18 @@
+import { Callout } from '@blueprintjs/core';
 import React from 'react';
 import styled from 'styled-components';
-import styledMap from 'styled-map';
 
-const tileColorMap = styledMap`
-  danger: #e3342f;
-  success: #0F9960;
-`;
-
-const Styles = styled.div`
-  background-color: ${tileColorMap};
+const Styles = styled(Callout)`
   border-radius: 4px;
   box-sizing: border-box;
-  color: #fff;
   margin-right: 5px;
   padding: 10px;
   text-align: right;
   width: 320px;
+
+  .title {
+    margin: 0;
+  }
 
   .value {
     font-size: 2.5em;
@@ -24,7 +21,7 @@ const Styles = styled.div`
 
 export const StatisticTile = ({ title, value, ...props }) => (
   <Styles {...props}>
-    <div className="title">{title}</div>
+    <h4 className="bp3-heading title">{title}</h4>
     <div className="value">{value}</div>
   </Styles>
 );

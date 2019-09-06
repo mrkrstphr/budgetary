@@ -11,26 +11,22 @@ export default () => {
           <StatisticTile
             title="This Month"
             value={currencyFormatter(thisMonth)}
-            success={thisMonth > 0}
-            danger={thisMonth <= 0}
+            intent={thisMonth <= 0 ? 'danger' : 'success'}
           />
           <StatisticTile
             title="Last Month"
             value={currencyFormatter(lastMonth)}
-            success={lastMonth > 0}
-            danger={lastMonth <= 0}
+            intent={lastMonth <= 0 ? 'danger' : 'success'}
           />
           <StatisticTile
             title="Last 3"
             value={currencyFormatter(threeMonths)}
-            success={threeMonths > 0}
-            danger={threeMonths <= 0}
+            intent={threeMonths <= 0 ? 'danger' : 'success'}
           />
           <StatisticTile
             title="Last 12"
             value={currencyFormatter(twelveMonths)}
-            success={twelveMonths > 0}
-            danger={twelveMonths <= 0}
+            intent={twelveMonths <= 0 ? 'danger' : 'success'}
           />
         </div>
       )}

@@ -2,7 +2,7 @@ import moment from 'moment';
 import React, { useState } from 'react';
 import MonthSwitcher from 'component/MonthSwitcher';
 import { TabPanel } from 'component/TabPanel';
-import AddTransactionForm from './components/AddTransactionForm';
+import AddTransactionForm from '../../component/AddTransactionForm';
 import SpendBreakdown from './components/SpendBreakdown';
 import Statistics from './components/Statistics';
 import AddImportTransactionButton from 'component/AddImportTransactionButton';
@@ -32,7 +32,7 @@ function TransactionsTab({ onAddTransaction, month }) {
         <AddImportTransactionButton onAddTransaction={onAddTransaction} />
       </div>
 
-      <TransactionsList transactions={transactions.items} />
+      <TransactionsList transactions={transactions.items} filters={{ month }} />
     </div>
   );
 }

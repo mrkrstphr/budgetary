@@ -42,7 +42,13 @@ const DialogHeader = styled.div`
   padding: 16px;
 `;
 
-const Dialog = ({ footer, header, children, onClose, ...props }) => (
+const Dialog = ({
+  footer,
+  header,
+  children,
+  onClose = () => null,
+  ...props
+}) => (
   <Backdrop onClick={onClose} {...props}>
     <DialogContainer onClick={e => e.stopPropagation()}>
       {header && <DialogHeader>{header}</DialogHeader>}

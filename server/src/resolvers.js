@@ -42,6 +42,21 @@ export default {
         .createTransaction(date, description, splits)
         .then(transaction => ({ transaction }));
     },
+    deleteTransaction(root, { id }, context) {
+      return context.dbal.transactions.delete(id).then(() => true);
+    },
+    updateTransaction(
+      root,
+      {
+        id,
+        transaction: { date, description, accounts },
+      },
+      context,
+    ) {
+      return context.dbal.transactions
+        .update(id, date, description, accounts)
+        .then(transaction => ({ transaction }));
+    },
   },
   Query: {
     account(root, { id }, context) {

@@ -99,6 +99,18 @@ export default gql`
     accounts: [CreateTransactionAccountInput]
   }
 
+  input UpdateTransactionAccountInput {
+    id: ID
+    accountId: ID!
+    amount: Float!
+  }
+
+  input UpdateTransactionInput {
+    date: Date!
+    description: String!
+    accounts: [UpdateTransactionAccountInput]
+  }
+
   type Month {
     name: String!
     totalExpenses: Float!
@@ -136,28 +148,30 @@ export default gql`
   }
 
   type Query {
-    account(id: ID!): Account @protected
-    accounts(filter: String): [Account] @protected
-    months: [Month] @protected
+    account(id: ID!): Account
+    accounts(filter: String): [Account]
+    months: [Month]
     transactions(
       filters: TransactionFilterInput
       paging: PagingInput
-    ): TransactionCollection @protected
-    spendingBreakdown(month: String!): [SpendingCategory] @protected
+    ): TransactionCollection
+    spendingBreakdown(month: String!): [SpendingCategory]
     netIncomeStats: NetIncomeStats!
   }
 
   type Mutation {
     bulkImport(transactions: [CreateTransactionInput]!): Boolean
-    createAccount(account: CreateAccountInput!): AccountPayload! @protected
+    createAccount(account: CreateAccountInput!): AccountPayload!
     createToken(email: String!, password: String): TokenPayload
-    createTransaction(
-      transaction: CreateTransactionInput!
-    ): TransactionPayload! @protected
+    createTransaction(transaction: CreateTransactionInput!): TransactionPayload!
 
     deleteTransaction(id: ID!): Boolean
 
     updateAccount(id: ID!, account: UpdateAccountInput!): AccountPayload!
-      @protected
+
+    updateTransaction(
+      id: ID!
+      transaction: UpdateTransactionInput
+    ): TransactionPayload
   }
 `;

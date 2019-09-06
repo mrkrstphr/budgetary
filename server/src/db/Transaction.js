@@ -7,6 +7,27 @@ class Transaction {
     this.account = new Account(conn);
   }
 
+  calculateExpensesForMonths(months) {
+    const month = `to_char(date, 'YYYY-MM')`;
+
+    const query = this.conn('transactions AS t')
+      .select(
+        this.conn.raw(
+          `DISTINCT ${month} AS month, SUM(CASE WHEN a.type = 'expense' THEN ta.amount ELSE ta.amount * -1 END) AS total`,
+        ),
+      )
+      .join('transaction_accounts AS ta', 'ta.transaction_id', 't.id')
+      .join('accounts AS a', 'a.id', 'ta.account_id')
+      .whereIn('a.type', ['expense', 'liability'])
+      .whereIn(this.conn.raw(month), months)
+      .groupBy(this.conn.raw(month))
+      .orderBy(this.conn.raw(`${month}`), 'DESC');
+
+    console.log(query.toSQL());
+
+    return query;
+  }
+
   calculateSumForMonths(months, type) {
     const month = `to_char(date, 'YYYY-MM')`;
 
@@ -244,6 +265,54 @@ class Transaction {
       account_id: accountId,
       amount,
     });
+  }
+
+  delete(id) {
+    return this.conn('transactions')
+      .delete()
+      .where({ id });
+  }
+
+  update(id, date, description, accounts) {
+    const update = this.conn('transactions')
+      .update({ date, description })
+      .where({ id })
+      .returning('*');
+
+    // Delete any splits that are no longer in "accounts"
+    const deletePromise = this.conn('transaction_accounts')
+      .select('*')
+      .where('transaction_id', id)
+      .then(splits => {
+        return Promise.all(
+          splits
+            .filter(split => {
+              return !accounts.map(({ id }) => id).includes(split.id);
+            })
+            .map(split =>
+              this.conn('transaction_accounts')
+                .delete()
+                .where({ id: split.id }),
+            ),
+        );
+      });
+
+    const bagOfPromises = accounts.map(({ id: splitId, accountId, amount }) => {
+      if (splitId) {
+        return this.conn('transaction_accounts')
+          .update({
+            account_id: accountId,
+            amount,
+          })
+          .where({ id: splitId });
+      }
+
+      return this.createSplit(id, accountId, amount);
+    });
+
+    return Promise.all([update, deletePromise, ...bagOfPromises])
+      .then(([transaction]) => transaction)
+      .then(r => r[0]);
   }
 }
 

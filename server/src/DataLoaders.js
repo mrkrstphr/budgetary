@@ -21,7 +21,7 @@ class DataLoaders {
   constructor(dbal) {
     this.calculateExpensesByMonth = new DL(months =>
       dbal.transactions
-        .calculateSumForMonths(months, 'expense')
+        .calculateExpensesForMonths(months)
         .then(data => organizeResultsById(data, months, 'month')),
     );
 

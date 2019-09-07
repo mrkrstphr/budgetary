@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserTitle } from 'component';
 import Statistics from './components/Statistics';
 import TransactionList from 'component/TransactionList';
 import { useAccountDetailsQuery, useTransactionsQuery } from 'query';
@@ -15,6 +16,7 @@ function AccountDetails({ id }) {
 
   return (
     <div>
+      <BrowserTitle title={account.name} />
       <h2>{account.name}</h2>
       <Statistics account={account} />
       <p>Balance: ${account.currentBalance}</p>

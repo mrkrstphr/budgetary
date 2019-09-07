@@ -1,5 +1,6 @@
 import moment from 'moment';
 import React, { useState } from 'react';
+import { BrowserTitle } from 'component';
 import MonthSwitcher from 'component/MonthSwitcher';
 import { TabPanel } from 'component/TabPanel';
 import AddTransactionForm from '../../component/AddTransactionForm';
@@ -61,6 +62,11 @@ function TransactionsPage({ match }) {
 
   return (
     <div>
+      <BrowserTitle
+        title={`${moment(`${selectedMonth.name + '-01'}`).format(
+          'MMMM YYYY',
+        )} Transactions`}
+      />
       <div
         style={{
           borderBottom: '1px solid #eee',

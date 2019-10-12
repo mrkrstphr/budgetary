@@ -10,6 +10,7 @@ import moment from 'moment';
 import Papa from 'papaparse';
 import React, { useReducer } from 'react';
 import ImportTarget from './ImportTarget';
+import { FieldColumn, FieldRow, Label } from 'component/Form';
 import SelectCategory from '../../../component/SelectCategory';
 import { initialState, reducer } from '../reducer';
 import { Mutation } from 'react-apollo';
@@ -42,16 +43,36 @@ function getMappingOptionsFor(state, columnName) {
 const ImportOptions = ({ dispatch, state }) => (
   <div>
     <h3>Options</h3>
-    <Checkbox
-      checked={state.firstRowAsHeaders}
-      label="Use First Row as Headers"
-      onChange={() =>
-        dispatch({
-          type: 'setUseFirstRowAsHeaders',
-          value: !state.firstRowAsHeaders,
-        })
-      }
-    />
+
+    <FieldRow>
+      <FieldColumn>
+        <Label>Offset Account:</Label>
+        <SelectCategory
+          value={state.offsetAccount}
+          onChange={account => {
+            dispatch({
+              type: 'setOffsetAccount',
+              value: account,
+            });
+          }}
+        />
+      </FieldColumn>
+    </FieldRow>
+
+    <FieldRow>
+      <FieldColumn>
+        <Checkbox
+          checked={state.firstRowAsHeaders}
+          label="Use First Row as Headers"
+          onChange={() =>
+            dispatch({
+              type: 'setUseFirstRowAsHeaders',
+              value: !state.firstRowAsHeaders,
+            })
+          }
+        />
+      </FieldColumn>
+    </FieldRow>
 
     <HTMLTable style={{ width: '100%' }} striped={true} interactive={true}>
       <thead>
@@ -144,6 +165,15 @@ function getTransactionsToImport(state) {
       accounts: [
         {
           accountId: state.transactionAccountMappings[index].id,
+          amount:
+            parseFloat(
+              state.rows[index][
+                state.columns.indexOf(state.columnMappings.amount)
+              ],
+            ) * -1,
+        },
+        {
+          accountId: state.offsetAccount.id,
           amount: parseFloat(
             state.rows[index][
               state.columns.indexOf(state.columnMappings.amount)
@@ -203,7 +233,7 @@ function TransactionsTable({ dispatch, state }) {
                     {state.columns.map(column => (
                       <th key={`header-${column}`}>{column}</th>
                     ))}
-                    <th>Category Mapping</th>
+                    <th>Account Mapping</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -258,7 +288,6 @@ function TransactionsTable({ dispatch, state }) {
                 onConfirm={async () => {
                   const transactions = getTransactionsToImport(state);
                   await bulkImport(transactions);
-                  console.log({ transactions });
                   dispatch({ type: 'toggleConfirmFinish' });
                   toaster.show({
                     icon: 'tick-circle',

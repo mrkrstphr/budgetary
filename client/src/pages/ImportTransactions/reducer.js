@@ -8,6 +8,7 @@ const initialState = {
   confirmResetOpen: false,
   confirmFinishOpen: false,
   columnMappings: {},
+  offsetAccount: null,
   transactionAccountMappings: {},
 };
 
@@ -39,6 +40,12 @@ function reducer(state, action) {
         selectedRows: state.selectAll
           ? Array.from(rows.keys())
           : state.selectedRows.filter((row, index) => index !== 0),
+      };
+
+    case 'setOffsetAccount':
+      return {
+        ...state,
+        offsetAccount: action.value,
       };
 
     case 'selectAll':

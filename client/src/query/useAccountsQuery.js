@@ -12,6 +12,8 @@ export const filterAccountsQuery = gql`
       type
       name
       currentBalance
+      isOpen
+      showInMenu
     }
   }
 `;

@@ -1,4 +1,5 @@
 import makeUuid from 'uuid/v4';
+import { desnakeify } from 'lib';
 
 class Account {
   constructor(conn) {
@@ -28,9 +29,11 @@ class Account {
   }
 
   fetchAccounts() {
-    return this.conn('accounts')
-      .select('*')
-      .orderBy('name', 'ASC');
+    return desnakeify(
+      this.conn('accounts')
+        .select('*')
+        .orderBy('name', 'ASC')
+    );
   }
 
   fetchById(id) {

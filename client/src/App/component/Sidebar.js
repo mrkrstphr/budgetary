@@ -6,10 +6,12 @@ import { useAccountsQuery } from 'query';
 import AccountTypeList from './AccountTypeList';
 import Logo from './Logo';
 
-function accountType(accounts, type) {
-  return accounts.filter(
-    account => account.type.toLowerCase() === type.toLowerCase(),
-  );
+function accountType(accounts, types) {
+  return accounts.filter(account => types.includes(account.type.toLowerCase()));
+}
+
+function visibleOnly(accounts) {
+  return accounts.filter(account => account.isOpen && account.showInMenu);
 }
 
 const SidebarStyles = styled.div`
@@ -116,7 +118,7 @@ export default function Sidebar() {
             <div className="heading">Bank Accounts</div>
 
             <AccountTypeList
-              accounts={accountType(accounts, 'bank')}
+              accounts={accountType(visibleOnly(accounts), ['bank'])}
               icon="bank-account"
               color="#FF66A1"
             />
@@ -124,7 +126,10 @@ export default function Sidebar() {
             <div className="heading">Liabilities</div>
 
             <AccountTypeList
-              accounts={accountType(accounts, 'liabilities')}
+              accounts={accountType(visibleOnly(accounts), [
+                'credit',
+                'liabilities',
+              ])}
               icon="credit-card"
               color="#669EFF"
             />

@@ -1,5 +1,7 @@
+import moment from 'moment';
 import makeUuid from 'uuid/v4';
 import Account from './Account';
+import { applyPaging, desnakeify } from '../lib';
 
 class Transaction {
   constructor(conn) {
@@ -22,8 +24,6 @@ class Transaction {
       .whereIn(this.conn.raw(month), months)
       .groupBy(this.conn.raw(month))
       .orderBy(this.conn.raw(`${month}`), 'DESC');
-
-    console.log(query.toSQL());
 
     return query;
   }
@@ -190,7 +190,7 @@ class Transaction {
       .orderBy(this.conn.raw(month), 'DESC');
   }
 
-  filterTransactions(filters = {}) {
+  filterTransactions(filters = {}, paging = {}) {
     const query = this.conn('transactions AS t')
       .distinct('t.*')
       .orderBy('t.date', 'DESC');
@@ -205,7 +205,36 @@ class Transaction {
         .andWhere('account_id', filters.accountId);
     }
 
-    return query;
+    return applyPaging(query, paging).then(({ paging, items }) => ({
+      paging,
+      items: desnakeify(items),
+    }));
+  }
+
+  fetchForReconciliation(reconciliation) {
+    const query = this.conn('transactions AS t')
+      .distinct('t.*')
+      .join('transaction_accounts AS ta', 'ta.transaction_id', 't.id')
+      .andWhere('account_id', reconciliation.accountId)
+      .orderBy('t.date', 'ASC');
+
+    if (reconciliation.status.toLowerCase() === 'open') {
+      query.andWhere(function() {
+        this.where('reconciliation_id', reconciliation.id).orWhere(
+          'reconciliation_id',
+          null,
+        );
+      });
+    } else {
+      query.andWhere('reconciliation_id', reconciliation.id);
+    }
+
+    query.whereRaw(
+      "t.date BETWEEN ?::date - '5 days'::interval AND ?::date + '5 days'::interval",
+      [reconciliation.startDate, reconciliation.endDate],
+    );
+
+    return desnakeify(query);
   }
 
   findCategoriesForTransactionByIds(ids) {
@@ -216,14 +245,23 @@ class Transaction {
         'ta.id AS trans_account_id',
         'ta.amount',
         'ta.transaction_id',
+        'ta.reconciliation_id',
       ])
       .whereIn('ta.transaction_id', ids)
+      .then(desnakeify)
       .then(results =>
         results.map(
-          ({ trans_account_id, amount, transaction_id, ...account }) => ({
-            id: trans_account_id,
+          ({
+            transAccountId,
             amount,
-            transaction_id,
+            transactionId,
+            reconciliationId,
+            ...account
+          }) => ({
+            id: transAccountId,
+            amount,
+            transactionId,
+            reconciliationId,
             account,
           }),
         ),
@@ -235,7 +273,7 @@ class Transaction {
       .insert(
         {
           id: makeUuid(),
-          date,
+          date: moment(date).toISOString(),
           description,
           amount: splits.reduce((sum, split) => sum + split.amount, 0),
         },
@@ -275,7 +313,7 @@ class Transaction {
 
   update(id, date, description, accounts) {
     const update = this.conn('transactions')
-      .update({ date, description })
+      .update({ date: moment(date).toISOString(), description })
       .where({ id })
       .returning('*');
 

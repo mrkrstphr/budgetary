@@ -1,9 +1,13 @@
 import { GraphQLDate, GraphQLDateTime } from 'graphql-iso-date';
+import * as Mutation from './mutation';
+import * as resolvers from './resolvers/index';
 
 export default {
   Date: GraphQLDate,
   DateTime: GraphQLDateTime,
+  ...resolvers,
   Mutation: {
+    ...Mutation,
     bulkImport(root, { transactions }, context) {
       return Promise.all(
         transactions.map(({ date, description, accounts: splits }) =>
@@ -72,13 +76,17 @@ export default {
       // This is hacky...
       return {};
     },
+    reconciliation(root, { id }, context) {
+      return context.dbal.reconciliation.fetchById(id);
+    },
+    reconciliations(root, { accountId }, context) {
+      return context.dbal.reconciliation.fetchByAccountId(accountId);
+    },
     spendingBreakdown(root, { month }, context) {
       return context.dbal.transactions.categoryBreakdownForMonth(month);
     },
-    transactions(root, args, context) {
-      return context.dbal.transactions
-        .filterTransactions(args.filters)
-        .then(r => ({ items: r })); // TODO: FIXME: pagination type stuff
+    transactions(root, { filters, paging }, context) {
+      return context.dbal.transactions.filterTransactions(filters, paging);
     },
   },
   Account: {

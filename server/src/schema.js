@@ -31,6 +31,9 @@ export default gql`
     name: String!
     type: String!
 
+    isOpen: Boolean!
+    showInMenu: Boolean!
+
     currentBalance: Float!
 
     thisMonth: Float!
@@ -71,6 +74,7 @@ export default gql`
     account: Account
     transaction: Transaction
     amount: Float
+    reconciliation: Reconciliation
   }
 
   type TransactionCollection {
@@ -123,6 +127,30 @@ export default gql`
     amount: Float!
   }
 
+  enum ReconcilationStatus {
+    Open
+    Complete
+  }
+
+  input ReconciliationDetailsInput {
+    startDate: Date!
+    endDate: Date!
+    startingBalance: Float!
+    endingBalance: Float!
+  }
+
+  type Reconciliation {
+    id: ID!
+    account: Account!
+    startDate: Date!
+    endDate: Date!
+    startingBalance: Float!
+    endingBalance: Float!
+    transactions: [Transaction]!
+    status: ReconcilationStatus!
+    created: DateTime!
+  }
+
   type User {
     id: ID!
     email: String!
@@ -151,6 +179,8 @@ export default gql`
     account(id: ID!): Account
     accounts(filter: String): [Account]
     months: [Month]
+    reconciliations(accountId: ID!): [Reconciliation]!
+    reconciliation(id: ID!): Reconciliation!
     transactions(
       filters: TransactionFilterInput
       paging: PagingInput
@@ -159,13 +189,30 @@ export default gql`
     netIncomeStats: NetIncomeStats!
   }
 
+  type ReconciliationPayload {
+    reconciliation: Reconciliation
+    errors: [ErrorDetails]
+  }
+
   type Mutation {
     bulkImport(transactions: [CreateTransactionInput]!): Boolean
+
     createAccount(account: CreateAccountInput!): AccountPayload!
+
     createToken(email: String!, password: String): TokenPayload
+
+    createReconciliation(
+      accountId: ID!
+      details: ReconciliationDetailsInput!
+    ): ReconciliationPayload!
+
     createTransaction(transaction: CreateTransactionInput!): TransactionPayload!
 
     deleteTransaction(id: ID!): Boolean
+
+    finishReconciliation(id: ID!): ReconciliationPayload!
+
+    markReconciled(accountId: ID!, reconciliationId: ID): AccountTransaction!
 
     updateAccount(id: ID!, account: UpdateAccountInput!): AccountPayload!
 

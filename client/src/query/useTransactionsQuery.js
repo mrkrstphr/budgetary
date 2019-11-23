@@ -2,8 +2,11 @@ import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 export const fetchTransactionsQuery = gql`
-  query filterTransactions($filters: TransactionFilterInput) {
-    transactions(filters: $filters) {
+  query filterTransactions(
+    $filters: TransactionFilterInput
+    $paging: PagingInput
+  ) {
+    transactions(filters: $filters, paging: $paging) {
       paging {
         page
         totalPages
@@ -28,9 +31,13 @@ export const fetchTransactionsQuery = gql`
   }
 `;
 
-export function useTransactionsQuery({ filters = {}, options = {} }) {
+export function useTransactionsQuery({
+  filters = {},
+  paging = {},
+  options = {},
+}) {
   const { loading, error, data } = useQuery(fetchTransactionsQuery, {
-    variables: { filters },
+    variables: { filters, paging },
     ...options,
   });
 

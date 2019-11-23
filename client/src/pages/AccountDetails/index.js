@@ -1,13 +1,16 @@
 import React from 'react';
 import { BrowserTitle } from 'component';
 import Statistics from './components/Statistics';
+import { TabPanel } from 'component/TabPanel';
 import TransactionList from 'component/TransactionList';
 import { useAccountDetailsQuery, useTransactionsQuery } from 'query';
+import Reconciliations from './components/Reconciliations';
 
 function AccountDetails({ id }) {
   const { account, loading } = useAccountDetailsQuery(id);
   const { transactions, loading: transactionsLoading } = useTransactionsQuery({
     filters: { accountId: id },
+    paging: { perPage: 50 },
   });
 
   if (loading) {
@@ -20,19 +23,24 @@ function AccountDetails({ id }) {
       <h2>{account.name}</h2>
       <Statistics account={account} />
       <p>Balance: ${account.currentBalance}</p>
-      <h3>Recent Transactions</h3>
-      {!transactionsLoading && (
-        <TransactionList
-          filters={{ accountId: id }}
-          transactions={transactions.items}
-          /*formatSplits={splits => {
+
+      <TabPanel
+        tabs={[{ label: 'Transactions' }, { label: 'Reconcilations' }]}
+        contents={[
+          <TransactionList
+            filters={{ accountId: id }}
+            transactions={transactionsLoading ? [] : transactions.items}
+            /*formatSplits={splits => {
             const newSplits = splits.filter(a => a.account.id !== id);
             newSplits[0].amount = newSplits[0].amount * -1;
 
             return newSplits;
           }}*/
-        />
-      )}
+          />,
+          <Reconciliations accountId={id} />,
+        ]}
+        style={{ marginTop: 20 }}
+      />
     </div>
   );
 }

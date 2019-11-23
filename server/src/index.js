@@ -1,16 +1,19 @@
-import { ApolloServer } from 'apollo-server-express';
+import { ApolloServer, makeExecutableSchema } from 'apollo-server-express';
 import express from 'express';
 import fs from 'fs';
+import { applyMiddleware } from 'graphql-middleware';
 import https from 'https';
 import http from 'http';
 import path from 'path';
 import typeDefs from './schema';
 import DataLoaders from './DataLoaders';
 import Account from './db/Account';
+import Reconciliation from './db/Reconciliation';
 import Transaction from './db/Transaction';
 import User from './db/User';
 import conn from './db/conn';
 import ProtectedDirective from './directives/ProtectedDirective';
+import ValidationMiddleware from './middleware/ValidationMiddleware';
 import resolvers from './resolvers';
 import config from './config';
 
@@ -18,6 +21,7 @@ class Context {
   constructor(request) {
     const dbal = {
       accounts: new Account(conn),
+      reconciliation: new Reconciliation(conn),
       transactions: new Transaction(conn),
       users: new User(conn),
     };
@@ -40,12 +44,17 @@ class Context {
   };
 }
 
-const apollo = new ApolloServer({
+const schema = makeExecutableSchema({
   typeDefs,
   resolvers,
   schemaDirectives: {
     protected: ProtectedDirective,
   },
+});
+const schemaWithMiddleware = applyMiddleware(schema, ValidationMiddleware);
+
+const apollo = new ApolloServer({
+  schema: schemaWithMiddleware,
   context: ({ req }) => new Context(req),
 });
 

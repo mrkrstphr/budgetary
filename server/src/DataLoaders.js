@@ -19,6 +19,16 @@ function organizeResultsById(results, ids, idColumn = 'id') {
 
 class DataLoaders {
   constructor(dbal) {
+    this.accountById = new DL(ids =>
+      dbal.accounts.findByIds(ids).then(data => organizeResultsById(data, ids)),
+    );
+
+    this.reconciliationById = new DL(ids =>
+      dbal.reconciliation
+        .findByIds(ids)
+        .then(data => organizeResultsById(data, ids)),
+    );
+
     this.calculateExpensesByMonth = new DL(months =>
       dbal.transactions
         .calculateExpensesForMonths(months)
@@ -34,7 +44,7 @@ class DataLoaders {
     this.findCategoriesForTransaction = new DL(ids =>
       dbal.transactions
         .findCategoriesForTransactionByIds(ids)
-        .then(data => organizeMultipleResultsById(data, ids, 'transaction_id')),
+        .then(data => organizeMultipleResultsById(data, ids, 'transactionId')),
     );
 
     this.findUserById = new DL(ids =>

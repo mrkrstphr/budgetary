@@ -39,6 +39,12 @@ class Account {
       .where('id', id)
       .then(v => v[0]);
   }
+
+  findByIds(ids) {
+    return this.conn('accounts')
+      .select('*')
+      .whereIn('id', ids);
+  }
 }
 
 export default Account;

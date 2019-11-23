@@ -3,7 +3,7 @@ import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/icons/lib/css/blueprint-icons.css';
 
 export default createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css?family=Lato:300,400|Lora:400,700&display=swap');
+  @import url('https://fonts.googleapis.com/css?family=Lato:300,400,700|Lora:400,700&display=swap');
 
   * {
     box-sizing: border-box;

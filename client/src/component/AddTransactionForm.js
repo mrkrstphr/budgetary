@@ -3,19 +3,13 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { isNil } from 'lodash';
 import moment from 'moment';
 import React, { useReducer } from 'react';
-import styled from 'styled-components';
 import * as yup from 'yup';
 import { Dialog } from 'component/Dialog';
-import { FieldColumn, FieldRow } from 'component/Form';
+import { FieldColumn, FieldError, FieldRow } from 'component/Form';
 import { CreateableSelect, DatePicker, Input, Label } from 'component/Form';
 import { useCreateTransaction } from 'mutation';
 import { useAccountsQuery } from 'query';
 import AddCategoryForm from './AddCategoryForm';
-
-const FieldError = styled.div`
-  color: #c23030;
-  padding: 5px;
-`;
 
 yup.addMethod(yup.object, 'onlyOneOf', function(
   list,

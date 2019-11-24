@@ -21,14 +21,6 @@ const Dashboard = () => {
       <div style={{ width: '100%', height: 320 }}>
         <NetIncomeChart months={months} />
       </div>
-
-      <div style={{ alignItems: 'center', display: 'flex', width: '100%' }}>
-        <h3>Recent Transactions</h3>
-        <div style={{ flex: 1, textAlign: 'right' }}>
-          <Link to="/transactions">View All</Link>
-        </div>
-      </div>
-      <p>...</p>
     </>
   );
 };

@@ -1,32 +1,40 @@
 {
   "dependencies": {
-    "apollo-server": "^2.3.1",
-    "apollo-server-express": "^2.3.1",
-    "babel-register": "^6.26.0",
-    "csv-parser": "^2.1.0",
+    "apollo-server": "^2.9.6",
+    "apollo-server-express": "^2.9.6",
+    "csv-parser": "^2.3.1",
     "dataloader": "^1.4.0",
-    "dotenv": "^6.2.0",
-    "graphql": "^14.0.2",
+    "date-fns": "^2.5.1",
+    "dotenv": "^8.1.0",
+    "graphql": "^14.5.8",
     "graphql-iso-date": "^3.6.1",
-    "knex": "^0.16.2",
-    "pg": "^7.7.1",
+    "graphql-middleware": "^4.0.1",
+    "knex": "^0.19.5",
+    "moment": "^2.24.0",
+    "pg": "^7.12.1",
     "rand-token": "^0.4.0",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.3",
+    "yup": "^0.27.0"
   },
   "scripts": {
     "migrate:latest": "babel-node ./node_modules/.bin/knex migrate:latest --knexfile=src/knexfile.js",
     "migrations:make": "babel-node ./node_modules/.bin/knex migrate:make --knexfile=src/knexfile.js",
     "migrate:rollback": "babel-node ./node_modules/.bin/knex migrate:rollback --knexfile=src/knexfile.js",
-    "start": "NODE_ENV=development babel-watch src/index.js"
+    "start": "NODE_ENV=development babel-watch src/index.js",
+    "test": "NODE_ENV=test mocha --require @babel/register --recursive \"src/**/*.spec.js\" --reporter min --watch",
+    "test-ci": "NODE_ENV=test mocha --require @babel/register --recursive \"src/**/*.spec.js\""
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-plugin-module-resolver": "^3.1.1",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-export-extensions": "^6.22.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-watch": "^2.0.7"
+    "@babel/cli": "^7.6.4",
+    "@babel/core": "^7.6.4",
+    "@babel/node": "^7.6.3",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.6.2",
+    "@babel/preset-env": "^7.6.3",
+    "@babel/register": "^7.6.2",
+    "babel-plugin-module-resolver": "^3.2.0",
+    "babel-watch": "^7.0.0",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.1"
   }
 }

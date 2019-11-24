@@ -7,10 +7,7 @@ import http from 'http';
 import path from 'path';
 import typeDefs from './schema';
 import DataLoaders from './DataLoaders';
-import Account from './db/Account';
-import Reconciliation from './db/Reconciliation';
-import Transaction from './db/Transaction';
-import User from './db/User';
+import { createDbal } from './db';
 import conn from './db/conn';
 import ProtectedDirective from './directives/ProtectedDirective';
 import ValidationMiddleware from './middleware/ValidationMiddleware';
@@ -19,12 +16,7 @@ import config from './config';
 
 class Context {
   constructor(request) {
-    const dbal = {
-      accounts: new Account(conn),
-      reconciliation: new Reconciliation(conn),
-      transactions: new Transaction(conn),
-      users: new User(conn),
-    };
+    const dbal = createDbal(conn);
     this.request = request;
     this.dataloaders = new DataLoaders(dbal);
     this.dbal = dbal;

@@ -1,5 +1,5 @@
 import makeUuid from 'uuid/v4';
-import { desnakeify } from 'lib';
+import { desnakeify, pickFirst } from 'lib';
 
 class Account {
   constructor(conn) {
@@ -11,21 +11,23 @@ class Account {
       this.conn('accounts')
         .select('initial_balance')
         .where({ id: accountId })
-        .then(v => v[0])
+        .then(pickFirst)
         .then(v => v.initial_balance),
       this.conn('transaction_accounts')
         .select(this.conn.raw('COALESCE(SUM(amount), 0) AS sum'))
         .where({ account_id: accountId })
-        .then(v => v[0])
+        .then(pickFirst)
         .then(v => v.sum),
     ]);
     return parseFloat(initialBalance) + parseFloat(transactions);
   }
 
   createAccount(type, name) {
-    return this.conn('accounts')
-      .insert({ id: makeUuid(), type, name }, '*')
-      .then(v => v[0]);
+    return desnakeify(
+      pickFirst(
+        this.conn('accounts').insert({ id: makeUuid(), type, name }, '*')
+      )
+    );
   }
 
   fetchAccounts() {
@@ -37,16 +39,21 @@ class Account {
   }
 
   fetchById(id) {
-    return this.conn('accounts')
-      .select('*')
-      .where('id', id)
-      .then(v => v[0]);
+    return desnakeify(
+      pickFirst(
+        this.conn('accounts')
+          .select('*')
+          .where('id', id)
+      )
+    );
   }
 
   findByIds(ids) {
-    return this.conn('accounts')
-      .select('*')
-      .whereIn('id', ids);
+    return desnakeify(
+      this.conn('accounts')
+        .select('*')
+        .whereIn('id', ids)
+    );
   }
 }
 

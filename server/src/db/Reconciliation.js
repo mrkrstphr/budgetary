@@ -1,4 +1,3 @@
-import { snakeCase } from 'lodash';
 import makeUuid from 'uuid/v4';
 import moment from 'moment';
 import { desnakeify, pickFirst, snakeify } from 'lib';
@@ -34,9 +33,9 @@ function betweenHandler(query, condition) {
       query,
       clause,
       `? BETWEEN ${snakeify(condition.column[0])} AND ${snakeify(
-        condition.column[1],
+        condition.column[1]
       )}`,
-      condition.value,
+      condition.value
     );
   }
 }
@@ -72,7 +71,7 @@ export default class Reconciliation {
 
   find(conditions) {
     return desnakeify(
-      whereBuilder(this.conn('account_reconciliation').select('*'), conditions),
+      whereBuilder(this.conn('account_reconciliation').select('*'), conditions)
     );
   }
 
@@ -81,8 +80,8 @@ export default class Reconciliation {
       desnakeify(
         this.conn('account_reconciliation')
           .select('*')
-          .where('id', id),
-      ),
+          .where('id', id)
+      )
     );
   }
 
@@ -90,7 +89,7 @@ export default class Reconciliation {
     return desnakeify(
       this.conn('account_reconciliation')
         .select('*')
-        .whereIn('id', ids),
+        .whereIn('id', ids)
     );
   }
 
@@ -114,10 +113,10 @@ export default class Reconciliation {
               ...details,
               startDate: moment(details.startDate).toISOString(),
               endDate: moment(details.endDate).toISOString(),
-            }),
+            })
           )
-          .returning('*'),
-      ),
+          .returning('*')
+      )
     );
   }
 
@@ -127,8 +126,8 @@ export default class Reconciliation {
         this.conn('account_reconciliation')
           .update(snakeify(details))
           .where('id', id)
-          .returning('*'),
-      ),
+          .returning('*')
+      )
     );
   }
 
@@ -138,8 +137,8 @@ export default class Reconciliation {
         this.conn('transaction_accounts')
           .update(snakeify({ reconciliationId }))
           .returning('*')
-          .where({ id: accountId }),
-      ),
+          .where({ id: accountId })
+      )
     );
   }
 }

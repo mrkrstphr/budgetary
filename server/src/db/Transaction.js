@@ -287,17 +287,19 @@ class Transaction {
   }
 
   async createTransaction(date, description, splits) {
-    const transaction = await this.conn('transactions')
-      .insert(
-        {
-          id: makeUuid(),
-          date: moment(date).toISOString(),
-          description,
-          amount: splits.reduce((sum, split) => sum + split.amount, 0),
-        },
-        '*'
+    const transaction = await desnakeify(
+      pickFirst(
+        this.conn('transactions').insert(
+          {
+            id: makeUuid(),
+            date: moment(date).toISOString(),
+            description,
+            amount: splits.reduce((sum, split) => sum + split.amount, 0),
+          },
+          '*'
+        )
       )
-      .then(r => r[0]);
+    );
 
     await Promise.all(
       splits.map(async split => {
@@ -315,12 +317,18 @@ class Transaction {
   }
 
   createSplit(transactionId, accountId, amount) {
-    return this.conn('transaction_accounts').insert({
-      id: makeUuid(),
-      transaction_id: transactionId,
-      account_id: accountId,
-      amount,
-    });
+    return desnakeify(
+      pickFirst(
+        this.conn('transaction_accounts')
+          .insert({
+            id: makeUuid(),
+            transaction_id: transactionId,
+            account_id: accountId,
+            amount,
+          })
+          .returning('*')
+      )
+    );
   }
 
   delete(id) {
@@ -368,7 +376,8 @@ class Transaction {
 
     return Promise.all([update, deletePromise, ...bagOfPromises])
       .then(([transaction]) => transaction)
-      .then(r => r[0]);
+      .then(pickFirst)
+      .then(desnakeify);
   }
 }
 

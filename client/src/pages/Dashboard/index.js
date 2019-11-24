@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import NetIncomeChart from './components/NetIncomeChart';
 import Statistics from './components/Statistics';
 import { useMonthsQuery } from 'query';

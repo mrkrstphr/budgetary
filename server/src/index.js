@@ -14,7 +14,7 @@ import User from './db/User';
 import conn from './db/conn';
 import ProtectedDirective from './directives/ProtectedDirective';
 import ValidationMiddleware from './middleware/ValidationMiddleware';
-import resolvers from './resolvers';
+import * as resolvers from './resolvers';
 import config from './config';
 
 class Context {
@@ -76,7 +76,7 @@ if (config.ssl) {
       key: fs.readFileSync(config.ssl.key),
       cert: fs.readFileSync(config.ssl.cert),
     },
-    app,
+    app
   );
 } else {
   server = http.createServer(app);
@@ -87,6 +87,6 @@ server.listen({ port: config.port }, () =>
     '🚀 Server ready at',
     `http${config.ssl ? 's' : ''}://${config.hostname}:${config.port}${
       apollo.graphqlPath
-    }`,
-  ),
+    }`
+  )
 );

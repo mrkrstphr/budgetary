@@ -1,5 +1,6 @@
 import { GraphQLDate, GraphQLDateTime } from 'graphql-iso-date';
 import * as Mutation from './mutation';
+import * as Query from './query';
 import * as resolvers from './resolvers/index';
 
 export default {
@@ -11,12 +12,8 @@ export default {
     bulkImport(root, { transactions }, context) {
       return Promise.all(
         transactions.map(({ date, description, accounts: splits }) =>
-          context.dbal.transactions.createTransaction(
-            date,
-            description,
-            splits,
-          ),
-        ),
+          context.dbal.transactions.createTransaction(date, description, splits)
+        )
       ).then(() => true);
     },
     createAccount(root, { account: accountInput }, context) {
@@ -37,10 +34,8 @@ export default {
     },
     createTransaction(
       root,
-      {
-        transaction: { date, description, accounts: splits },
-      },
-      context,
+      { transaction: { date, description, accounts: splits } },
+      context
     ) {
       return context.dbal.transactions
         .createTransaction(date, description, splits)
@@ -51,11 +46,8 @@ export default {
     },
     updateTransaction(
       root,
-      {
-        id,
-        transaction: { date, description, accounts },
-      },
-      context,
+      { id, transaction: { date, description, accounts } },
+      context
     ) {
       return context.dbal.transactions
         .update(id, date, description, accounts)
@@ -63,14 +55,12 @@ export default {
     },
   },
   Query: {
+    ...Query,
     account(root, { id }, context) {
       return context.dbal.accounts.fetchById(id);
     },
     accounts(root, args, context) {
       return context.dbal.accounts.fetchAccounts();
-    },
-    months(root, args, context) {
-      return context.dbal.transactions.fetchUniqueMonths();
     },
     netIncomeStats() {
       // This is hacky...
@@ -96,38 +86,26 @@ export default {
     thisMonth(account, args, context) {
       return context.dbal.transactions.countAccountTransactionsForPeriod(
         account.id,
-        'thisMonth',
+        'thisMonth'
       );
     },
     lastMonth(account, args, context) {
       return context.dbal.transactions.countAccountTransactionsForPeriod(
         account.id,
-        'lastMonth',
+        'lastMonth'
       );
     },
     thisYear(account, args, context) {
       return context.dbal.transactions.countAccountTransactionsForPeriod(
         account.id,
-        'year',
+        'year'
       );
     },
     total(account, args, context) {
       return context.dbal.transactions.countAccountTransactionsForPeriod(
         account.id,
-        'total',
+        'total'
       );
-    },
-  },
-  Month: {
-    totalExpenses({ name: month }, args, context) {
-      return context.dataloaders.calculateExpensesByMonth
-        .load(month)
-        .then(data => (data ? data.total : 0));
-    },
-    totalIncome({ name: month }, args, context) {
-      return context.dataloaders.calculateIncomeByMonth
-        .load(month)
-        .then(data => (data ? data.total : 0));
     },
   },
   NetIncomeStats: {

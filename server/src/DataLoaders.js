@@ -20,37 +20,39 @@ function organizeResultsById(results, ids, idColumn = 'id') {
 class DataLoaders {
   constructor(dbal) {
     this.accountById = new DL(ids =>
-      dbal.accounts.findByIds(ids).then(data => organizeResultsById(data, ids)),
+      dbal.accounts.findByIds(ids).then(data => organizeResultsById(data, ids))
     );
 
     this.reconciliationById = new DL(ids =>
       dbal.reconciliation
         .findByIds(ids)
-        .then(data => organizeResultsById(data, ids)),
+        .then(data => organizeResultsById(data, ids))
     );
 
     this.calculateExpensesByMonth = new DL(months =>
       dbal.transactions
         .calculateExpensesForMonths(months)
-        .then(data => organizeResultsById(data, months, 'month')),
+        .then(data => organizeResultsById(data, months, 'month'))
     );
 
     this.calculateIncomeByMonth = new DL(months =>
-      dbal.transactions
-        .calculateSumForMonths(months, 'income')
-        .then(data => organizeResultsById(data, months, 'month')),
+      dbal.transactions.calculateSumForMonths(months, 'income').then(data => {
+        const negated = data.map(({ month, total }) => ({
+          month,
+          total: total * -1,
+        }));
+        return organizeResultsById(negated, months, 'month');
+      })
     );
 
     this.findCategoriesForTransaction = new DL(ids =>
       dbal.transactions
         .findCategoriesForTransactionByIds(ids)
-        .then(data => organizeMultipleResultsById(data, ids, 'transactionId')),
+        .then(data => organizeMultipleResultsById(data, ids, 'transactionId'))
     );
 
     this.findUserById = new DL(ids =>
-      dbal.users
-        .findUserByIds(ids)
-        .then(data => organizeResultsById(data, ids)),
+      dbal.users.findUserByIds(ids).then(data => organizeResultsById(data, ids))
     );
   }
 }

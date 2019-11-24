@@ -1,7 +1,7 @@
 import moment from 'moment';
 import makeUuid from 'uuid/v4';
 import Account from './Account';
-import { applyPaging, desnakeify } from '../lib';
+import { applyPaging, desnakeify, pickFirst } from '../lib';
 
 class Transaction {
   constructor(conn) {
@@ -14,13 +14,11 @@ class Transaction {
 
     const query = this.conn('transactions AS t')
       .select(
-        this.conn.raw(
-          `DISTINCT ${month} AS month, SUM(CASE WHEN a.type = 'expense' THEN ta.amount ELSE ta.amount * -1 END) AS total`,
-        ),
+        this.conn.raw(`DISTINCT ${month} AS month, SUM(ta.amount) AS total`)
       )
       .join('transaction_accounts AS ta', 'ta.transaction_id', 't.id')
       .join('accounts AS a', 'a.id', 'ta.account_id')
-      .whereIn('a.type', ['expense', 'liability'])
+      .whereIn('a.type', ['expense', 'liabilities'])
       .whereIn(this.conn.raw(month), months)
       .groupBy(this.conn.raw(month))
       .orderBy(this.conn.raw(`${month}`), 'DESC');
@@ -33,7 +31,7 @@ class Transaction {
 
     return this.conn('transactions AS t')
       .select(
-        this.conn.raw(`DISTINCT ${month} AS month, SUM(ta.amount) AS total`),
+        this.conn.raw(`DISTINCT ${month} AS month, SUM(ta.amount) AS total`)
       )
       .join('transaction_accounts AS ta', 'ta.transaction_id', 't.id')
       .join('accounts AS a', 'a.id', 'ta.account_id')
@@ -69,13 +67,13 @@ class Transaction {
           this.where(
             't.date',
             '>=',
-            conn.raw(`date_trunc('month', now())`),
+            conn.raw(`date_trunc('month', now())`)
           ).andWhere(
             't.date',
             '<',
             conn.raw(
-              `date_trunc('month', date_trunc('month', now()) + '1 month'::interval)`,
-            ),
+              `date_trunc('month', date_trunc('month', now()) + '1 month'::interval)`
+            )
           );
         });
         break;
@@ -86,8 +84,8 @@ class Transaction {
             't.date',
             '>=',
             conn.raw(
-              `date_trunc('month', date_trunc('month', now()) - '1 month'::interval)`,
-            ),
+              `date_trunc('month', date_trunc('month', now()) - '1 month'::interval)`
+            )
           ).andWhere('t.date', '<', conn.raw(`date_trunc('month', now())`));
         });
         break;
@@ -97,11 +95,11 @@ class Transaction {
           this.where(
             't.date',
             '>=',
-            conn.raw(`date_trunc('year', now())`),
+            conn.raw(`date_trunc('year', now())`)
           ).andWhere(
             't.date',
             '<',
-            conn.raw(`(date_part('year', now()) || '-12-31')::date`),
+            conn.raw(`(date_part('year', now()) || '-12-31')::date`)
           );
         });
         break;
@@ -115,63 +113,79 @@ class Transaction {
   }
 
   countTransactionsForPeriod(period) {
-    const query = this.conn('transaction_accounts AS ta')
-      .select(this.conn.raw('COALESCE(SUM(ta.amount), 0) AS total'))
-      .join('transactions AS t', 't.id', 'ta.transaction_id');
+    const expenseQuery = this.conn('transactions AS t')
+      .select(this.conn.raw(`SUM(ta.amount) AS total`))
+      .join('transaction_accounts AS ta', 'ta.transaction_id', 't.id')
+      .join('accounts AS a', 'a.id', 'ta.account_id')
+      .whereIn('a.type', ['expense', 'liabilities']);
+
+    const incomeQuery = this.conn('transactions AS t')
+      .select(this.conn.raw(`SUM(ta.amount) AS total`))
+      .join('transaction_accounts AS ta', 'ta.transaction_id', 't.id')
+      .join('accounts AS a', 'a.id', 'ta.account_id')
+      .where('a.type', 'income');
 
     const conn = this.conn;
 
     switch (period.toLowerCase()) {
       case 'thismonth':
-        query.where(function() {
-          this.where(
-            't.date',
-            '>=',
-            conn.raw(`date_trunc('month', now())`),
-          ).andWhere(
-            't.date',
-            '<',
-            conn.raw(
-              `date_trunc('month', date_trunc('month', now()) + '1 month'::interval)`,
-            ),
-          );
-        });
+        [expenseQuery, incomeQuery].forEach(query =>
+          query.where(function() {
+            this.where(
+              't.date',
+              '>=',
+              conn.raw(`date_trunc('month', now())`)
+            ).andWhere(
+              't.date',
+              '<',
+              conn.raw(
+                `date_trunc('month', date_trunc('month', now()) + '1 month'::interval)`
+              )
+            );
+          })
+        );
         break;
 
       case 'lastmonth':
-        query.where(function() {
-          this.where(
-            't.date',
-            '>=',
-            conn.raw(
-              `date_trunc('month', date_trunc('month', now()) - '1 month'::interval)`,
-            ),
-          ).andWhere('t.date', '<', conn.raw(`date_trunc('month', now())`));
-        });
+        [expenseQuery, incomeQuery].forEach(query =>
+          query.where(function() {
+            this.where(
+              't.date',
+              '>=',
+              conn.raw(
+                `date_trunc('month', date_trunc('month', now()) - '1 month'::interval)`
+              )
+            ).andWhere('t.date', '<', conn.raw(`date_trunc('month', now())`));
+          })
+        );
         break;
 
       case 'lastthree':
-        query.where(function() {
-          this.where(
-            't.date',
-            '>=',
-            conn.raw(
-              `date_trunc('month', date_trunc('month', now()) - '3 month'::interval)`,
-            ),
-          ).andWhere('t.date', '<', conn.raw(`date_trunc('month', now())`));
-        });
+        [expenseQuery, incomeQuery].forEach(query =>
+          query.where(function() {
+            this.where(
+              't.date',
+              '>=',
+              conn.raw(
+                `date_trunc('month', date_trunc('month', now()) - '3 month'::interval)`
+              )
+            ).andWhere('t.date', '<', conn.raw(`date_trunc('month', now())`));
+          })
+        );
         break;
 
       case 'lasttwelve':
-        query.where(function() {
-          this.where(
-            't.date',
-            '>=',
-            conn.raw(
-              `date_trunc('month', date_trunc('month', now()) - '12 month'::interval)`,
-            ),
-          ).andWhere('t.date', '<', conn.raw(`date_trunc('month', now())`));
-        });
+        [expenseQuery, incomeQuery].forEach(query =>
+          query.where(function() {
+            this.where(
+              't.date',
+              '>=',
+              conn.raw(
+                `date_trunc('month', date_trunc('month', now()) - '12 month'::interval)`
+              )
+            ).andWhere('t.date', '<', conn.raw(`date_trunc('month', now())`));
+          })
+        );
         break;
 
       case 'total':
@@ -179,7 +193,11 @@ class Transaction {
       // do nothing...
     }
 
-    return query.then(v => (v.length ? v[0].total : 0));
+    const query = conn.raw(
+      `SELECT (inc.total * -1) - exp.total AS total FROM (${incomeQuery}) inc CROSS JOIN (${expenseQuery}) exp`
+    );
+
+    return pickFirst(query.then(r => r.rows)).then(({ total }) => total);
   }
 
   fetchUniqueMonths() {
@@ -222,7 +240,7 @@ class Transaction {
       query.andWhere(function() {
         this.where('reconciliation_id', reconciliation.id).orWhere(
           'reconciliation_id',
-          null,
+          null
         );
       });
     } else {
@@ -231,7 +249,7 @@ class Transaction {
 
     query.whereRaw(
       "t.date BETWEEN ?::date - '5 days'::interval AND ?::date + '5 days'::interval",
-      [reconciliation.startDate, reconciliation.endDate],
+      [reconciliation.startDate, reconciliation.endDate]
     );
 
     return desnakeify(query);
@@ -263,8 +281,8 @@ class Transaction {
             transactionId,
             reconciliationId,
             account,
-          }),
-        ),
+          })
+        )
       );
   }
 
@@ -277,7 +295,7 @@ class Transaction {
           description,
           amount: splits.reduce((sum, split) => sum + split.amount, 0),
         },
-        '*',
+        '*'
       )
       .then(r => r[0]);
 
@@ -287,10 +305,10 @@ class Transaction {
         return this.createSplit(
           transaction.id,
           split.accountId,
-          split.amount,
+          split.amount
           // account.type === 'expense' ? split.amount * -1 : split.amount,
         );
-      }),
+      })
     );
 
     return transaction;
@@ -330,8 +348,8 @@ class Transaction {
             .map(split =>
               this.conn('transaction_accounts')
                 .delete()
-                .where({ id: split.id }),
-            ),
+                .where({ id: split.id })
+            )
         );
       });
 

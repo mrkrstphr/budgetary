@@ -15,7 +15,7 @@ import { currencyFormatter } from 'lib';
 function mapMonths(months) {
   const chartValues = months.map(month => ({
     name: month.name,
-    amount: (month.totalIncome - month.totalExpenses * -1).toFixed(2),
+    amount: (month.totalIncome - month.totalExpenses).toFixed(2),
   }));
 
   chartValues.reverse();

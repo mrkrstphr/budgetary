@@ -24,7 +24,7 @@ export default function AddReconciliationForm({ initialValues, onClose }) {
               startingBalance = null,
               endingBalance = null,
             },
-            { setSubmitting },
+            { setSubmitting }
           ) => {
             return createReconciliation(accountId, {
               startDate: startDate
@@ -35,17 +35,28 @@ export default function AddReconciliationForm({ initialValues, onClose }) {
               endingBalance,
             })
               .then(({ errors }) => {
+                setSubmitting(false);
                 if (isNil(errors)) {
                   toaster.show({
                     icon: 'tick-circle',
                     intent: 'success',
                     message: `Account Reconciliation Created`,
                   });
-                  setSubmitting(false);
                   onClose();
+                } else {
+                  toaster.show({
+                    icon: 'warning-triangle',
+                    intent: 'danger',
+                    message: `Failed to create Reconciliation`,
+                  });
                 }
               })
-              .catch(() => {
+              .catch(e => {
+                toaster.show({
+                  icon: 'warning-triangle',
+                  intent: 'danger',
+                  message: `Failed to create Reconciliation`,
+                });
                 setSubmitting(false);
               });
           }}

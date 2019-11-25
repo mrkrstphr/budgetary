@@ -1,4 +1,5 @@
 import { addDays } from 'date-fns';
+import { formatToTimeZone } from 'date-fns-timezone';
 import { isNil } from 'lodash';
 import * as yup from 'yup';
 
@@ -31,46 +32,35 @@ function validateCreateReconciliation(context) {
             if (startDate) {
               return schema.min(
                 addDays(startDate, 1),
-                'End Date must be after Start Date',
+                'End Date must be after Start Date'
               );
             }
 
             return schema;
-          })
-          .test(
-            'validate-not-exists',
-            'A reconciliation already exists within this date range',
-            async function(endDate) {
-              if (!endDate || !this.parent.startDate) {
-                return true;
-              }
-
-              console.log({ dbal: context.dbal });
-
-              const reconciliation = await context.dbal.reconciliation.find([
-                {
-                  or: [
-                    {
-                      column: ['startDate', 'endDate'],
-                      type: 'between',
-                      value: this.parent.startDate,
-                    },
-                    {
-                      column: ['startDate', 'endDate'],
-                      type: 'between',
-                      value: this.parent.endDate,
-                    },
-                  ],
-                },
-              ]);
-
-              return isNil(reconciliation);
-            },
-          ),
+          }),
         startingBalance: yup.number().required(),
         endingBalance: yup.number().required(),
       })
-      .required(),
+      .required()
+      .test(
+        'validate-not-exists',
+        'A reconciliation already exists within this date range',
+        async function({ endDate, startDate }) {
+          const { accountId } = this.parent;
+
+          if (!endDate || !startDate || !accountId) {
+            return true;
+          }
+
+          const reconciliation = await context.dbal.reconciliation.findBetween(
+            accountId,
+            formatToTimeZone(startDate, 'YYYY-MM-DD', { timeZone: 'UTC' }),
+            formatToTimeZone(endDate, 'YYYY-MM-DD', { timeZone: 'UTC' })
+          );
+
+          return reconciliation.length === 0;
+        }
+      ),
   });
 }
 
@@ -79,7 +69,7 @@ export const createReconciliation = {
   resolve: function createReconciliation(
     root,
     { accountId, details },
-    context,
+    context
   ) {
     return context.dbal.reconciliation
       .create(accountId, details)

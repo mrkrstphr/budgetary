@@ -75,6 +75,17 @@ export default class Reconciliation {
     );
   }
 
+  findBetween(accountId, startDate, endDate) {
+    const query = this.conn('account_reconciliation')
+      .where({ account_id: accountId })
+      .whereRaw(
+        '(? BETWEEN start_date AND end_date ' +
+          'OR ? BETWEEN start_date AND end_date)',
+        [startDate, endDate]
+      );
+    return desnakeify(query);
+  }
+
   fetchById(id) {
     return pickFirst(
       desnakeify(

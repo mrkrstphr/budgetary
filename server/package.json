@@ -2,6 +2,7 @@
   "dependencies": {
     "apollo-server": "^2.9.6",
     "apollo-server-express": "^2.9.6",
+    "bcryptjs": "^2.4.3",
     "csv-parser": "^2.3.1",
     "dataloader": "^1.4.0",
     "date-fns": "^2.5.1",

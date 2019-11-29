@@ -1,72 +1,65 @@
+import { Button } from '@blueprintjs/core';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import React from 'react';
-import { Button } from 'component/Button';
 import { Input, Label } from 'component/Form';
 import createTokenMutation from '../container/createTokenMutation';
 import { AppContext } from '../Context';
+import { ToastContext } from '../../component/ToastContext';
 
 const Login = ({ createToken }) => (
-  <AppContext.Consumer>
-    {({ setToken }) => (
-      <Formik
-        initialValues={{ email: '', password: '' }}
-        onSubmit={({ email, password }, { setSubmitting }) => {
-          return createToken(email, password)
-            .then(response => {
-              setSubmitting(false);
-              if (response.data.createToken.errors) {
-                return;
-              }
-              setToken(response.data.createToken.token);
-            })
-            .catch(e => {
-              console.log(e);
-              // TODO: handle e
-              setSubmitting(false);
-            });
-        }}
-      >
-        {({ handleSubmit, isSubmitting }) => (
-          <div style={{ maxWidth: 320 }}>
-            <Form>
-              <Field
-                name="email"
-                render={({ field }) => (
-                  <>
-                    <Label htmlFor={field.name}>Email</Label>
-                    <Input id={field.name} {...field} type="text" autoFocus />
-                  </>
-                )}
-              />
-              <ErrorMessage name="email" component="div" />
+  <ToastContext.Consumer>
+    {toaster => (
+      <AppContext.Consumer>
+        {({ setToken }) => (
+          <Formik
+            initialValues={{ email: '', password: '' }}
+            onSubmit={({ email, password }, { setSubmitting }) => {
+              return createToken(email, password)
+                .then(response => {
+                  setSubmitting(false);
+                  if (response.data.createToken.errors) {
+                    toaster.show({
+                      icon: 'warning-sign',
+                      intent: 'danger',
+                      message: 'Authentication Failed',
+                    });
+                    return;
+                  }
+                  setToken(response.data.createToken.token);
+                })
+                .catch(e => {
+                  toaster.show({
+                    icon: 'warning-sign',
+                    intent: 'danger',
+                    message: 'An Unknown Error Occurred',
+                  });
+                  setSubmitting(false);
+                });
+            }}
+          >
+            {({ handleSubmit, isSubmitting }) => (
+              <div style={{ maxWidth: 320 }}>
+                <Form>
+                  <Input label="Email" name="email" type="text" autoFocus />
+                  <Input label="Password" name="password" type="password" />
 
-              <Field
-                name="password"
-                render={({ field }) => (
-                  <>
-                    <Label htmlFor={field.name}>Password</Label>
-                    <Input id={field.name} {...field} type="password" />
-                  </>
-                )}
-              />
-              <ErrorMessage name="password" component="div" />
-
-              <div>
-                <Button
-                  primary
-                  type="button"
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                >
-                  Log In
-                </Button>
+                  <div>
+                    <Button
+                      intent="primary"
+                      onClick={handleSubmit}
+                      disabled={isSubmitting}
+                    >
+                      Log In
+                    </Button>
+                  </div>
+                </Form>
               </div>
-            </Form>
-          </div>
+            )}
+          </Formik>
         )}
-      </Formik>
+      </AppContext.Consumer>
     )}
-  </AppContext.Consumer>
+  </ToastContext.Consumer>
 );
 
 export default createTokenMutation(Login);

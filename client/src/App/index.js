@@ -53,7 +53,11 @@ export default class App extends React.Component {
   render() {
     return (
       <Context
-        login={() => <Login />}
+        login={() => (
+          <ToastContext>
+            <Login />
+          </ToastContext>
+        )}
         router={() => (
           <BrowserRouter>
             <ToastContext>

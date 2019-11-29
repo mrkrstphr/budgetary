@@ -10,7 +10,7 @@ function AccountDetails({ id }) {
   const { account, loading } = useAccountDetailsQuery(id);
   const { transactions, loading: transactionsLoading } = useTransactionsQuery({
     filters: { accountId: id },
-    paging: { perPage: 50 },
+    paging: { perPage: 150 },
   });
 
   if (loading) {

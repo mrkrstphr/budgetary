@@ -34,11 +34,11 @@ export default function SpendBreakdown({ month }) {
             ({ id, category, amount }) => (
               <tr key={`account--total--${category}`}>
                 <td>
-                  <Link to={`/account/${id}`}>{category}</Link>
+                  <Link to={`/accounts/${id}`}>{category}</Link>
                 </td>
                 <td className="right">{amount.toFixed(2)}</td>
               </tr>
-            ),
+            )
           )}
         </tbody>
       </HTMLTable>

@@ -6,10 +6,10 @@ import {
   Popover,
 } from '@blueprintjs/core';
 import React from 'react';
-import useRouter from 'use-react-router';
+import { useHistory } from 'react-router-dom';
 
 export default function AddImportTransactionButton({ onAddTransaction }) {
-  const { history } = useRouter();
+  const history = useHistory();
 
   return (
     <ButtonGroup>

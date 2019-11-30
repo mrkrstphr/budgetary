@@ -1,7 +1,6 @@
 import { Button, NonIdealState } from '@blueprintjs/core';
 import React, { Suspense, lazy } from 'react';
-import { Route, Switch } from 'react-router-dom';
-import useRouter from 'use-react-router';
+import { Route, Switch, useHistory } from 'react-router-dom';
 import AccountDetails from 'pages/AccountDetails';
 import DashboardPage from 'pages/Dashboard';
 import ReconciliationDetails from 'pages/ReconciliationDetails';
@@ -11,7 +10,8 @@ import ImportTransactions from 'pages/ImportTransactions';
 const Accounts = lazy(() => import('pages/Accounts'));
 
 function Lost() {
-  const { history } = useRouter();
+  const history = useHistory();
+
   return (
     <NonIdealState
       icon="zoom-out"

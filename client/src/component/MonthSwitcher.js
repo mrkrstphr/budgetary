@@ -2,7 +2,7 @@ import { Button, ButtonGroup, MenuItem } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
 import moment from 'moment';
 import React from 'react';
-import useRouter from 'use-react-router';
+import { useHistory } from 'react-router-dom';
 
 // from https://github.com/palantir/blueprint/blob/develop/packages/docs-app/src/examples/select-examples/films.tsx
 function highlightText(text, query) {
@@ -96,7 +96,7 @@ function gotoNextMonth(history, months, selected) {
 }
 
 export default function MonthSwitcher({ months, selectedMonth }) {
-  const { history } = useRouter();
+  const history = useHistory();
 
   return (
     <ButtonGroup>

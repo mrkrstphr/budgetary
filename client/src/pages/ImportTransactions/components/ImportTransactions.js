@@ -15,7 +15,7 @@ import SelectCategory from '../../../component/SelectCategory';
 import { initialState, reducer } from '../reducer';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
-import useReactRouter from 'use-react-router';
+import { useHistory } from 'react-router-dom';
 import { ToastContext } from '../../../component/ToastContext';
 
 function getMappingOptionsFor(state, columnName) {
@@ -156,7 +156,7 @@ function getTransactionsToImport(state) {
   const transactions = state.selectedRows.map(index => {
     return {
       date: moment(
-        state.rows[index][state.columns.indexOf(state.columnMappings.date)],
+        state.rows[index][state.columns.indexOf(state.columnMappings.date)]
       ).format('YYYY-MM-DD'),
       description:
         state.rows[index][
@@ -169,7 +169,7 @@ function getTransactionsToImport(state) {
             parseFloat(
               state.rows[index][
                 state.columns.indexOf(state.columnMappings.amount)
-              ],
+              ]
             ) * -1,
         },
         {
@@ -177,7 +177,7 @@ function getTransactionsToImport(state) {
           amount: parseFloat(
             state.rows[index][
               state.columns.indexOf(state.columnMappings.amount)
-            ],
+            ]
           ),
         },
       ],
@@ -204,7 +204,7 @@ function BulkImport({ children }) {
 }
 
 function TransactionsTable({ dispatch, state }) {
-  const { history } = useReactRouter();
+  const history = useHistory();
 
   return (
     <ToastContext.Consumer>
@@ -292,9 +292,7 @@ function TransactionsTable({ dispatch, state }) {
                   toaster.show({
                     icon: 'tick-circle',
                     intent: 'success',
-                    message: `(${
-                      transactions.length
-                    }) Transactions Imported Successfully`,
+                    message: `(${transactions.length}) Transactions Imported Successfully`,
                   });
                   history.push('/transactions');
                 }}

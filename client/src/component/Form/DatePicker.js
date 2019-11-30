@@ -1,22 +1,38 @@
+import { Label } from '@blueprintjs/core';
+import { DateInput } from '@blueprintjs/datetime';
+import { Field, ErrorMessage, useFormikContext } from 'formik';
 import React from 'react';
-import ReactDatePicker from 'react-datepicker';
-import styled from 'styled-components';
-import { rawStyles } from './Input';
-import 'react-datepicker/dist/react-datepicker.css';
+import { FieldError } from 'component/Form';
 
-const DatePickerWrapper = styled.div`
-  .react-datepicker-wrapper,
-  .react-datepicker__input-container {
-    display: block;
-    width: 100%;
-  }
-  input {
-    ${rawStyles}
-  }
-`;
+function FakeLabel({ children }) {
+  return <div>{children}</div>;
+}
 
-export const DatePicker = ({ name, onChange, value }) => (
-  <DatePickerWrapper>
-    <ReactDatePicker onChange={date => onChange(name, date)} selected={value} />
-  </DatePickerWrapper>
-);
+export function DatePicker({ label, name, ...props }) {
+  const { setFieldValue } = useFormikContext();
+
+  const FieldLabel = label ? Label : FakeLabel;
+
+  return (
+    <Field name={name}>
+      {({ field: { name, value } }) => (
+        <>
+          <FieldLabel htmlFor={name}>
+            {label}
+            <DateInput
+              name={name}
+              defaultValue={value}
+              fill={true}
+              formatDate={date => date.toLocaleDateString()}
+              parseDate={str => new Date(str)}
+              placeholder="M/D/YYYY"
+              onChange={newValue => setFieldValue(name, newValue)}
+              {...props}
+            />
+          </FieldLabel>
+          <ErrorMessage name={name} component={FieldError} />
+        </>
+      )}
+    </Field>
+  );
+}

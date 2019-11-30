@@ -1,4 +1,3 @@
-export * from './CreateableSelect';
 export * from './DatePicker';
 export * from './FieldColumn';
 export * from './FieldError';

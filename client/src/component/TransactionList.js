@@ -1,15 +1,10 @@
 import { HTMLTable } from '@blueprintjs/core';
-import moment from 'moment';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { formatDate } from 'lib';
 import TransactionActions from './TransactionActions';
 
-function formatDate(date) {
-  return moment(date).format('M/D/YYYY');
-}
-
 export default function TransactionsList({
-  filters,
   formatSplits = s => s,
   transactions,
 }) {
@@ -42,7 +37,7 @@ export default function TransactionsList({
                 )}
               </td>
             </tr>
-          )),
+          ))
         )}
       </tbody>
     </HTMLTable>

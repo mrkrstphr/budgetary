@@ -1,33 +1,35 @@
+import { HTMLSelect, Label } from '@blueprintjs/core';
+import { Field, ErrorMessage } from 'formik';
 import React from 'react';
-import ReactSelect from 'react-select';
 
-export class Select extends React.Component {
-  handleChange = value => {
-    this.props.onChange(this.props.name, value);
-  };
+function FakeLabel({ children }) {
+  return <div>{children}</div>;
+}
 
-  handleBlur = () => {
-    this.props.onBlur(this.props.name, true);
-  };
+export function Select({ label, name, options = [], ...props }) {
+  const FieldLabel = label ? Label : FakeLabel;
 
-  render() {
-    const { options, ...props } = this.props;
-
-    return (
-      <div>
-        <ReactSelect
-          {...props}
-          options={options}
-          onChange={this.handleChange}
-          onBlur={this.handleBlur}
-          value={this.props.value}
-        />
-        {!!this.props.error && this.props.touched && (
-          <div style={{ color: 'red', marginTop: '.5rem' }}>
-            {this.props.error}
-          </div>
-        )}
-      </div>
-    );
-  }
+  return (
+    <Field name={name}>
+      {({ field }) => (
+        <>
+          <FieldLabel htmlFor={field.name}>
+            {label}
+            <HTMLSelect fill {...field} {...props}>
+              <option value=""></option>
+              {options.map(option => (
+                <option
+                  key={`${field.name}_${option.value}`}
+                  value={option.value}
+                >
+                  {option.label}
+                </option>
+              ))}
+            </HTMLSelect>
+          </FieldLabel>
+          <ErrorMessage name={field.name} component="div" />
+        </>
+      )}
+    </Field>
+  );
 }

@@ -1,118 +1,29 @@
-import { Button, Callout } from '@blueprintjs/core';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { isNil } from 'lodash';
+import { Button, Dialog } from '@blueprintjs/core';
+import { addDays } from 'date-fns';
+import { Formik, Form } from 'formik';
 import moment from 'moment';
 import React, { useReducer } from 'react';
-import styled from 'styled-components';
-import * as yup from 'yup';
-import { Dialog } from 'component/Dialog';
-import { FieldColumn, FieldRow } from 'component/Form';
-import { CreateableSelect, DatePicker, Input, Label } from 'component/Form';
+import { AccountSelect, TransactionTable } from 'component';
+import { DatePicker, Input } from 'component/Form';
 import { useUpdateTransactionMutation } from 'mutation';
 import { useAccountsQuery } from 'query';
-import AddCategoryForm from './AddCategoryForm';
+import AddAccountForm from './AddAccountForm';
 import { ToastContext } from './ToastContext';
 
-const FieldError = styled.div`
-  color: #c23030;
-  padding: 5px;
-`;
-
-yup.addMethod(yup.object, 'onlyOneOf', function(
-  list,
-  // eslint-disable-next-line no-template-curly-in-string
-  message = '${path} must have at least one of these keys: ${keys}',
-) {
-  return this.test({
-    name: 'onlyOneOf',
-    message: message,
-    exclusive: true,
-    params: { keys: list.join(', ') },
-    test: value => {
-      return value == null || list.filter(f => !isNil(value[f])).length === 1;
-    },
-  });
-});
-
-// const AddTransactionSchema = yup.object().shape({
-//   description: yup
-//     .string()
-//     .min(2)
-//     .max(255)
-//     .required(),
-//   splits: yup
-//     .array()
-//     .min(2)
-//     .of(
-//       yup
-//         .object()
-//         .shape({
-//           accountId: yup.string().required(),
-//           increase: yup
-//             .number()
-//             .transform(v => (v === '' ? null : v))
-//             .nullable(),
-//           decrease: yup
-//             .number()
-//             .transform(v => (v === '' ? null : v))
-//             .nullable(),
-//         })
-//         .onlyOneOf(
-//           ['increase', 'decrease'],
-//           'Only one of "increase" or "decrease" is allowed',
-//         ),
-//     )
-//     .required()
-//     .test('must-balance', 'The sum of the splits must equal 0', function(
-//       splits,
-//     ) {
-//       let sum = 0;
-//       for (const split of splits) {
-//         if (split.increase) {
-//           sum += split.increase;
-//         } else if (split.decrease) {
-//           sum -= split.decrease;
-//         }
-//       }
-//       console.log({ sum });
-//       return sum === 0;
-//     })
-//     .test('no-reuse', 'Only use each account once', function(splits) {
-//       const usedAccounts = splits.map(({ accountId }) => accountId);
-
-//       for (const account of usedAccounts) {
-//         if (usedAccounts.filter(a => a === account).length > 1) {
-//           return false;
-//         }
-//       }
-
-//       return true;
-//     }),
-// });
-
-// const AddTransactionSchema = yup.object().shape({
-//   description: yup
-//     .string()
-//     .min(2)
-//     .max(255)
-//     .required(),
-//   splits: yup.array().of(
-//     yup.object().shape({
-//       accountId: yup
-//         .string('Account is required')
-//         .required('Account is required'),
-//       // increase: yup.number(),
-//       decrease: yup.number().when('increase', {
-//         is: increase => {
-//           console.log({ increase });
-//           return isNil(increase);
-//         },
-//         then: yup
-//           .number()
-//           .required('Either "increase" or "decrease" is required'),
-//       }),
-//     }),
-//   ),
+// yup.addMethod(yup.object, 'onlyOneOf', function(
+//   list,
+//   // eslint-disable-next-line no-template-curly-in-string
+//   message = '${path} must have at least one of these keys: ${keys}',
+// ) {
+//   return this.test({
+//     name: 'onlyOneOf',
+//     message: message,
+//     exclusive: true,
+//     params: { keys: list.join(', ') },
+//     test: value => {
+//       return value == null || list.filter(f => !isNil(value[f])).length === 1;
+//     },
+//   });
 // });
 
 const initialState = {
@@ -148,23 +59,24 @@ function reducer(state, action) {
 }
 
 export default function EditTransactionForm({ onClose, transaction }) {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const { loading, error, accounts } = useAccountsQuery();
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialState,
+    transactionCount: transaction.accounts.length,
+  });
+  const { accounts } = useAccountsQuery();
   const [updateTransaction] = useUpdateTransactionMutation();
 
   const initialValues = {
-    date: transaction.date,
+    date: new Date(transaction.date),
     description: transaction.description,
-    splits: transaction.accounts.map((account, index) => {
+    splits: transaction.accounts.map(account => {
       const accountDetails = accounts
         ? accounts.find(a => a.id === account.account.id)
         : null;
 
       return {
         id: account.id,
-        accountId: accountDetails
-          ? { value: accountDetails.id, label: accountDetails.name }
-          : null,
+        accountId: accountDetails ? accountDetails : null,
         increase:
           Math.abs(account.amount) === account.amount ? account.amount : '',
         decrease:
@@ -180,7 +92,7 @@ export default function EditTransactionForm({ onClose, transaction }) {
       {toaster => (
         <>
           {state.isAddCategoryOpen && (
-            <AddCategoryForm
+            <AddAccountForm
               initialValues={{ name: state.categoryName }}
               onClose={() => dispatch({ type: 'close' })}
               onSave={state.onSaveEvent}
@@ -201,7 +113,7 @@ export default function EditTransactionForm({ onClose, transaction }) {
             // }}
             onSubmit={({ date, description, splits }, { setSubmitting }) => {
               const preparedSplits = splits.map(split => ({
-                accountId: split.accountId ? split.accountId.value : null,
+                accountId: split.accountId ? split.accountId.id : null,
                 amount: split.increase
                   ? Math.abs(parseFloat(split.increase))
                   : Math.abs(parseFloat(split.decrease)) * -1,
@@ -211,7 +123,7 @@ export default function EditTransactionForm({ onClose, transaction }) {
                 transaction.id,
                 moment(date).format('YYYY-MM-DD'),
                 description,
-                preparedSplits,
+                preparedSplits
               ).then(() => {
                 setSubmitting(false);
                 toaster.show({
@@ -223,193 +135,115 @@ export default function EditTransactionForm({ onClose, transaction }) {
               });
             }}
           >
-            {({
-              handleSubmit,
-              isSubmitting,
-              setFieldTouched,
-              setFieldValue,
-              values,
-              errors,
-            }) => (
+            {({ handleSubmit, isSubmitting, setFieldValue }) => (
               <Dialog
-                header="Edit Transaction"
-                footer={
-                  <div>
-                    <Button intent="danger" minimal onClick={onClose}>
-                      Close
-                    </Button>{' '}
-                    <Button
-                      intent="primary"
-                      minimal
-                      onClick={handleSubmit}
-                      disabled={isSubmitting}
-                    >
-                      Save
-                    </Button>
-                  </div>
-                }
+                icon="edit"
+                title="Edit Transaction"
+                isOpen={true}
+                onClose={onClose}
               >
                 <Form>
-                  <Field
-                    name="date"
-                    render={({ field }) => (
-                      <>
-                        <Label htmlFor={field.name}>Transaction Date</Label>
-                        <DatePicker
-                          name="date"
-                          onChange={setFieldValue}
-                          value={values.date}
-                        />
-                      </>
-                    )}
-                  />
-                  <ErrorMessage name="date" component={FieldError} />
+                  <div className="bp3-dialog-body">
+                    <DatePicker
+                      label="Transaction Date"
+                      name="date"
+                      maxDate={addDays(new Date(), 365)}
+                    />
 
-                  <Field
-                    name="description"
-                    render={({ field }) => (
-                      <>
-                        <Label htmlFor={field.name}>Description</Label>
-                        <Input
-                          id={field.name}
-                          {...field}
-                          type="text"
-                          autoFocus
-                        />
-                      </>
-                    )}
-                  />
-                  <ErrorMessage name="description">
-                    {msg => (
-                      <Callout intent="danger" minimal>
-                        {msg}
-                      </Callout>
-                    )}
-                  </ErrorMessage>
+                    <Input label="Description" name="description" autoFocus />
 
-                  <FieldRow>
-                    <FieldColumn flex={2}>Category</FieldColumn>
-                    <FieldColumn>Increase</FieldColumn>
-                    <FieldColumn>Decrease</FieldColumn>
-                    <FieldColumn />
-                  </FieldRow>
-
-                  {[...Array(state.transactionCount)].map((e, index) => (
-                    <>
-                      <FieldRow key={`transaction-row-${index}`}>
-                        <FieldColumn flex={3}>
-                          <Field
-                            name={`splits[${index}].accountId`}
-                            render={({ field }) => (
-                              <>
-                                <CreateableSelect
-                                  {...field}
-                                  onChange={setFieldValue}
-                                  onBlur={setFieldTouched}
-                                  options={
-                                    loading || error
-                                      ? []
-                                      : accounts.map(account => ({
+                    <TransactionTable striped>
+                      <thead>
+                        <tr>
+                          <th>Account</th>
+                          <th>Increase</th>
+                          <th>Decrease</th>
+                          <th> </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[...Array(state.transactionCount)].map((e, index) => (
+                          <tr key={`transaction-row-${index}`}>
+                            <td>
+                              <AccountSelect
+                                name={`splits[${index}].accountId`}
+                                onAddAccount={query =>
+                                  dispatch({
+                                    type: 'open',
+                                    name: query,
+                                    onSaveEvent: account => {
+                                      setFieldValue(
+                                        `splits[${index}].accountId`,
+                                        {
                                           value: account.id,
                                           label: account.name,
-                                        }))
-                                  }
-                                  onCreateOption={newValue => {
-                                    dispatch({
-                                      type: 'open',
-                                      name: newValue,
-                                      onSaveEvent: account => {
-                                        setFieldValue(
-                                          `splits[${index}].accountId`,
-                                          {
-                                            value: account.id,
-                                            label: account.name,
-                                          },
-                                        );
-                                      },
-                                    });
-                                  }}
-                                />
-                              </>
-                            )}
-                          />
-                          <ErrorMessage
-                            name={`splits[${index}].accountId`}
-                            component={FieldError}
-                          />
-                        </FieldColumn>
-                        <FieldColumn flex={2}>
-                          <Field
-                            name={`splits[${index}].increase`}
-                            render={({ field }) => (
-                              <>
-                                <Input
-                                  id={field.name}
-                                  {...field}
-                                  type="text"
-                                  size="5"
-                                />
-                              </>
-                            )}
-                          />
-                          <ErrorMessage
-                            name={`splits[${index}].increase`}
-                            component={FieldError}
-                          />
-                        </FieldColumn>
-                        <FieldColumn flex={2}>
-                          <Field
-                            name={`splits[${index}].decrease`}
-                            render={({ field }) => (
-                              <>
-                                <Input
-                                  id={field.name}
-                                  {...field}
-                                  type="text"
-                                  size="5"
-                                />
-                              </>
-                            )}
-                          />
-                          <ErrorMessage
-                            name={`splits[${index}].decrease`}
-                            component={FieldError}
-                          />
-                        </FieldColumn>
-                        <FieldColumn>
-                          {index === state.transactionCount - 1 && (
-                            <Button
-                              icon="plus"
-                              minimal
-                              intent="primary"
-                              onClick={() =>
-                                dispatch({ type: 'addTransaction' })
-                              }
-                            />
-                          )}
-                          {index === state.transactionCount - 1 &&
-                            state.transactionCount > 2 && (
-                              <Button
-                                icon="cross"
-                                minimal
-                                intent="danger"
-                                onClick={() =>
-                                  dispatch({ type: 'removeTransaction' })
+                                        }
+                                      );
+                                    },
+                                  })
                                 }
                               />
-                            )}
-                        </FieldColumn>
-                      </FieldRow>
-                      <ErrorMessage name={`splits[${index}]`}>
-                        {msg => (
-                          <Callout intent="danger" minimal>
-                            {msg}
-                          </Callout>
-                        )}
-                      </ErrorMessage>
-                    </>
-                  ))}
-                  <pre>{JSON.stringify(errors, null, 2)}</pre>
+                            </td>
+                            <td>
+                              <Input
+                                name={`splits[${index}].increase`}
+                                type="number"
+                              />
+                            </td>
+                            <td>
+                              <Input
+                                name={`splits[${index}].decrease`}
+                                type="number"
+                              />
+                            </td>
+                            <td>
+                              {index === state.transactionCount - 1 && (
+                                <Button
+                                  icon="plus"
+                                  minimal
+                                  intent="primary"
+                                  onClick={() =>
+                                    dispatch({ type: 'addTransaction' })
+                                  }
+                                />
+                              )}
+                              {index === state.transactionCount - 1 &&
+                                state.transactionCount > 2 && (
+                                  <Button
+                                    icon="cross"
+                                    minimal
+                                    intent="danger"
+                                    onClick={() =>
+                                      dispatch({ type: 'removeTransaction' })
+                                    }
+                                  />
+                                )}
+                            </td>
+                            {/* <ErrorMessage name={`splits[${index}]`}>
+                          {msg => (
+                            <Callout intent="danger" minimal>
+                              {msg}
+                            </Callout>
+                          )}
+                        </ErrorMessage> */}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </TransactionTable>
+                  </div>
+
+                  <div className="bp3-dialog-footer">
+                    <div className="bp3-dialog-footer-actions">
+                      <Button onClick={onClose}>Close</Button>
+                      <Button
+                        intent="primary"
+                        onClick={handleSubmit}
+                        disabled={isSubmitting}
+                      >
+                        Save
+                      </Button>
+                    </div>
+                  </div>
                 </Form>
               </Dialog>
             )}

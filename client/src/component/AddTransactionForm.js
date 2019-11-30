@@ -1,16 +1,15 @@
-import { Button, Callout } from '@blueprintjs/core';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Button } from '@blueprintjs/core';
+import { Formik, Form } from 'formik';
 import { isNil } from 'lodash';
 import moment from 'moment';
 import React, { useReducer } from 'react';
 import * as yup from 'yup';
-import { Dialog } from 'component/Dialog';
-import { FieldColumn, FieldError, FieldRow } from 'component/Form';
-import { CreateableSelect, DatePicker, Input, Label } from 'component/Form';
+import { AccountSelect, Dialog, TransactionTable } from 'component';
+import { DatePicker, Input } from 'component/Form';
 import { useCreateTransaction } from 'mutation';
-import { useAccountsQuery } from 'query';
-import AddCategoryForm from './AddCategoryForm';
+import AddAccountForm from './AddAccountForm';
 import { ToastContext } from './ToastContext';
+import { addDays } from 'date-fns';
 
 yup.addMethod(yup.object, 'onlyOneOf', function(
   list,
@@ -49,12 +48,18 @@ function reducer(state, action) {
       };
     case 'open':
       return {
+        ...state,
         isAddCategoryOpen: true,
         categoryName: action.name,
         onSaveEvent: action.onSaveEvent,
       };
     case 'close':
-      return { isAddCategoryOpen: false, categoryName: '', onSaveEvent: null };
+      return {
+        ...state,
+        isAddCategoryOpen: false,
+        categoryName: '',
+        onSaveEvent: null,
+      };
     default:
       return state;
   }
@@ -62,13 +67,12 @@ function reducer(state, action) {
 
 export default function AddTransactionForm({ onClose }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { loading, error, accounts } = useAccountsQuery();
   const [createTransaction] = useCreateTransaction();
 
   const initialValues = {
     date: new Date(),
     description: '',
-    splits: [...Array(state.transactionCount)].map((e, index) => ({
+    splits: [...Array(state.transactionCount)].map(() => ({
       accountId: null,
       increase: '',
       decrease: '',
@@ -80,7 +84,7 @@ export default function AddTransactionForm({ onClose }) {
       {toaster => (
         <>
           {state.isAddCategoryOpen && (
-            <AddCategoryForm
+            <AddAccountForm
               initialValues={{ name: state.categoryName }}
               onClose={() => dispatch({ type: 'close' })}
               onSave={state.onSaveEvent}
@@ -93,7 +97,7 @@ export default function AddTransactionForm({ onClose }) {
               { setSubmitting, resetForm }
             ) => {
               const preparedSplits = splits.map(split => ({
-                accountId: split.accountId ? split.accountId.value : null,
+                accountId: split.accountId ? split.accountId.id : null,
                 amount: split.increase
                   ? Math.abs(parseFloat(split.increase))
                   : Math.abs(parseFloat(split.decrease)) * -1,
@@ -122,188 +126,112 @@ export default function AddTransactionForm({ onClose }) {
                 });
             }}
           >
-            {({
-              handleSubmit,
-              isSubmitting,
-              setFieldTouched,
-              setFieldValue,
-              values,
-            }) => (
+            {({ handleSubmit, isSubmitting, setFieldValue }) => (
               <Dialog
-                header="Add Transaction"
+                icon="plus"
+                title="Create Transaction"
+                isOpen={true}
+                onClose={onClose}
                 footer={
-                  <div>
-                    <Button intent="danger" minimal onClick={onClose}>
-                      Close
-                    </Button>{' '}
+                  <>
+                    <Button onClick={onClose}>Close</Button>
                     <Button
                       intent="primary"
-                      minimal
                       onClick={handleSubmit}
                       disabled={isSubmitting}
                     >
                       Save
                     </Button>
-                  </div>
+                  </>
                 }
               >
                 <Form>
-                  <Field
+                  <DatePicker
+                    label="Transaction Date"
                     name="date"
-                    render={({ field }) => (
-                      <>
-                        <Label htmlFor={field.name}>Transaction Date</Label>
-                        <DatePicker
-                          name="date"
-                          onChange={setFieldValue}
-                          value={values.date}
-                        />
-                      </>
-                    )}
+                    maxDate={addDays(new Date(), 365)}
                   />
-                  <ErrorMessage name="date" component={FieldError} />
-                  <Field
-                    name="description"
-                    render={({ field }) => (
-                      <>
-                        <Label htmlFor={field.name}>Description</Label>
-                        <Input
-                          id={field.name}
-                          {...field}
-                          type="text"
-                          autoFocus
-                        />
-                      </>
-                    )}
-                  />
-                  <ErrorMessage name="description">
-                    {msg => (
-                      <Callout intent="danger" minimal>
-                        {msg}
-                      </Callout>
-                    )}
-                  </ErrorMessage>
-                  <FieldRow>
-                    <FieldColumn flex={2}>Category</FieldColumn>
-                    <FieldColumn>Increase</FieldColumn>
-                    <FieldColumn>Decrease</FieldColumn>
-                    <FieldColumn />
-                  </FieldRow>
-                  {[...Array(state.transactionCount)].map((e, index) => (
-                    <>
-                      <FieldRow key={`transaction-row-${index}`}>
-                        <FieldColumn flex={3}>
-                          <Field
-                            name={`splits[${index}].accountId`}
-                            render={({ field }) => (
-                              <>
-                                <CreateableSelect
-                                  {...field}
-                                  onChange={setFieldValue}
-                                  onBlur={setFieldTouched}
-                                  options={
-                                    loading || error
-                                      ? []
-                                      : accounts.map(account => ({
-                                          value: account.id,
-                                          label: account.name,
-                                        }))
-                                  }
-                                  onCreateOption={newValue => {
-                                    dispatch({
-                                      type: 'open',
-                                      name: newValue,
-                                      onSaveEvent: account => {
-                                        setFieldValue(
-                                          `splits[${index}].accountId`,
-                                          {
-                                            value: account.id,
-                                            label: account.name,
-                                          }
-                                        );
-                                      },
-                                    });
-                                  }}
-                                />
-                              </>
-                            )}
-                          />
-                          <ErrorMessage
-                            name={`splits[${index}].accountId`}
-                            component={FieldError}
-                          />
-                        </FieldColumn>
-                        <FieldColumn flex={2}>
-                          <Field
-                            name={`splits[${index}].increase`}
-                            render={({ field }) => (
-                              <>
-                                <Input
-                                  id={field.name}
-                                  {...field}
-                                  type="text"
-                                  size="5"
-                                />
-                              </>
-                            )}
-                          />
-                          <ErrorMessage
-                            name={`splits[${index}].increase`}
-                            component={FieldError}
-                          />
-                        </FieldColumn>
-                        <FieldColumn flex={2}>
-                          <Field
-                            name={`splits[${index}].decrease`}
-                            render={({ field }) => (
-                              <>
-                                <Input
-                                  id={field.name}
-                                  {...field}
-                                  type="text"
-                                  size="5"
-                                />
-                              </>
-                            )}
-                          />
-                          <ErrorMessage
-                            name={`splits[${index}].decrease`}
-                            component={FieldError}
-                          />
-                        </FieldColumn>
-                        <FieldColumn>
-                          {index === state.transactionCount - 1 && (
-                            <Button
-                              icon="plus"
-                              minimal
-                              intent="primary"
-                              onClick={() =>
-                                dispatch({ type: 'addTransaction' })
+
+                  <Input label="Description" name="description" autoFocus />
+
+                  <TransactionTable striped>
+                    <thead>
+                      <tr>
+                        <th>Account</th>
+                        <th>Increase</th>
+                        <th>Decrease</th>
+                        <th> </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...Array(state.transactionCount)].map((e, index) => (
+                        <tr key={`transaction-row-${index}`}>
+                          <td>
+                            <AccountSelect
+                              name={`splits[${index}].accountId`}
+                              onAddAccount={query =>
+                                dispatch({
+                                  type: 'open',
+                                  name: query,
+                                  onSaveEvent: account => {
+                                    setFieldValue(
+                                      `splits[${index}].accountId`,
+                                      {
+                                        value: account.id,
+                                        label: account.name,
+                                      }
+                                    );
+                                  },
+                                })
                               }
                             />
-                          )}
-                          {index === state.transactionCount - 1 &&
-                            state.transactionCount > 2 && (
+                          </td>
+                          <td>
+                            <Input
+                              name={`splits[${index}].increase`}
+                              type="number"
+                            />
+                          </td>
+                          <td>
+                            <Input
+                              name={`splits[${index}].decrease`}
+                              type="number"
+                            />
+                          </td>
+                          <td>
+                            {index === state.transactionCount - 1 && (
                               <Button
-                                icon="cross"
+                                icon="plus"
                                 minimal
-                                intent="danger"
+                                intent="primary"
                                 onClick={() =>
-                                  dispatch({ type: 'removeTransaction' })
+                                  dispatch({ type: 'addTransaction' })
                                 }
                               />
                             )}
-                        </FieldColumn>
-                      </FieldRow>
-                      <ErrorMessage name={`splits[${index}]`}>
-                        {msg => (
-                          <Callout intent="danger" minimal>
-                            {msg}
-                          </Callout>
-                        )}
-                      </ErrorMessage>
-                    </>
-                  ))}
+                            {index === state.transactionCount - 1 &&
+                              state.transactionCount > 2 && (
+                                <Button
+                                  icon="cross"
+                                  minimal
+                                  intent="danger"
+                                  onClick={() =>
+                                    dispatch({ type: 'removeTransaction' })
+                                  }
+                                />
+                              )}
+                          </td>
+                          {/* <ErrorMessage name={`splits[${index}]`}>
+                          {msg => (
+                            <Callout intent="danger" minimal>
+                              {msg}
+                            </Callout>
+                          )}
+                        </ErrorMessage> */}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </TransactionTable>
                 </Form>
               </Dialog>
             )}

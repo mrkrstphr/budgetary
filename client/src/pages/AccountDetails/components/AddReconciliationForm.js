@@ -1,10 +1,9 @@
-import { Button } from '@blueprintjs/core';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Button, Dialog } from '@blueprintjs/core';
+import { Formik, Form, ErrorMessage } from 'formik';
 import { isNil } from 'lodash';
 import moment from 'moment';
 import React from 'react';
-import { Dialog } from 'component/Dialog';
-import { DatePicker, FieldError, Input, Label } from 'component/Form';
+import { DatePicker, FieldError, Input } from 'component/Form';
 import { ToastContext } from 'component/ToastContext';
 import { useCreateReconciliation } from 'mutation';
 
@@ -19,12 +18,14 @@ export default function AddReconciliationForm({ initialValues, onClose }) {
           onSubmit={(
             {
               accountId,
-              startDate = null,
-              endDate = null,
-              startingBalance = null,
-              endingBalance = null,
+              details: {
+                startDate = null,
+                endDate = null,
+                startingBalance = null,
+                endingBalance = null,
+              },
             },
-            { setSubmitting }
+            { setErrors, setSubmitting }
           ) => {
             return createReconciliation(accountId, {
               startDate: startDate
@@ -44,10 +45,15 @@ export default function AddReconciliationForm({ initialValues, onClose }) {
                   });
                   onClose();
                 } else {
+                  const errorList = {};
+                  for (const error of errors) {
+                    errorList[error.field] = error.details[0];
+                  }
+                  setErrors(errorList);
                   toaster.show({
                     icon: 'warning-triangle',
                     intent: 'danger',
-                    message: `Failed to create Reconciliation`,
+                    message: `Failed to create reconciliation`,
                   });
                 }
               })
@@ -55,91 +61,52 @@ export default function AddReconciliationForm({ initialValues, onClose }) {
                 toaster.show({
                   icon: 'warning-triangle',
                   intent: 'danger',
-                  message: `Failed to create Reconciliation`,
+                  message: `Failed to create reconciliation`,
                 });
                 setSubmitting(false);
               });
           }}
         >
-          {({ handleSubmit, isSubmitting, setFieldValue, values }) => (
+          {({ handleSubmit, isSubmitting }) => (
             <Dialog
-              header="Add Reconciliation"
+              icon="plus"
+              title="Add Reconciliation"
+              isOpen={true}
               onClose={onClose}
-              footer={
-                <div>
-                  <Button
-                    intent="danger"
-                    minimal
-                    type="button"
-                    onClick={onClose}
-                  >
-                    Close
-                  </Button>
-                  <Button
-                    intent="primary"
-                    minimal
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                  >
-                    Save
-                  </Button>
-                </div>
-              }
-              style={{ zIndex: 9000 }}
             >
               <Form>
-                <Field
-                  name="startDate"
-                  render={({ field }) => (
-                    <>
-                      <Label htmlFor={field.name}>Start Date</Label>
-                      <DatePicker
-                        name={field.name}
-                        onChange={setFieldValue}
-                        value={values.startDate}
-                      />
-                      <ErrorMessage name={field.name} component={FieldError} />
-                    </>
-                  )}
-                />
+                <div className="bp3-dialog-body">
+                  <DatePicker label="Start Date" name="details.startDate" />
+                  <DatePicker label="End Date" name="details.endDate" />
 
-                <Field
-                  name="endDate"
-                  render={({ field }) => (
-                    <>
-                      <Label htmlFor={field.name}>End Date</Label>
-                      <DatePicker
-                        name={field.name}
-                        onChange={setFieldValue}
-                        value={values.endDate}
-                      />
-                      <ErrorMessage name={field.name} component={FieldError} />
-                    </>
-                  )}
-                />
+                  <Input
+                    label="Starting Balance"
+                    name="details.startingBalance"
+                    type="number"
+                  />
+                  <Input
+                    label="Ending Balance"
+                    name="details.endingBalance"
+                    type="number"
+                  />
 
-                <Field
-                  name="startingBalance"
-                  render={({ field }) => (
-                    <>
-                      <Label htmlFor={field.name}>Starting Balance</Label>
-                      <Input id={field.name} {...field} type="number" />
-                      <ErrorMessage name={field.name} component="div" />
-                    </>
-                  )}
-                />
-
-                <Field
-                  name="endingBalance"
-                  render={({ field }) => (
-                    <>
-                      <Label htmlFor={field.name}>Ending Balance</Label>
-                      <Input id={field.name} {...field} type="number" />
-                      <ErrorMessage name={field.name} component="div" />
-                    </>
-                  )}
-                />
+                  <ErrorMessage name="details" component={FieldError} />
+                </div>
+                <div className="bp3-dialog-footer">
+                  <div className="bp3-dialog-footer-actions">
+                    <Button type="button" onClick={onClose}>
+                      Close
+                    </Button>
+                    <Button
+                      intent="primary"
+                      type="button"
+                      onClick={handleSubmit}
+                      disabled={isSubmitting}
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </div>
               </Form>
             </Dialog>
           )}

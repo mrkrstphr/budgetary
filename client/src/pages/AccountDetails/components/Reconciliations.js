@@ -24,8 +24,10 @@ export default withRouter(function Reconciliations({ accountId, history }) {
           onClose={toggleAddOpen}
           initialValues={{
             accountId,
-            startingBalance: '',
-            endingBalance: '',
+            details: {
+              startingBalance: '',
+              endingBalance: '',
+            },
           }}
         />
       )}

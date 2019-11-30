@@ -12,13 +12,17 @@ export const fetchSpendingBreakdownQuery = gql`
 `;
 
 export function useSpendingBreakdown({ month }) {
-  const { loading, error, data } = useQuery(fetchSpendingBreakdownQuery, {
-    variables: { month },
-  });
+  const { loading, error, data, ...etc } = useQuery(
+    fetchSpendingBreakdownQuery,
+    {
+      variables: { month },
+    }
+  );
 
   return {
     loading,
     error,
     spendingBreakdown: loading || error ? [] : data.spendingBreakdown,
+    ...etc,
   };
 }

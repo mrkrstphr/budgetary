@@ -17,7 +17,7 @@ export const fetchAccountDetailsQuery = gql`
 `;
 
 export function useAccountDetailsQuery(id) {
-  const { data, error, loading } = useQuery(fetchAccountDetailsQuery, {
+  const { data, error, loading, ...etc } = useQuery(fetchAccountDetailsQuery, {
     variables: { id },
   });
 
@@ -25,5 +25,6 @@ export function useAccountDetailsQuery(id) {
     loading,
     error,
     account: loading || error ? null : data.account,
+    ...etc,
   };
 }

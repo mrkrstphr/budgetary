@@ -12,11 +12,12 @@ export const fetchMonthsQuery = gql`
 `;
 
 export function useMonthsQuery() {
-  const { loading, error, data } = useQuery(fetchMonthsQuery);
+  const { loading, error, data, ...etc } = useQuery(fetchMonthsQuery);
 
   return {
     loading,
     error,
     months: loading || error ? [] : data.months,
+    ...etc,
   };
 }

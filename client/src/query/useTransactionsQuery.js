@@ -36,7 +36,7 @@ export function useTransactionsQuery({
   paging = {},
   options = {},
 }) {
-  const { loading, error, data } = useQuery(fetchTransactionsQuery, {
+  const { loading, error, data, ...etc } = useQuery(fetchTransactionsQuery, {
     variables: { filters, paging },
     ...options,
   });
@@ -46,5 +46,6 @@ export function useTransactionsQuery({
     error,
     transactions:
       loading || error ? { items: [], paging: {} } : data.transactions,
+    ...etc,
   };
 }

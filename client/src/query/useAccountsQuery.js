@@ -19,7 +19,7 @@ export const filterAccountsQuery = gql`
 `;
 
 export function useAccountsQuery(filter = '') {
-  const { loading, error, data, ...other } = useQuery(filterAccountsQuery, {
+  const { loading, error, data, ...etc } = useQuery(filterAccountsQuery, {
     variables: { filter },
   });
 
@@ -27,6 +27,6 @@ export function useAccountsQuery(filter = '') {
     loading,
     error,
     accounts: loading || error ? [] : data.accounts,
-    ...other,
+    ...etc,
   };
 }

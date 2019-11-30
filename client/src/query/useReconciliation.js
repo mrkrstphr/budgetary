@@ -37,7 +37,7 @@ const reconciliationQuery = gql`
 `;
 
 export function useReconciliation(id) {
-  const { data, error, loading } = useQuery(reconciliationQuery, {
+  const { data, error, loading, ...etc } = useQuery(reconciliationQuery, {
     variables: { id },
   });
 
@@ -45,5 +45,6 @@ export function useReconciliation(id) {
     error,
     loading,
     reconciliation: error || loading ? null : data.reconciliation,
+    ...etc,
   };
 }

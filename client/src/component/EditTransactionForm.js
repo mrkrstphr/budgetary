@@ -1,13 +1,11 @@
-import { Button, Dialog } from '@blueprintjs/core';
-import { addDays } from 'date-fns';
-import { Formik, Form } from 'formik';
+import { Button } from '@blueprintjs/core';
+import { Formik } from 'formik';
 import moment from 'moment';
-import React, { useReducer } from 'react';
-import { AccountSelect, TransactionTable } from 'component';
-import { DatePicker, Input } from 'component/Form';
+import React from 'react';
+import { Dialog } from 'component';
 import { useUpdateTransactionMutation } from 'mutation';
 import { useAccountsQuery } from 'query';
-import AddAccountForm from './AddAccountForm';
+import TransactionForm from './TransactionForm';
 import { ToastContext } from './ToastContext';
 
 // yup.addMethod(yup.object, 'onlyOneOf', function(
@@ -26,43 +24,7 @@ import { ToastContext } from './ToastContext';
 //   });
 // });
 
-const initialState = {
-  isAddCategoryOpen: false,
-  categoryName: '',
-  onSaveEvent: null,
-  transactionCount: 2,
-};
-
-function reducer(state, action) {
-  switch (action.type) {
-    case 'addTransaction':
-      return {
-        ...state,
-        transactionCount: state.transactionCount + 1,
-      };
-    case 'removeTransaction':
-      return {
-        ...state,
-        transactionCount: Math.max(2, state.transactionCount - 1),
-      };
-    case 'open':
-      return {
-        isAddCategoryOpen: true,
-        categoryName: action.name,
-        onSaveEvent: action.onSaveEvent,
-      };
-    case 'close':
-      return { isAddCategoryOpen: false, categoryName: '', onSaveEvent: null };
-    default:
-      return state;
-  }
-}
-
 export default function EditTransactionForm({ onClose, transaction }) {
-  const [state, dispatch] = useReducer(reducer, {
-    ...initialState,
-    transactionCount: transaction.accounts.length,
-  });
   const { accounts } = useAccountsQuery();
   const [updateTransaction] = useUpdateTransactionMutation();
 
@@ -91,13 +53,6 @@ export default function EditTransactionForm({ onClose, transaction }) {
     <ToastContext.Consumer>
       {toaster => (
         <>
-          {state.isAddCategoryOpen && (
-            <AddAccountForm
-              initialValues={{ name: state.categoryName }}
-              onClose={() => dispatch({ type: 'close' })}
-              onSave={state.onSaveEvent}
-            />
-          )}
           <Formik
             initialValues={initialValues}
             // validationSchema={AddTransactionSchema}
@@ -135,116 +90,28 @@ export default function EditTransactionForm({ onClose, transaction }) {
               });
             }}
           >
-            {({ handleSubmit, isSubmitting, setFieldValue }) => (
+            {({ handleSubmit, isSubmitting }) => (
               <Dialog
                 icon="edit"
                 title="Edit Transaction"
                 isOpen={true}
                 onClose={onClose}
+                footer={
+                  <>
+                    <Button onClick={onClose}>Close</Button>
+                    <Button
+                      intent="primary"
+                      onClick={handleSubmit}
+                      disabled={isSubmitting}
+                    >
+                      Save
+                    </Button>
+                  </>
+                }
               >
-                <Form>
-                  <div className="bp3-dialog-body">
-                    <DatePicker
-                      label="Transaction Date"
-                      name="date"
-                      maxDate={addDays(new Date(), 365)}
-                    />
-
-                    <Input label="Description" name="description" autoFocus />
-
-                    <TransactionTable striped>
-                      <thead>
-                        <tr>
-                          <th>Account</th>
-                          <th>Increase</th>
-                          <th>Decrease</th>
-                          <th> </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[...Array(state.transactionCount)].map((e, index) => (
-                          <tr key={`transaction-row-${index}`}>
-                            <td>
-                              <AccountSelect
-                                name={`splits[${index}].accountId`}
-                                onAddAccount={query =>
-                                  dispatch({
-                                    type: 'open',
-                                    name: query,
-                                    onSaveEvent: account => {
-                                      setFieldValue(
-                                        `splits[${index}].accountId`,
-                                        {
-                                          value: account.id,
-                                          label: account.name,
-                                        }
-                                      );
-                                    },
-                                  })
-                                }
-                              />
-                            </td>
-                            <td>
-                              <Input
-                                name={`splits[${index}].increase`}
-                                type="number"
-                              />
-                            </td>
-                            <td>
-                              <Input
-                                name={`splits[${index}].decrease`}
-                                type="number"
-                              />
-                            </td>
-                            <td>
-                              {index === state.transactionCount - 1 && (
-                                <Button
-                                  icon="plus"
-                                  minimal
-                                  intent="primary"
-                                  onClick={() =>
-                                    dispatch({ type: 'addTransaction' })
-                                  }
-                                />
-                              )}
-                              {index === state.transactionCount - 1 &&
-                                state.transactionCount > 2 && (
-                                  <Button
-                                    icon="cross"
-                                    minimal
-                                    intent="danger"
-                                    onClick={() =>
-                                      dispatch({ type: 'removeTransaction' })
-                                    }
-                                  />
-                                )}
-                            </td>
-                            {/* <ErrorMessage name={`splits[${index}]`}>
-                          {msg => (
-                            <Callout intent="danger" minimal>
-                              {msg}
-                            </Callout>
-                          )}
-                        </ErrorMessage> */}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </TransactionTable>
-                  </div>
-
-                  <div className="bp3-dialog-footer">
-                    <div className="bp3-dialog-footer-actions">
-                      <Button onClick={onClose}>Close</Button>
-                      <Button
-                        intent="primary"
-                        onClick={handleSubmit}
-                        disabled={isSubmitting}
-                      >
-                        Save
-                      </Button>
-                    </div>
-                  </div>
-                </Form>
+                <TransactionForm
+                  initialTransactionCount={transaction.accounts.length}
+                />
               </Dialog>
             )}
           </Formik>

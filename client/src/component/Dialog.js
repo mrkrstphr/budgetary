@@ -1,6 +1,5 @@
 import { Dialog as Bp3Dialog } from '@blueprintjs/core';
 import React from 'react';
-import styled from 'styled-components';
 
 export function Dialog({ children, footer, ...props }) {
   return (

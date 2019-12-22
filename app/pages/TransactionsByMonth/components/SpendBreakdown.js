@@ -1,5 +1,6 @@
 import { HTMLTable } from '@blueprintjs/core';
 import { sortBy } from 'lodash';
+import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSpendingBreakdown } from 'query';
@@ -38,10 +39,14 @@ export default function SpendBreakdown({ month }) {
                 </td>
                 <td className="right">{amount.toFixed(2)}</td>
               </tr>
-            )
+            ),
           )}
         </tbody>
       </HTMLTable>
     </div>
   );
 }
+
+SpendBreakdown.propTypes = {
+  month: PropTypes.string,
+};

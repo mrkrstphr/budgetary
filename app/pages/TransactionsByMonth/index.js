@@ -1,16 +1,17 @@
 import moment from 'moment';
-import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { useParams } from 'react-router-dom';
 import { BrowserTitle } from 'component';
 import MonthSwitcher from 'component/MonthSwitcher';
 import { TabPanel } from 'component/TabPanel';
-import AddTransactionForm from '../../component/AddTransactionForm';
-import SpendBreakdown from './components/SpendBreakdown';
-import Statistics from './components/Statistics';
 import AddImportTransactionButton from 'component/AddImportTransactionButton';
 import TransactionsList from 'component/TransactionList';
 import { useMonthsQuery, useTransactionsQuery } from 'query';
+import SpendBreakdown from './components/SpendBreakdown';
+import Statistics from './components/Statistics';
 
-function TransactionsTab({ onAddTransaction, month }) {
+function TransactionsTab({ month }) {
   const { error, loading, transactions } = useTransactionsQuery({
     filters: { month },
   });
@@ -30,7 +31,7 @@ function TransactionsTab({ onAddTransaction, month }) {
       >
         <h3 style={{ flex: 1, margin: 0 }}>Transactions</h3>
 
-        <AddImportTransactionButton onAddTransaction={onAddTransaction} />
+        <AddImportTransactionButton />
       </div>
 
       <TransactionsList transactions={transactions.items} filters={{ month }} />
@@ -38,8 +39,12 @@ function TransactionsTab({ onAddTransaction, month }) {
   );
 }
 
-function TransactionsPage({ match }) {
-  const [addOpen, setAddOpen] = useState(false);
+TransactionsTab.propTypes = {
+  month: PropTypes.string.isRequired,
+};
+
+function TransactionsPage() {
+  const { month } = useParams();
   const { loading, months } = useMonthsQuery();
 
   if (loading) {
@@ -47,8 +52,8 @@ function TransactionsPage({ match }) {
   }
 
   let selectedMonth = months[0];
-  if (match.params.month) {
-    const matchedMonths = months.filter(m => m.name === match.params.month);
+  if (month) {
+    const matchedMonths = months.filter(m => m.name === month);
     if (matchedMonths.length) {
       selectedMonth = {
         ...matchedMonths[0],
@@ -58,12 +63,10 @@ function TransactionsPage({ match }) {
     }
   }
 
-  const toggleAddOpen = () => setAddOpen(!addOpen);
-
   return (
     <div>
       <BrowserTitle
-        title={`${moment(`${selectedMonth.name + '-01'}`).format(
+        title={`${moment(`${`${selectedMonth.name}-01`}`).format(
           'MMMM YYYY',
         )} Transactions`}
       />
@@ -77,7 +80,7 @@ function TransactionsPage({ match }) {
         }}
       >
         <h2 style={{ flex: 1, margin: 0 }}>
-          {moment(`${selectedMonth.name + '-01'}`).format('MMMM YYYY')}
+          {moment(`${`${selectedMonth.name}-01`}`).format('MMMM YYYY')}
         </h2>
 
         <MonthSwitcher months={months} selectedMonth={selectedMonth} />
@@ -85,20 +88,10 @@ function TransactionsPage({ match }) {
 
       <Statistics month={selectedMonth} />
 
-      {addOpen && (
-        <AddTransactionForm
-          onClose={toggleAddOpen}
-          currentMonth={selectedMonth.name}
-        />
-      )}
-
       <TabPanel
         tabs={[{ label: 'Transactions' }, { label: 'Spending Breakdown' }]}
         contents={[
-          <TransactionsTab
-            month={selectedMonth.name}
-            onAddTransaction={toggleAddOpen}
-          />,
+          <TransactionsTab month={selectedMonth.name} />,
           <SpendBreakdown month={selectedMonth.name} />,
         ]}
         style={{ marginTop: 20 }}

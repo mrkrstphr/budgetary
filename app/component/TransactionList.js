@@ -1,13 +1,11 @@
 import { HTMLTable } from '@blueprintjs/core';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { formatDate } from 'lib';
 import TransactionActions from './TransactionActions';
 
-export default function TransactionsList({
-  formatSplits = s => s,
-  transactions,
-}) {
+export default function TransactionsList({ transactions }) {
   return (
     <HTMLTable style={{ width: '100%' }} className="valignMiddle">
       <thead>
@@ -21,7 +19,7 @@ export default function TransactionsList({
       </thead>
       <tbody>
         {transactions.map((transaction, index) =>
-          formatSplits(transaction.accounts).map((account, accountIndex) => (
+          transaction.accounts.map((account, accountIndex) => (
             <tr key={account.id} className={index % 2 === 1 ? 'odd' : 'even'}>
               <td>{accountIndex === 0 && formatDate(transaction.date)}</td>
               <td>{accountIndex === 0 && transaction.description}</td>
@@ -37,9 +35,26 @@ export default function TransactionsList({
                 )}
               </td>
             </tr>
-          ))
+          )),
         )}
       </tbody>
     </HTMLTable>
   );
 }
+
+TransactionsList.propTypes = {
+  transactions: PropTypes.arrayOf(
+    PropTypes.shape({
+      account: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        account: PropTypes.shape({
+          id: PropTypes.string.isRequired,
+          name: PropTypes.string.isRequired,
+        }).isRequired,
+        amount: PropTypes.number.isRequired,
+      }).isRequired,
+      date: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
+};

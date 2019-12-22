@@ -1,41 +1,48 @@
 import { Button } from '@blueprintjs/core';
 import { Formik } from 'formik';
-import { isNil } from 'lodash';
+// import { isNil } from 'lodash';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 import React from 'react';
-import * as yup from 'yup';
+// import * as yup from 'yup';
 import { Dialog } from 'component';
 import { useCreateTransaction } from 'mutation';
 import TransactionForm from './TransactionForm';
 import { ToastContext } from './ToastContext';
 
-yup.addMethod(yup.object, 'onlyOneOf', function(
-  list,
-  // eslint-disable-next-line no-template-curly-in-string
-  message = '${path} must have at least one of these keys: ${keys}'
-) {
-  return this.test({
-    name: 'onlyOneOf',
-    message: message,
-    exclusive: true,
-    params: { keys: list.join(', ') },
-    test: value => {
-      return value == null || list.filter(f => !isNil(value[f])).length === 1;
-    },
-  });
-});
+// yup.addMethod(yup.object, 'onlyOneOf', function(
+//   list,
+//   // eslint-disable-next-line no-template-curly-in-string
+//   message = '${path} must have at least one of these keys: ${keys}',
+// ) {
+//   return this.test({
+//     name: 'onlyOneOf',
+//     message,
+//     exclusive: true,
+//     params: { keys: list.join(', ') },
+//     test: value =>
+//       value == null || list.filter(f => !isNil(value[f])).length === 1,
+//   });
+// });
 
-export default function AddTransactionForm({ onClose }) {
+export default function AddTransactionForm({ account, onClose }) {
   const [createTransaction] = useCreateTransaction();
 
   const initialValues = {
     date: new Date(),
     description: '',
-    splits: [...Array(2)].map(() => ({
-      accountId: null,
-      increase: '',
-      decrease: '',
-    })),
+    splits: [
+      {
+        accountId: account,
+        increase: '',
+        decrease: '',
+      },
+      {
+        accountId: null,
+        increase: '',
+        decrease: '',
+      },
+    ],
   };
 
   return (
@@ -46,7 +53,7 @@ export default function AddTransactionForm({ onClose }) {
             initialValues={initialValues}
             onSubmit={(
               { date, description, splits },
-              { setSubmitting, resetForm }
+              { setSubmitting, resetForm },
             ) => {
               const preparedSplits = splits.map(split => ({
                 accountId: split.accountId ? split.accountId.id : null,
@@ -57,7 +64,7 @@ export default function AddTransactionForm({ onClose }) {
               return createTransaction(
                 moment(date).format('YYYY-MM-DD'),
                 description,
-                preparedSplits
+                preparedSplits,
               )
                 .then(() => {
                   setSubmitting(false);
@@ -82,7 +89,7 @@ export default function AddTransactionForm({ onClose }) {
               <Dialog
                 icon="plus"
                 title="Create Transaction"
-                isOpen={true}
+                isOpen
                 onClose={onClose}
                 footer={
                   <>
@@ -110,3 +117,11 @@ export default function AddTransactionForm({ onClose }) {
     </ToastContext.Consumer>
   );
 }
+
+AddTransactionForm.propTypes = {
+  account: PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string,
+  }),
+  onClose: PropTypes.func.isRequired,
+};

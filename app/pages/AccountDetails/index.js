@@ -1,9 +1,12 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { BrowserTitle } from 'component';
-import Statistics from './components/Statistics';
+import AddImportTransactionButton from 'component/AddImportTransactionButton';
 import { TabPanel } from 'component/TabPanel';
 import TransactionList from 'component/TransactionList';
+import { mapParamIdToId } from 'lib';
 import { useAccountDetailsQuery, useTransactionsQuery } from 'query';
+import Statistics from './components/Statistics';
 import Reconciliations from './components/Reconciliations';
 
 function AccountDetails({ id }) {
@@ -27,16 +30,26 @@ function AccountDetails({ id }) {
       <TabPanel
         tabs={[{ label: 'Transactions' }, { label: 'Reconcilations' }]}
         contents={[
-          <TransactionList
-            filters={{ accountId: id }}
-            transactions={transactionsLoading ? [] : transactions.items}
-            /*formatSplits={splits => {
-            const newSplits = splits.filter(a => a.account.id !== id);
-            newSplits[0].amount = newSplits[0].amount * -1;
+          <div>
+            <div
+              style={{
+                alignItems: 'center',
+                display: 'flex',
+                padding: '10px 0',
+              }}
+            >
+              <h3 style={{ flex: 1, margin: 0 }}>Transactions</h3>
 
-            return newSplits;
-          }}*/
-          />,
+              <AddImportTransactionButton
+                account={account}
+                onAddTransaction={() => null}
+              />
+            </div>
+            <TransactionList
+              filters={{ accountId: id }}
+              transactions={transactionsLoading ? [] : transactions.items}
+            />
+          </div>,
           <Reconciliations accountId={id} />,
         ]}
         style={{ marginTop: 20 }}
@@ -45,8 +58,8 @@ function AccountDetails({ id }) {
   );
 }
 
-const MapParamIdToId = Component => props => {
-  return <Component id={props.match.params.id} {...props} />;
+AccountDetails.propTypes = {
+  id: PropTypes.string.isRequired,
 };
 
-export default MapParamIdToId(AccountDetails);
+export default mapParamIdToId(AccountDetails);

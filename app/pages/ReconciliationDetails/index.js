@@ -1,13 +1,15 @@
 import { Checkbox, HTMLTable } from '@blueprintjs/core';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { BrowserTitle } from 'component';
 import { formatDate, mapParamIdToId } from 'lib';
 import { useMarkReconciled } from 'mutation';
 import { useReconciliation } from 'query';
+import TransactionActions from 'component/TransactionActions';
+import AddImportTransactionButton from 'component/AddImportTransactionButton';
 import ActionBar from './ActionBar';
 import Summary from './Summary';
 import Title from './Title';
-import TransactionActions from 'component/TransactionActions';
 
 function findAccount(reconciliation, transaction) {
   return transaction.accounts.find(
@@ -41,13 +43,17 @@ function ReconciliationDetailsPage({ id }) {
 
   return (
     <div>
-      <BrowserTitle title={`Account Reconciliation`} />
+      <BrowserTitle title="Account Reconciliation" />
 
       <Title reconciliation={reconciliation} />
       <Summary
         balance={calculateReconciledBalance(reconciliation)}
         reconciliation={reconciliation}
       />
+
+      <div style={{ textAlign: 'right' }}>
+        <AddImportTransactionButton account={reconciliation.account} />
+      </div>
 
       <HTMLTable interactive striped style={{ width: '100%' }}>
         <thead>
@@ -105,5 +111,9 @@ function ReconciliationDetailsPage({ id }) {
     </div>
   );
 }
+
+ReconciliationDetailsPage.propTypes = {
+  id: PropTypes.string.isRequired,
+};
 
 export default mapParamIdToId(ReconciliationDetailsPage);

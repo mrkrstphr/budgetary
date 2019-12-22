@@ -21,7 +21,7 @@ export function useMarkReconciled() {
   const [markReconciled] = useMutation(markReconciledMutation);
 
   return [
-    function(accountId, reconciliationId) {
+    function wrapMarkReconciled(accountId, reconciliationId) {
       const variables = { accountId };
 
       if (reconciliationId) {

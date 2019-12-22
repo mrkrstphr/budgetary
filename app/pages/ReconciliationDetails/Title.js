@@ -1,4 +1,5 @@
 import { Tag } from '@blueprintjs/core';
+import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -29,3 +30,9 @@ export default function Title({ reconciliation }) {
     </TitleStyles>
   );
 }
+
+Title.propTypes = {
+  reconciliation: PropTypes.shape({
+    status: PropTypes.string.isRequired,
+  }).isRequired,
+};

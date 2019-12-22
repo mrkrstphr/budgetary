@@ -1,8 +1,9 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { StatisticTile } from 'component/StatisticTile';
 import { currencyFormatter } from 'lib/currencyFormatter';
 
-export default ({ account }) => {
+export default function Statistics({ account }) {
   return (
     <div style={{ alignItems: 'center', display: 'flex' }}>
       <StatisticTile
@@ -27,4 +28,13 @@ export default ({ account }) => {
       />
     </div>
   );
+}
+
+Statistics.propTypes = {
+  account: PropTypes.shape({
+    lastMonth: PropTypes.number.isRequired,
+    thisMonth: PropTypes.number.isRequired,
+    thisYear: PropTypes.number.isRequired,
+    total: PropTypes.number.isRequired,
+  }).isRequired,
 };

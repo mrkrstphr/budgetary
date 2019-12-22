@@ -2,6 +2,7 @@ import { Button, Dialog } from '@blueprintjs/core';
 import { Formik, Form, ErrorMessage } from 'formik';
 import { isNil } from 'lodash';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { DatePicker, FieldError, Input } from 'component/Form';
 import { ToastContext } from 'component/ToastContext';
@@ -25,9 +26,9 @@ export default function AddReconciliationForm({ initialValues, onClose }) {
                 endingBalance = null,
               },
             },
-            { setErrors, setSubmitting }
-          ) => {
-            return createReconciliation(accountId, {
+            { setErrors, setSubmitting },
+          ) =>
+            createReconciliation(accountId, {
               startDate: startDate
                 ? moment(startDate).format('YYYY-MM-DD')
                 : null,
@@ -64,14 +65,14 @@ export default function AddReconciliationForm({ initialValues, onClose }) {
                   message: `Failed to create reconciliation`,
                 });
                 setSubmitting(false);
-              });
-          }}
+              })
+          }
         >
           {({ handleSubmit, isSubmitting }) => (
             <Dialog
               icon="plus"
               title="Add Reconciliation"
-              isOpen={true}
+              isOpen
               onClose={onClose}
             >
               <Form>
@@ -115,3 +116,8 @@ export default function AddReconciliationForm({ initialValues, onClose }) {
     </ToastContext.Consumer>
   );
 }
+
+AddReconciliationForm.propTypes = {
+  initialValues: PropTypes.object,
+  onClose: PropTypes.func.isRequired,
+};

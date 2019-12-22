@@ -1,8 +1,9 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { StatisticTile } from 'component/StatisticTile';
 import { currencyFormatter } from 'lib/currencyFormatter';
 
-export default ({ month }) => {
+export default function Statistics({ month }) {
   const cashflow = month.totalIncome - month.totalExpenses;
 
   return (
@@ -24,4 +25,8 @@ export default ({ month }) => {
       />
     </div>
   );
+}
+
+Statistics.propTypes = {
+  month: PropTypes.string.isRequired,
 };

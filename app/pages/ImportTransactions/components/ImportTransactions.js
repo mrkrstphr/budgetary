@@ -8,14 +8,15 @@ import {
 } from '@blueprintjs/core';
 import moment from 'moment';
 import Papa from 'papaparse';
+import PropTypes from 'prop-types';
 import React, { useReducer } from 'react';
-import ImportTarget from './ImportTarget';
 import { FieldColumn, FieldRow, Label } from 'component/Form';
-import SelectCategory from '../../../component/SelectCategory';
-import { initialState, reducer } from '../reducer';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import { useHistory } from 'react-router-dom';
+import { initialState, reducer } from '../reducer';
+import SelectCategory from '../../../component/SelectCategory';
+import ImportTarget from './ImportTarget';
 import { ToastContext } from '../../../component/ToastContext';
 
 function getMappingOptionsFor(state, columnName) {
@@ -74,7 +75,7 @@ const ImportOptions = ({ dispatch, state }) => (
       </FieldColumn>
     </FieldRow>
 
-    <HTMLTable style={{ width: '100%' }} striped={true} interactive={true}>
+    <HTMLTable style={{ width: '100%' }} striped interactive>
       <thead>
         <tr>
           <th colSpan="2">Import Column Mapping</th>
@@ -152,37 +153,44 @@ const ImportOptions = ({ dispatch, state }) => (
   </div>
 );
 
+ImportOptions.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  state: PropTypes.shape({
+    firstRowAsHeaders: PropTypes.bool.isRequired,
+    offsetAccount: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+    }),
+  }).isRequired,
+};
+
 function getTransactionsToImport(state) {
-  const transactions = state.selectedRows.map(index => {
-    return {
-      date: moment(
-        state.rows[index][state.columns.indexOf(state.columnMappings.date)]
-      ).format('YYYY-MM-DD'),
-      description:
-        state.rows[index][
-          state.columns.indexOf(state.columnMappings.description)
-        ],
-      accounts: [
-        {
-          accountId: state.transactionAccountMappings[index].id,
-          amount:
-            parseFloat(
-              state.rows[index][
-                state.columns.indexOf(state.columnMappings.amount)
-              ]
-            ) * -1,
-        },
-        {
-          accountId: state.offsetAccount.id,
-          amount: parseFloat(
+  const transactions = state.selectedRows.map(index => ({
+    date: moment(
+      state.rows[index][state.columns.indexOf(state.columnMappings.date)],
+    ).format('YYYY-MM-DD'),
+    description:
+      state.rows[index][
+        state.columns.indexOf(state.columnMappings.description)
+      ],
+    accounts: [
+      {
+        accountId: state.transactionAccountMappings[index].id,
+        amount:
+          parseFloat(
             state.rows[index][
               state.columns.indexOf(state.columnMappings.amount)
-            ]
-          ),
-        },
-      ],
-    };
-  });
+            ],
+          ) * -1,
+      },
+      {
+        accountId: state.offsetAccount.id,
+        amount: parseFloat(
+          state.rows[index][state.columns.indexOf(state.columnMappings.amount)],
+        ),
+      },
+    ],
+  }));
 
   return transactions;
 }
@@ -203,6 +211,10 @@ function BulkImport({ children }) {
   );
 }
 
+BulkImport.propTypes = {
+  children: PropTypes.func.isRequired,
+};
+
 function TransactionsTable({ dispatch, state }) {
   const history = useHistory();
 
@@ -212,11 +224,7 @@ function TransactionsTable({ dispatch, state }) {
         <BulkImport>
           {bulkImport => (
             <div>
-              <HTMLTable
-                style={{ width: '100%' }}
-                striped={true}
-                interactive={true}
-              >
+              <HTMLTable style={{ width: '100%' }} striped interactive>
                 <thead>
                   <tr>
                     <th>
@@ -238,7 +246,7 @@ function TransactionsTable({ dispatch, state }) {
                 </thead>
                 <tbody>
                   {state.rows.map((transaction, index) => (
-                    <tr key={`transaction-${index}`}>
+                    <tr key={`transaction-${transaction.id}`}>
                       <td>
                         <Checkbox
                           checked={
@@ -253,10 +261,10 @@ function TransactionsTable({ dispatch, state }) {
                           }
                         />
                       </td>
-                      {transaction.map((column, columnIndex) => (
+                      {transaction.map(column => (
                         <td
                           className="right"
-                          key={`transaction-${index}-${columnIndex}`}
+                          key={`transaction-${transaction.id}-${column}`}
                         >
                           {column}
                         </td>
@@ -267,7 +275,7 @@ function TransactionsTable({ dispatch, state }) {
                           onChange={category => {
                             dispatch({
                               type: 'mapTransaction',
-                              index: index,
+                              index,
                               value: category,
                             });
                           }}
@@ -292,7 +300,9 @@ function TransactionsTable({ dispatch, state }) {
                   toaster.show({
                     icon: 'tick-circle',
                     intent: 'success',
-                    message: `(${transactions.length}) Transactions Imported Successfully`,
+                    message: `(${
+                      transactions.length
+                    }) Transactions Imported Successfully`,
                   });
                   history.push('/transactions');
                 }}
@@ -316,12 +326,23 @@ function TransactionsTable({ dispatch, state }) {
   );
 }
 
+TransactionsTable.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  state: PropTypes.shape({
+    firstRowAsHeaders: PropTypes.bool.isRequired,
+    offsetAccount: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+    }),
+  }).isRequired,
+};
+
 export default function ImportTransactions() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   function fileSelected(details) {
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function onCsvFileLoad() {
       const csv = Papa.parse(reader.result, { skipEmptyLines: true });
       // TODO: FIXME: check - csv.errors
       // TODO: FIXME: check - csv.meta.truncated, csv.meta.aborted
@@ -333,8 +354,6 @@ export default function ImportTransactions() {
   return (
     <div>
       {state.rows.length === 0 && <ImportTarget fileSelected={fileSelected} />}
-
-      {/* <pre>{JSON.stringify(state, null, 2)}</pre> */}
 
       <div>
         {state.rows.length > 0 && (

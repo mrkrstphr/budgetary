@@ -63,7 +63,7 @@ class Transaction {
 
     switch (period.toLowerCase()) {
       case 'thismonth':
-        query.andWhere(function() {
+        query.andWhere(function whereThisMonth() {
           this.where(
             't.date',
             '>=',
@@ -79,7 +79,7 @@ class Transaction {
         break;
 
       case 'lastmonth':
-        query.andWhere(function() {
+        query.andWhere(function whereLastMonth() {
           this.where(
             't.date',
             '>=',
@@ -91,7 +91,7 @@ class Transaction {
         break;
 
       case 'year':
-        query.andWhere(function() {
+        query.andWhere(function whereThisYear() {
           this.where(
             't.date',
             '>=',
@@ -130,7 +130,7 @@ class Transaction {
     switch (period.toLowerCase()) {
       case 'thismonth':
         [expenseQuery, incomeQuery].forEach(query =>
-          query.where(function() {
+          query.where(function whereThisMonth() {
             this.where(
               't.date',
               '>=',
@@ -148,7 +148,7 @@ class Transaction {
 
       case 'lastmonth':
         [expenseQuery, incomeQuery].forEach(query =>
-          query.where(function() {
+          query.where(function whereLastMonth() {
             this.where(
               't.date',
               '>=',
@@ -162,7 +162,7 @@ class Transaction {
 
       case 'lastthree':
         [expenseQuery, incomeQuery].forEach(query =>
-          query.where(function() {
+          query.where(function whereLastThreeMonths() {
             this.where(
               't.date',
               '>=',
@@ -176,7 +176,7 @@ class Transaction {
 
       case 'lasttwelve':
         [expenseQuery, incomeQuery].forEach(query =>
-          query.where(function() {
+          query.where(function whereLastTwelveMonths() {
             this.where(
               't.date',
               '>=',
@@ -223,10 +223,12 @@ class Transaction {
         .andWhere('account_id', filters.accountId);
     }
 
-    return applyPaging(query, paging).then(({ paging, items }) => ({
-      paging,
-      items: desnakeify(items),
-    }));
+    return applyPaging(query, paging).then(
+      ({ paging: pagingDetails, items }) => ({
+        paging: pagingDetails,
+        items: desnakeify(items),
+      }),
+    );
   }
 
   fetchForReconciliation(reconciliation) {
@@ -237,7 +239,7 @@ class Transaction {
       .orderBy('t.date', 'ASC');
 
     if (reconciliation.status.toLowerCase() === 'open') {
-      query.andWhere(function() {
+      query.andWhere(function whereReconciliationOpen() {
         this.where('reconciliation_id', reconciliation.id).orWhere(
           'reconciliation_id',
           null,
@@ -350,7 +352,12 @@ class Transaction {
       .then(splits =>
         Promise.all(
           splits
-            .filter(split => !accounts.map(({ id }) => id).includes(split.id))
+            .filter(
+              split =>
+                !accounts
+                  .map(({ id: accountId }) => accountId)
+                  .includes(split.id),
+            )
             .map(split =>
               this.conn('transaction_accounts')
                 .delete()

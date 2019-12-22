@@ -16,7 +16,7 @@ export function useSpendingBreakdown({ month }) {
     fetchSpendingBreakdownQuery,
     {
       variables: { month },
-    }
+    },
   );
 
   return {

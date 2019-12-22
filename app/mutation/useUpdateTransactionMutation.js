@@ -27,11 +27,10 @@ export function useUpdateTransactionMutation() {
     updateTransactionMutation,
   );
 
-  const updateTransaction = (id, date, description, accounts) => {
-    return updateTransactionFunc({
+  const updateTransaction = (id, date, description, accounts) =>
+    updateTransactionFunc({
       variables: { id, transaction: { date, description, accounts } },
     });
-  };
 
   return [updateTransaction, { data }];
 }

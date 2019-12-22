@@ -1,9 +1,9 @@
 import React from 'react';
+import { useMonthsQuery } from 'query';
 import NetIncomeChart from './components/NetIncomeChart';
 import Statistics from './components/Statistics';
-import { useMonthsQuery } from 'query';
 
-const Dashboard = () => {
+export default function Dashboard() {
   const { loading, months } = useMonthsQuery();
 
   if (loading) {
@@ -22,6 +22,4 @@ const Dashboard = () => {
       </div>
     </>
   );
-};
-
-export default Dashboard;
+}

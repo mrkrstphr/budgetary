@@ -11,6 +11,10 @@ class Context {
     this.dbal = dbal;
   }
 
+  setUser = user => {
+    this.request.session.user = user;
+  };
+
   requireAuthorization = () => {
     const user =
       'user' in this.request.session ? this.request.session.user : null;
@@ -33,6 +37,8 @@ class Context {
         return this.dbal.users.findUserByIds([token.user_id]);
       }
     }
+
+    return undefined;
   };
 }
 

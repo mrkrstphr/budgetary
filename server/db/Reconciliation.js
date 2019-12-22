@@ -4,13 +4,13 @@ const { desnakeify, pickFirst, snakeify } = require('../lib');
 
 const handlers = { between: betweenHandler, or: orHandler };
 
-function doWhere(query, type, ...args) {
-  if (type === 'OR') {
-    return query.orWhere(...args);
-  }
+// function doWhere(query, type, ...args) {
+//   if (type === 'OR') {
+//     return query.orWhere(...args);
+//   }
 
-  return query.andWhere(...args);
-}
+//   return query.andWhere(...args);
+// }
 
 function doRawWhere(query, type, ...args) {
   if (type === 'OR') {
@@ -21,6 +21,7 @@ function doRawWhere(query, type, ...args) {
 }
 
 function betweenHandler(query, condition) {
+  // eslint-disable-next-line no-underscore-dangle
   const clause = '_clause' in condition ? condition._clause : 'AND';
 
   if (
@@ -42,7 +43,7 @@ function betweenHandler(query, condition) {
 
 function orHandler(query, condition) {
   if (condition.value && Array.isArray(condition.value)) {
-    query.where(function() {
+    query.where(function orWhereHandler() {
       for (const clause of condition.value) {
         if (clause.type && clause.type in handlers) {
           handlers[clause.type](this, { ...clause, _clause: 'OR' });
@@ -58,8 +59,6 @@ function whereBuilder(query, conditions) {
       handlers[condition.type](query, condition);
     }
   }
-
-  console.log({ query: query.toSQL() });
 
   return query;
 }

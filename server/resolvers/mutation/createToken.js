@@ -14,7 +14,7 @@ module.exports = async function createToken(
     return { errors: { password: ['Authentication failed'] } };
   }
 
-  context.request.session.user = user;
+  context.setUser(user); // request.session.user = user;
 
   // const token = await context.dbal.users.createToken(user);
   // return { token };

@@ -2,11 +2,12 @@ module.exports = async function applyPaging(
   query,
   { perPage = 2555, page = 1 },
 ) {
-  const currentPage = Math.max(1, parseInt(page));
-  const limit = Math.max(1, parseInt(perPage));
+  const currentPage = Math.max(1, parseInt(page, 10));
+  const limit = Math.max(1, parseInt(perPage, 10));
 
   const countQuery = query.clone();
 
+  // eslint-disable-next-line no-underscore-dangle
   countQuery
     .clearSelect()
     .count('* AS total')
@@ -15,7 +16,7 @@ module.exports = async function applyPaging(
   query.limit(limit).offset((currentPage - 1) * limit);
   const [count, items] = await Promise.all([countQuery, query]);
 
-  const total = parseInt(count[0].total);
+  const total = parseInt(count[0].total, 10);
   const paging = {
     page,
     totalRecords: total,

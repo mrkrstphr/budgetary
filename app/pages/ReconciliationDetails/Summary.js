@@ -1,4 +1,5 @@
 import { Card } from '@blueprintjs/core';
+import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
 import { currencyFormatter, formatDate } from 'lib';
@@ -64,3 +65,13 @@ export default function Summary({ balance, reconciliation }) {
     </SummaryCard>
   );
 }
+
+Summary.propTypes = {
+  balance: PropTypes.number.isRequired,
+  reconciliation: PropTypes.shape({
+    endingBalance: PropTypes.number.isRequired,
+    endDate: PropTypes.string.isRequired,
+    startingBalance: PropTypes.number.isRequired,
+    startDate: PropTypes.string.isRequired,
+  }).isRequired,
+};

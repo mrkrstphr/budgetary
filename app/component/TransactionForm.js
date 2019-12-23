@@ -1,6 +1,7 @@
 import { Button } from '@blueprintjs/core';
 import { addDays } from 'date-fns';
 import { Form } from 'formik';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { AccountSelect, TransactionTable } from 'component';
 import { DatePicker, Input } from 'component/Form';
@@ -9,7 +10,7 @@ import { useCounter } from 'lib';
 export default function TransactionForm({ initialTransactionCount = 2 }) {
   const [transactionCount, addTransaction, removeTransaction] = useCounter(
     initialTransactionCount,
-    2
+    2,
   );
 
   return (
@@ -75,3 +76,7 @@ export default function TransactionForm({ initialTransactionCount = 2 }) {
     </Form>
   );
 }
+
+TransactionForm.propTypes = {
+  initialTransactionCount: PropTypes.number.isRequired,
+};

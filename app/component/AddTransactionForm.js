@@ -8,7 +8,7 @@ import React from 'react';
 import { Dialog } from 'component';
 import { useCreateTransaction } from 'mutation';
 import TransactionForm from './TransactionForm';
-import { ToastContext } from './ToastContext';
+import { AppContext } from '../App/Context';
 
 // yup.addMethod(yup.object, 'onlyOneOf', function(
 //   list,
@@ -46,8 +46,8 @@ export default function AddTransactionForm({ account, onClose }) {
   };
 
   return (
-    <ToastContext.Consumer>
-      {toaster => (
+    <AppContext.Consumer>
+      {({ notify }) => (
         <>
           <Formik
             initialValues={initialValues}
@@ -69,19 +69,11 @@ export default function AddTransactionForm({ account, onClose }) {
                 .then(() => {
                   setSubmitting(false);
                   resetForm({ ...initialValues, date });
-                  toaster.show({
-                    icon: 'tick-circle',
-                    intent: 'success',
-                    message: `Transaction Created`,
-                  });
+                  notify('Transaction Created');
                 })
                 .catch(() => {
                   setSubmitting(false);
-                  toaster.show({
-                    icon: 'warning-sign',
-                    intent: 'danger',
-                    message: `Failed to Save Transaction`,
-                  });
+                  notify('Failed to Save Transaction', 'danger');
                 });
             }}
           >
@@ -114,7 +106,7 @@ export default function AddTransactionForm({ account, onClose }) {
           </Formik>
         </>
       )}
-    </ToastContext.Consumer>
+    </AppContext.Consumer>
   );
 }
 

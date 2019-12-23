@@ -1,10 +1,14 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Toaster } from '@blueprintjs/core';
 
 export const ToastContext = React.createContext();
 
 class Context extends React.Component {
-  state = { toaster: null };
+  constructor(props) {
+    super(props);
+    this.state = { toaster: null };
+  }
 
   refHandlers = {
     toaster: toaster => this.setState({ toaster }),
@@ -21,5 +25,9 @@ class Context extends React.Component {
     );
   }
 }
+
+Context.propTypes = {
+  children: PropTypes.element.isRequired,
+};
 
 export default Context;

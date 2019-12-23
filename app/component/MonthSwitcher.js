@@ -1,44 +1,10 @@
 import { Button, ButtonGroup, MenuItem } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-
-// from https://github.com/palantir/blueprint/blob/develop/packages/docs-app/src/examples/select-examples/films.tsx
-function highlightText(text, query) {
-  let lastIndex = 0;
-  const words = query
-    .split(/\s+/)
-    .filter(word => word.length > 0)
-    .map(escapeRegExpChars);
-  if (words.length === 0) {
-    return [text];
-  }
-  const regexp = new RegExp(words.join('|'), 'gi');
-  const tokens = [];
-  while (true) {
-    const match = regexp.exec(text);
-    if (!match) {
-      break;
-    }
-    const length = match[0].length;
-    const before = text.slice(lastIndex, regexp.lastIndex - length);
-    if (before.length > 0) {
-      tokens.push(before);
-    }
-    lastIndex = regexp.lastIndex;
-    tokens.push(<strong key={lastIndex}>{match[0]}</strong>);
-  }
-  const rest = text.slice(lastIndex);
-  if (rest.length > 0) {
-    tokens.push(rest);
-  }
-  return tokens;
-}
-
-function escapeRegExpChars(text) {
-  return text.replace(/([.*+?^=!:${}()|[\]/\\])/g, '\\$1');
-}
+import { highlightText } from 'lib';
 
 function itemPredicate(query, month, _index, exactMatch) {
   const normalizedTitle = month.name.toLowerCase();
@@ -46,9 +12,8 @@ function itemPredicate(query, month, _index, exactMatch) {
 
   if (exactMatch) {
     return normalizedTitle === normalizedQuery;
-  } else {
-    return normalizedTitle.indexOf(normalizedQuery) >= 0;
   }
+  return normalizedTitle.indexOf(normalizedQuery) >= 0;
 }
 
 function itemRenderer(month, { handleClick, modifiers, query }) {
@@ -111,7 +76,7 @@ export default function MonthSwitcher({ months, selectedMonth }) {
         itemsEqual={(a, b) => a.name === b.name}
         itemPredicate={itemPredicate}
         itemRenderer={itemRenderer}
-        noResults={<MenuItem disabled={true} text="No results." />}
+        noResults={<MenuItem disabled text="No results." />}
         onItemSelect={selected => {
           history.push(`/transactions/${selected.name}`);
         }}
@@ -130,3 +95,10 @@ export default function MonthSwitcher({ months, selectedMonth }) {
     </ButtonGroup>
   );
 }
+
+MonthSwitcher.propTypes = {
+  months: PropTypes.arrayOf(
+    PropTypes.shape({ name: PropTypes.string.isRequired }),
+  ).isRequired,
+  selectedMonth: PropTypes.shape({ name: PropTypes.string.isRequired }),
+};

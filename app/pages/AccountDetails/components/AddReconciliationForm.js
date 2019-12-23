@@ -47,9 +47,9 @@ export default function AddReconciliationForm({ initialValues, onClose }) {
                   onClose();
                 } else {
                   const errorList = {};
-                  for (const error of errors) {
-                    errorList[error.field] = error.details[0];
-                  }
+                  errors.forEach(({ details: [error], field }) => {
+                    errorList[field] = error;
+                  });
                   setErrors(errorList);
                   toaster.show({
                     icon: 'warning-triangle',
@@ -58,7 +58,7 @@ export default function AddReconciliationForm({ initialValues, onClose }) {
                   });
                 }
               })
-              .catch(e => {
+              .catch(() => {
                 toaster.show({
                   icon: 'warning-triangle',
                   intent: 'danger',

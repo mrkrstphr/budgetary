@@ -8,7 +8,7 @@ export const deleteTransactionMutation = gql`
   }
 `;
 
-export function useDeleteTransactionMutation({ refetchVariables = {} } = {}) {
+export function useDeleteTransaction({ refetchVariables = {} } = {}) {
   const [deleteTransaction, other] = useMutation(deleteTransactionMutation, {
     refetchQueries: [
       { query: fetchTransactionsQuery, variables: refetchVariables },

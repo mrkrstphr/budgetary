@@ -1,10 +1,10 @@
 import React from 'react';
-import { useMonthsQuery } from 'query';
+import { useMonths } from 'query';
 import NetIncomeChart from './components/NetIncomeChart';
 import Statistics from './components/Statistics';
 
 export default function Dashboard() {
-  const { loading, months } = useMonthsQuery();
+  const { loading, months } = useMonths();
 
   if (loading) {
     return null;

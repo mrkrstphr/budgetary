@@ -1,4 +1,5 @@
 import { Alert, Button, Icon } from '@blueprintjs/core';
+import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
 import { ToastContext } from 'component/ToastContext';
@@ -85,3 +86,11 @@ export default function ActionBar({ reconciliation, balance }) {
     </ToastContext.Consumer>
   );
 }
+
+ActionBar.propTypes = {
+  balance: PropTypes.number.isRequired,
+  reconciliation: PropTypes.shape({
+    endingBalance: PropTypes.number.isRequired,
+    id: PropTypes.string.isRequired,
+  }).isRequired,
+};

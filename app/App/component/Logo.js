@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -11,4 +12,10 @@ const Styles = styled.h1`
   text-align: center;
 `;
 
-export default props => <Styles {...props}>Budgetary</Styles>;
+export default function Logo({ className = '' }) {
+  return <Styles className={className}>Budgetary</Styles>;
+}
+
+Logo.propTypes = {
+  className: PropTypes.string,
+};

@@ -1,12 +1,18 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import { Label } from '@blueprintjs/core';
 import { DateInput } from '@blueprintjs/datetime';
 import { Field, ErrorMessage, useFormikContext } from 'formik';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { FieldError } from './FieldError';
 
 function FakeLabel({ children }) {
   return <div>{children}</div>;
 }
+
+FakeLabel.propTypes = {
+  children: PropTypes.element.isRequired,
+};
 
 export function DatePicker({ label, name, ...props }) {
   const { setFieldValue } = useFormikContext();
@@ -15,7 +21,7 @@ export function DatePicker({ label, name, ...props }) {
 
   return (
     <Field name={name}>
-      {({ field: { name, value } }) => (
+      {({ field: { value } }) => (
         <>
           <FieldLabel htmlFor={name}>
             {label}
@@ -36,3 +42,8 @@ export function DatePicker({ label, name, ...props }) {
     </Field>
   );
 }
+
+DatePicker.propTypes = {
+  label: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+};

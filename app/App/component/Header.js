@@ -35,7 +35,7 @@ export default () => {
   return (
     <Styles>
       <AppContext.Consumer>
-        {({ logout, theme, toggleTheme, setUser, user }) => (
+        {({ theme, toggleTheme }) => (
           <div className="menu">
             <Popover
               content={

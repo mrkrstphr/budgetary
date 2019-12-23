@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { lazy, Suspense } from 'react';
 
 const loadable = (importFunc, { fallback = null } = { fallback: null }) => {

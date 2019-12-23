@@ -44,21 +44,21 @@ function betweenHandler(query, condition) {
 function orHandler(query, condition) {
   if (condition.value && Array.isArray(condition.value)) {
     query.where(function orWhereHandler() {
-      for (const clause of condition.value) {
+      condition.value.forEach(clause => {
         if (clause.type && clause.type in handlers) {
           handlers[clause.type](this, { ...clause, _clause: 'OR' });
         }
-      }
+      });
     });
   }
 }
 
 function whereBuilder(query, conditions) {
-  for (const condition of conditions) {
+  conditions.forEach(condition => {
     if (condition.type && condition.type in handlers) {
       handlers[condition.type](query, condition);
     }
-  }
+  });
 
   return query;
 }

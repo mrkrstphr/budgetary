@@ -31,11 +31,7 @@ export const fetchTransactionsQuery = gql`
   }
 `;
 
-export function useTransactionsQuery({
-  filters = {},
-  paging = {},
-  options = {},
-}) {
+export function useTransactions({ filters = {}, paging = {}, options = {} }) {
   const { loading, error, data, ...etc } = useQuery(fetchTransactionsQuery, {
     variables: { filters, paging },
     ...options,

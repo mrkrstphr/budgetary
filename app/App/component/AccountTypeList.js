@@ -1,4 +1,5 @@
 import { Icon, Tag } from '@blueprintjs/core';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { currencyFormatter } from 'lib';
@@ -34,3 +35,14 @@ export default function AccountList({
     </>
   );
 }
+
+AccountList.propTypes = {
+  accounts: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
+  color: PropTypes.string.isRequired,
+  icon: PropTypes.string.isRequired,
+};

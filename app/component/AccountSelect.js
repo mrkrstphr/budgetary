@@ -1,10 +1,11 @@
 import { Button, Label, MenuItem } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
 import { Field, ErrorMessage, useFormikContext } from 'formik';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { FieldError } from 'component/Form';
 import { highlightText, useToggle } from 'lib';
-import { useAccountsQuery } from 'query';
+import { useAccounts } from 'query';
 import styled from 'styled-components';
 import AddAccountForm from './AddAccountForm';
 
@@ -37,8 +38,12 @@ function FakeLabel({ children }) {
   return <div>{children}</div>;
 }
 
+FakeLabel.propTypes = {
+  children: PropTypes.element.isRequired,
+};
+
 export function AccountSelect({ label, name }) {
-  const { loading, error, accounts, refetch } = useAccountsQuery();
+  const { loading, error, accounts, refetch } = useAccounts();
   const { setFieldValue } = useFormikContext();
   const [isAddOpen, toggleAddOpen] = useToggle();
   const [addQuery, setAddQuery] = React.useState();
@@ -76,12 +81,11 @@ export function AccountSelect({ label, name }) {
 
                   if (exactMatch) {
                     return normalizedAccount === normalizedQuery;
-                  } else {
-                    return normalizedAccount.indexOf(normalizedQuery) >= 0;
                   }
+                  return normalizedAccount.indexOf(normalizedQuery) >= 0;
                 }}
-                createNewItemFromQuery={query => null}
-                createNewItemRenderer={(query, active, handleClick) => (
+                createNewItemFromQuery={() => null}
+                createNewItemRenderer={query => (
                   <MenuItem
                     icon="add"
                     text={`Create ${query}...`}
@@ -106,3 +110,8 @@ export function AccountSelect({ label, name }) {
     </>
   );
 }
+
+AccountSelect.propTypes = {
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+};

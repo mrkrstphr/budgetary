@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
@@ -26,14 +27,14 @@ const TabStyles = styled.div`
   }
 `;
 
-export const TabPanel = ({ tabs = [], contents = [], ...props }) => {
+export const TabPanel = ({ tabs = [], contents = [], style = {} }) => {
   const [selectedTab, selectTab] = useState(0);
 
   if (tabs.length !== contents.length) {
     throw Error('Tabs and contents must have the same length');
   }
   return (
-    <ContainerStyles {...props}>
+    <ContainerStyles style={style}>
       <div className="tabBar">
         {tabs.map(({ label }, index) => (
           <Tab
@@ -49,4 +50,24 @@ export const TabPanel = ({ tabs = [], contents = [], ...props }) => {
   );
 };
 
-const Tab = ({ label, ...props }) => <TabStyles {...props}>{label}</TabStyles>;
+TabPanel.propTypes = {
+  contents: PropTypes.arrayOf(PropTypes.element),
+  style: PropTypes.object,
+  tabs: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+    }),
+  ),
+};
+
+const Tab = ({ className = '', label, onClick = () => null }) => (
+  <TabStyles className={className} onClick={onClick}>
+    {label}
+  </TabStyles>
+);
+
+Tab.propTypes = {
+  className: PropTypes.string,
+  label: PropTypes.string.isRequired,
+  onClick: PropTypes.func,
+};

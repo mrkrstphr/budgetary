@@ -1,4 +1,5 @@
 import { Toaster } from '@blueprintjs/core';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
 
@@ -18,11 +19,13 @@ const themes = {
 class Context extends React.Component {
   toaster = null;
 
-  toasterRef = ref => (this.toaster = ref);
+  toasterRef = ref => {
+    this.toaster = ref;
+  };
 
   constructor(props) {
     super(props);
-    this.state = { theme: 'light', token: null, user: this.props.me };
+    this.state = { theme: 'light', user: this.props.me };
   }
 
   componentDidMount() {
@@ -36,23 +39,15 @@ class Context extends React.Component {
     this.persist();
   }
 
-  isAuthenticated = () => this.state.user !== null; // TODO: Check token expiration
-
-  logout = () => {
-    console.log('fart');
-    // localStorage.removeItem('appContext');
-    // this.setState({ user: null, token: null });
-  };
-
   setUser = user => {
     this.setState({ user });
     this.persist();
   };
 
   toggleTheme = () =>
-    this.setState({
-      theme: this.state.theme.name === 'dark' ? 'light' : 'dark',
-    });
+    this.setState(prevState => ({
+      theme: prevState.theme.name === 'dark' ? 'light' : 'dark',
+    }));
 
   persist = () => {
     // localStorage.setItem('appContext', JSON.stringify(this.state));
@@ -67,7 +62,6 @@ class Context extends React.Component {
     return (
       <AppContext.Provider
         value={{
-          isAuthenticated: this.isAuthenticated,
           logout: this.logout,
           notify: this.notify,
           setUser: this.setUser,
@@ -86,5 +80,10 @@ class Context extends React.Component {
     );
   }
 }
+
+Context.propTypes = {
+  children: PropTypes.element.isRequired,
+  me: PropTypes.object,
+};
 
 export default Context;

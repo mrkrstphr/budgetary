@@ -7,12 +7,12 @@ import MonthSwitcher from 'component/MonthSwitcher';
 import { TabPanel } from 'component/TabPanel';
 import AddImportTransactionButton from 'component/AddImportTransactionButton';
 import TransactionsList from 'component/TransactionList';
-import { useMonthsQuery, useTransactionsQuery } from 'query';
+import { useMonths, useTransactions } from 'query';
 import SpendBreakdown from './components/SpendBreakdown';
 import Statistics from './components/Statistics';
 
 function TransactionsTab({ month }) {
-  const { error, loading, transactions } = useTransactionsQuery({
+  const { error, loading, transactions } = useTransactions({
     filters: { month },
   });
 
@@ -45,7 +45,7 @@ TransactionsTab.propTypes = {
 
 function TransactionsPage() {
   const { month } = useParams();
-  const { loading, months } = useMonthsQuery();
+  const { loading, months } = useMonths();
 
   if (loading) {
     return null;

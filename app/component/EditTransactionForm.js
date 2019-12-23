@@ -1,10 +1,11 @@
 import { Button } from '@blueprintjs/core';
 import { Formik } from 'formik';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Dialog } from 'component';
-import { useUpdateTransactionMutation } from 'mutation';
-import { useAccountsQuery } from 'query';
+import { useUpdateTransaction } from 'mutation';
+import { useAccounts } from 'query';
 import TransactionForm from './TransactionForm';
 import { ToastContext } from './ToastContext';
 
@@ -25,8 +26,8 @@ import { ToastContext } from './ToastContext';
 // });
 
 export default function EditTransactionForm({ onClose, transaction }) {
-  const { accounts } = useAccountsQuery();
-  const [updateTransaction] = useUpdateTransactionMutation();
+  const { accounts } = useAccounts();
+  const [updateTransaction] = useUpdateTransaction();
 
   const initialValues = {
     date: new Date(transaction.date),
@@ -38,7 +39,7 @@ export default function EditTransactionForm({ onClose, transaction }) {
 
       return {
         id: account.id,
-        accountId: accountDetails ? accountDetails : null,
+        accountId: accountDetails || null,
         increase:
           Math.abs(account.amount) === account.amount ? account.amount : '',
         decrease:
@@ -78,7 +79,7 @@ export default function EditTransactionForm({ onClose, transaction }) {
                 transaction.id,
                 moment(date).format('YYYY-MM-DD'),
                 description,
-                preparedSplits
+                preparedSplits,
               ).then(() => {
                 setSubmitting(false);
                 toaster.show({
@@ -94,7 +95,7 @@ export default function EditTransactionForm({ onClose, transaction }) {
               <Dialog
                 icon="edit"
                 title="Edit Transaction"
-                isOpen={true}
+                isOpen
                 onClose={onClose}
                 footer={
                   <>
@@ -120,3 +121,13 @@ export default function EditTransactionForm({ onClose, transaction }) {
     </ToastContext.Consumer>
   );
 }
+
+EditTransactionForm.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  transaction: PropTypes.shape({
+    accounts: PropTypes.arrayOf(PropTypes.object).isRequired,
+    date: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
+  }).isRequired,
+};

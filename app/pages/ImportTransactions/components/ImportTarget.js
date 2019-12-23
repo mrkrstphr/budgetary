@@ -1,4 +1,5 @@
 import { Button, NonIdealState } from '@blueprintjs/core';
+import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -29,9 +30,9 @@ export default function ImportTarget({ fileSelected }) {
         title="Import Transactions"
         description={
           <p>
-            Let's start by selecting a CSV (comma seperated values) file. These
-            can often be exported from your financial institutions. Excel files
-            can be opened in Excel and exported as CSV files.
+            Let&apos;s start by selecting a CSV (comma seperated values) file.
+            These can often be exported from your financial institutions. Excel
+            files can be opened in Excel and exported as CSV files.
           </p>
         }
         action={
@@ -53,3 +54,7 @@ export default function ImportTarget({ fileSelected }) {
     </ImportTargetStyles>
   );
 }
+
+ImportTarget.propTypes = {
+  fileSelected: PropTypes.func.isRequired,
+};

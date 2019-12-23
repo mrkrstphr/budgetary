@@ -10,7 +10,6 @@ import Header from './component/Header';
 import Login from './component/Login';
 import Router from './Router';
 import Context, { AppContext } from './Context';
-// import ToastContext from '../component/ToastContext';
 import AppSidebar from './component/Sidebar';
 
 const AppContainer = styled.div`

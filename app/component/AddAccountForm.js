@@ -1,5 +1,6 @@
 import { Button } from '@blueprintjs/core';
 import { Formik, Form } from 'formik';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Input, Select } from 'component/Form';
 import { useCreateAccount } from 'mutation';
@@ -66,5 +67,11 @@ function AddAccountForm({ initialValues, onClose, onSave }) {
     </Formik>
   );
 }
+
+AddAccountForm.propTypes = {
+  initialValues: PropTypes.object,
+  onClose: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
+};
 
 export default AddAccountForm;

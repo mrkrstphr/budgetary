@@ -5,13 +5,13 @@ import AddImportTransactionButton from 'component/AddImportTransactionButton';
 import { TabPanel } from 'component/TabPanel';
 import TransactionList from 'component/TransactionList';
 import { mapParamIdToId } from 'lib';
-import { useAccountDetailsQuery, useTransactionsQuery } from 'query';
+import { useAccountDetails, useTransactions } from 'query';
 import Statistics from './components/Statistics';
 import Reconciliations from './components/Reconciliations';
 
 function AccountDetails({ id }) {
-  const { account, loading } = useAccountDetailsQuery(id);
-  const { transactions, loading: transactionsLoading } = useTransactionsQuery({
+  const { account, loading } = useAccountDetails(id);
+  const { transactions, loading: transactionsLoading } = useTransactions({
     filters: { accountId: id },
     paging: { perPage: 150 },
   });

@@ -1,4 +1,5 @@
 import { Callout } from '@blueprintjs/core';
+import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -19,9 +20,15 @@ const Styles = styled(Callout)`
   }
 `;
 
-export const StatisticTile = ({ title, value, ...props }) => (
-  <Styles {...props}>
+export const StatisticTile = ({ intent = '', title, value }) => (
+  <Styles intent={intent}>
     <h4 className="bp3-heading title">{title}</h4>
     <div className="value">{value}</div>
   </Styles>
 );
+
+StatisticTile.propTypes = {
+  intent: PropTypes.oneOf(['success', 'danger', 'primary']),
+  title: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+};

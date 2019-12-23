@@ -34,6 +34,7 @@ import { ApolloLink } from 'apollo-link';
 import { createHttpLink } from 'apollo-link-http';
 import React from 'react';
 import { ApolloProvider } from 'react-apollo';
+import 'regenerator-runtime/runtime';
 import { render } from 'react-dom';
 import App from './App';
 

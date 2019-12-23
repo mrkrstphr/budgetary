@@ -1,8 +1,9 @@
 import { Button, MenuItem } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { highlightText } from 'lib';
-import { useAccountsQuery } from 'query';
+import { useAccounts } from 'query';
 
 export function itemsEqual(a, b) {
   return a.id === b.id;
@@ -19,7 +20,7 @@ export const filterCategories = (query, category, _index, exactMatch) => {
 };
 
 export default function SelectCategory({ onChange, value }) {
-  const { loading: accountsLoading, accounts } = useAccountsQuery();
+  const { loading: accountsLoading, accounts } = useAccounts();
 
   return (
     <Select
@@ -51,3 +52,11 @@ export default function SelectCategory({ onChange, value }) {
     </Select>
   );
 }
+
+SelectCategory.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  value: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+  }),
+};

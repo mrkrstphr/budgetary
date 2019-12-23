@@ -11,7 +11,7 @@ export const fetchMonthsQuery = gql`
   }
 `;
 
-export function useMonthsQuery() {
+export function useMonths() {
   const { loading, error, data, ...etc } = useQuery(fetchMonthsQuery);
 
   return {

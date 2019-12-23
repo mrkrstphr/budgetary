@@ -34,9 +34,9 @@ class User {
   findTokenBy(where) {
     const query = this.conn('user_tokens AS t');
 
-    for (const key of Object.keys(where)) {
+    Object.keys(where).forEach(key => {
       query.whereRaw(`LOWER(${key}) = ?`, [where[key].toLowerCase()]);
-    }
+    });
 
     return query.then(v => v[0]);
   }
@@ -44,9 +44,9 @@ class User {
   findOneBy(where) {
     const query = this.conn('users').select('*');
 
-    for (const key of Object.keys(where)) {
+    Object.keys(where).forEach(key => {
       query.whereRaw(`LOWER(${key}) = ?`, [where[key].toLowerCase()]);
-    }
+    });
 
     return query.then(v => v[0]);
   }

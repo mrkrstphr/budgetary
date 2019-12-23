@@ -2,7 +2,7 @@ import { Icon } from '@blueprintjs/core';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { useAccountsQuery } from 'query';
+import { useAccounts } from 'query';
 import AccountTypeList from './AccountTypeList';
 import Logo from './Logo';
 
@@ -74,7 +74,7 @@ const SidebarStyles = styled.div`
 `;
 
 export default function Sidebar() {
-  const { accounts, loading } = useAccountsQuery();
+  const { accounts, loading } = useAccounts();
 
   return (
     <SidebarStyles>

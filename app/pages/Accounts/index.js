@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BrowserTitle } from 'component';
 import { currencyFormatter, ucfirst } from 'lib';
-import { useAccountsQuery } from 'query';
+import { useAccounts } from 'query';
 
 function groupAccounts(accounts, filter = '') {
   const filteredAccounts = accounts.filter(account =>
@@ -19,7 +19,7 @@ function groupAccounts(accounts, filter = '') {
 }
 
 function Accounts() {
-  const { accounts } = useAccountsQuery();
+  const { accounts } = useAccounts();
   const [filter, setFilter] = useState('');
 
   const groupedAccounts = groupAccounts(accounts, filter);

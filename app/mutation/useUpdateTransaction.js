@@ -22,7 +22,7 @@ export const updateTransactionMutation = gql`
   }
 `;
 
-export function useUpdateTransactionMutation() {
+export function useUpdateTransaction() {
   const [updateTransactionFunc, { data }] = useMutation(
     updateTransactionMutation,
   );

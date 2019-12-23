@@ -6,15 +6,16 @@ import {
   Menu,
   MenuItem,
 } from '@blueprintjs/core';
+import PropTypes from 'prop-types';
 import React from 'react';
-import { useDeleteTransactionMutation } from 'mutation';
+import { useDeleteTransaction } from 'mutation';
 import EditTransactionForm from './EditTransactionForm';
 import { ToastContext } from './ToastContext';
 
 export default function TransactionActions({ transaction }) {
   const [editTransaction, setEditTransaction] = React.useState(null);
   const [confirmDeleteItem, setConfirmDeleteItem] = React.useState(false);
-  const [deleteTransaction] = useDeleteTransactionMutation();
+  const [deleteTransaction] = useDeleteTransaction();
 
   return (
     <ToastContext.Consumer>
@@ -88,3 +89,7 @@ export default function TransactionActions({ transaction }) {
     </ToastContext.Consumer>
   );
 }
+
+TransactionActions.propTypes = {
+  transaction: PropTypes.object.isRequired,
+};

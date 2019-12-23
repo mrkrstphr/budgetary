@@ -156,6 +156,7 @@ const ImportOptions = ({ dispatch, state }) => (
 ImportOptions.propTypes = {
   dispatch: PropTypes.func.isRequired,
   state: PropTypes.shape({
+    confirmResetOpen: PropTypes.bool.isRequired,
     firstRowAsHeaders: PropTypes.bool.isRequired,
     offsetAccount: PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -245,37 +246,37 @@ function TransactionsTable({ dispatch, state }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {state.rows.map((transaction, index) => (
-                    <tr key={`transaction-${transaction.id}`}>
+                  {state.rows.map((csvRow, csvRowIndex) => (
+                    <tr key={`transaction-${csvRowIndex}`}>
                       <td>
                         <Checkbox
                           checked={
                             state.selectAll ||
-                            state.selectedRows.includes(index)
+                            state.selectedRows.includes(csvRowIndex)
                           }
                           onClick={() =>
                             dispatch({
                               type: 'selectRow',
-                              value: index,
+                              value: csvRowIndex,
                             })
                           }
                         />
                       </td>
-                      {transaction.map(column => (
+                      {csvRow.map(column => (
                         <td
                           className="right"
-                          key={`transaction-${transaction.id}-${column}`}
+                          key={`transaction-${csvRowIndex}-${column}`}
                         >
                           {column}
                         </td>
                       ))}
                       <td>
                         <SelectCategory
-                          value={state.transactionAccountMappings[index]}
+                          value={state.transactionAccountMappings[csvRowIndex]}
                           onChange={category => {
                             dispatch({
                               type: 'mapTransaction',
-                              index,
+                              csvRowIndex,
                               value: category,
                             });
                           }}
@@ -329,11 +330,17 @@ function TransactionsTable({ dispatch, state }) {
 TransactionsTable.propTypes = {
   dispatch: PropTypes.func.isRequired,
   state: PropTypes.shape({
+    columns: PropTypes.arrayOf(PropTypes.string).isRequired,
+    confirmFinishOpen: PropTypes.bool.isRequired,
     firstRowAsHeaders: PropTypes.bool.isRequired,
     offsetAccount: PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
     }),
+    rows: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)).isRequired,
+    selectAll: PropTypes.bool.isRequired,
+    selectedRows: PropTypes.arrayOf(PropTypes.number).isRequired,
+    transactionAccountMappings: PropTypes.object.isRequired,
   }).isRequired,
 };
 

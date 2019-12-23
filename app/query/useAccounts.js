@@ -18,7 +18,7 @@ export const filterAccountsQuery = gql`
   }
 `;
 
-export function useAccountsQuery(filter = '') {
+export function useAccounts(filter = '') {
   const { loading, error, data, ...etc } = useQuery(filterAccountsQuery, {
     variables: { filter },
   });

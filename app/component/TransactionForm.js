@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import { Button } from '@blueprintjs/core';
 import { addDays } from 'date-fns';
 import { Form } from 'formik';

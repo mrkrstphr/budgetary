@@ -23,7 +23,7 @@ function reducer(state, action) {
         selectedRows: Array.from(action.data.keys()),
       };
 
-    case 'setUseFirstRowAsHeaders':
+    case 'setUseFirstRowAsHeaders': {
       const rows = action.value
         ? [...state.rows]
         : [state.columns, ...state.rows];
@@ -41,6 +41,7 @@ function reducer(state, action) {
           ? Array.from(rows.keys())
           : state.selectedRows.filter((row, index) => index !== 0),
       };
+    }
 
     case 'setOffsetAccount':
       return {

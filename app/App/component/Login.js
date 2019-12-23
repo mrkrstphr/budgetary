@@ -1,26 +1,26 @@
 import { Button } from '@blueprintjs/core';
 import { Formik, Form } from 'formik';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { Input } from 'component/Form';
-import createTokenMutation from '../container/createTokenMutation';
+import { useLogin } from 'mutation';
 import { AppContext } from '../Context';
 
-function Login({ createToken }) {
+export default function Login() {
+  const [login] = useLogin();
   return (
     <AppContext.Consumer>
       {({ notify, setUser }) => (
         <Formik
           initialValues={{ email: '', password: '' }}
           onSubmit={({ email, password }, { setSubmitting }) =>
-            createToken(email, password)
-              .then(response => {
+            login(email, password)
+              .then(({ errors, user }) => {
                 setSubmitting(false);
-                if (response.data.createToken.errors) {
+                if (errors) {
                   notify('Authentication Failed', 'danger');
                   return;
                 }
-                setUser(response.data.createToken.user);
+                setUser(user);
                 // TODO FIXME
                 window.location.reload();
               })
@@ -53,9 +53,3 @@ function Login({ createToken }) {
     </AppContext.Consumer>
   );
 }
-
-Login.propTypes = {
-  createToken: PropTypes.func.isRequired,
-};
-
-export default createTokenMutation(Login);

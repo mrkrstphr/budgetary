@@ -10,10 +10,6 @@ export default createGlobalStyle`
     box-sizing: border-box;
   }
 
-  a, a:visited {
-    color: #f6993f;
-  }
-
   html {
     margin: 0;
     padding: 0;

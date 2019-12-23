@@ -20,11 +20,12 @@ export function highlightText(text, query) {
   const regexp = new RegExp(words.join('|'), 'gi');
   const tokens = [];
 
-  while (true) {
-    const match = regexp.exec(text);
-    if (!match) {
-      break;
-    }
+  let match = regexp.exec(text);
+  while (match) {
+    // const match = regexp.exec(text);
+    // if (!match) {
+    //   break;
+    // }
 
     const { length } = match[0];
     const before = text.slice(lastIndex, regexp.lastIndex - length);
@@ -35,6 +36,8 @@ export function highlightText(text, query) {
 
     lastIndex = regexp.lastIndex;
     tokens.push(<strong key={lastIndex}>{match[0]}</strong>);
+
+    match = regexp.exec(text);
   }
 
   const rest = text.slice(lastIndex);

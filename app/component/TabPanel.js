@@ -39,7 +39,7 @@ export const TabPanel = ({ tabs = [], contents = [], style = {} }) => {
         {tabs.map(({ label }, index) => (
           <Tab
             label={label}
-            key={index}
+            key={`tab-${label}`}
             onClick={() => selectTab(index)}
             className={index === selectedTab ? 'active' : ''}
           />

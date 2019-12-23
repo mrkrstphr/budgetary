@@ -4,13 +4,16 @@ const express = require('express');
 const session = require('express-session');
 const sessionKnex = require('connect-session-knex');
 
-const { ApolloServer } = require('apollo-server-express');
+const { ApolloServer, makeExecutableSchema } = require('apollo-server-express');
 
 const logger = require('./logger');
+
+const { applyMiddleware } = require('graphql-middleware');
 
 const argv = require('./argv');
 const port = require('./port');
 const setup = require('./middlewares/frontendMiddleware');
+const ValidationMiddleware = require('./middlewares/ValidationMiddleware');
 const isDev = process.env.NODE_ENV !== 'production';
 const ngrok =
   (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel
@@ -44,9 +47,14 @@ app.use(
   }),
 );
 
-const server = new ApolloServer({
+const schema = makeExecutableSchema({
   typeDefs,
   resolvers,
+});
+const schemaWithMiddleware = applyMiddleware(schema, ValidationMiddleware);
+
+const server = new ApolloServer({
+  schema: schemaWithMiddleware,
   context: ({ req, res }) => new Context(req, res),
 });
 

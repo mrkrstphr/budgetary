@@ -100,7 +100,7 @@ const schema = gql`
   input CreateTransactionInput {
     date: Date!
     description: String!
-    accounts: [CreateTransactionAccountInput]
+    accounts: [CreateTransactionAccountInput]!
   }
 
   input UpdateTransactionAccountInput {

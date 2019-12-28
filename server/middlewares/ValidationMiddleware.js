@@ -5,9 +5,8 @@ module.exports = async function Mutation(resolve, root, args, context, info) {
     info.fieldName
   ];
 
-  let mutationValidationSchema = mutationField.validationSchema;
-
-  if (mutationValidationSchema) {
+  if (mutationField && 'validationSchema' in mutationField) {
+    let mutationValidationSchema = mutationField.validationSchema;
     if (typeof mutationValidationSchema === 'function') {
       mutationValidationSchema = mutationValidationSchema(context);
     }

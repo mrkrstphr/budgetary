@@ -1,19 +1,19 @@
 import { Button, Dialog } from '@blueprintjs/core';
 import { Formik, Form, ErrorMessage } from 'formik';
 import { isNil } from 'lodash';
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { DatePicker, FieldError, Input } from 'component/Form';
-import { ToastContext } from 'component/ToastContext';
+import { formatIsoDate } from 'lib';
 import { useCreateReconciliation } from 'mutation';
+import { AppContext } from '../../../App/Context';
 
 export default function AddReconciliationForm({ initialValues, onClose }) {
   const [createReconciliation] = useCreateReconciliation();
 
   return (
-    <ToastContext.Consumer>
-      {toaster => (
+    <AppContext.Consumer>
+      {({ notify }) => (
         <Formik
           initialValues={initialValues}
           onSubmit={(
@@ -29,21 +29,15 @@ export default function AddReconciliationForm({ initialValues, onClose }) {
             { setErrors, setSubmitting },
           ) =>
             createReconciliation(accountId, {
-              startDate: startDate
-                ? moment(startDate).format('YYYY-MM-DD')
-                : null,
-              endDate: endDate ? moment(endDate).format('YYYY-MM-DD') : null,
+              startDate: startDate ? formatIsoDate(startDate) : null,
+              endDate: endDate ? formatIsoDate(endDate) : null,
               startingBalance,
               endingBalance,
             })
               .then(({ errors }) => {
                 setSubmitting(false);
                 if (isNil(errors)) {
-                  toaster.show({
-                    icon: 'tick-circle',
-                    intent: 'success',
-                    message: `Account Reconciliation Created`,
-                  });
+                  notify('Account Reconciliation Created');
                   onClose();
                 } else {
                   const errorList = {};
@@ -51,19 +45,11 @@ export default function AddReconciliationForm({ initialValues, onClose }) {
                     errorList[field] = error;
                   });
                   setErrors(errorList);
-                  toaster.show({
-                    icon: 'warning-triangle',
-                    intent: 'danger',
-                    message: `Failed to create reconciliation`,
-                  });
+                  notify('Failed to create reconciliation', 'danger');
                 }
               })
               .catch(() => {
-                toaster.show({
-                  icon: 'warning-triangle',
-                  intent: 'danger',
-                  message: `Failed to create reconciliation`,
-                });
+                notify('Failed to create reconciliation', 'danger');
                 setSubmitting(false);
               })
           }
@@ -113,7 +99,7 @@ export default function AddReconciliationForm({ initialValues, onClose }) {
           )}
         </Formik>
       )}
-    </ToastContext.Consumer>
+    </AppContext.Consumer>
   );
 }
 

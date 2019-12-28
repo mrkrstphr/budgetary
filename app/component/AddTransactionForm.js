@@ -1,29 +1,77 @@
 import { Button } from '@blueprintjs/core';
 import { Formik } from 'formik';
-// import { isNil } from 'lodash';
-import moment from 'moment';
+import { isNil } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-// import * as yup from 'yup';
 import { Dialog } from 'component';
 import { useCreateTransaction } from 'mutation';
+import * as Yup from 'yup';
+import { formatIsoDate } from 'lib';
 import TransactionForm from './TransactionForm';
 import { AppContext } from '../App/Context';
 
-// yup.addMethod(yup.object, 'onlyOneOf', function(
-//   list,
-//   // eslint-disable-next-line no-template-curly-in-string
-//   message = '${path} must have at least one of these keys: ${keys}',
-// ) {
-//   return this.test({
-//     name: 'onlyOneOf',
-//     message,
-//     exclusive: true,
-//     params: { keys: list.join(', ') },
-//     test: value =>
-//       value == null || list.filter(f => !isNil(value[f])).length === 1,
-//   });
-// });
+Yup.addMethod(Yup.object, 'onlyOneOf', function validateOnlyOneOf(
+  list,
+  // eslint-disable-next-line no-template-curly-in-string
+  message = '${path} must have at least one of these keys: ${keys}',
+) {
+  return this.test({
+    name: 'onlyOneOf',
+    message,
+    exclusive: true,
+    params: { keys: list.join(', ') },
+    test: value =>
+      value == null || list.filter(f => !isNil(value[f])).length === 1,
+  });
+});
+
+const AddTransactionSchema = Yup.object().shape({
+  description: Yup.string().required(),
+  splits: Yup.array()
+    .of(
+      Yup.object().shape({
+        accountId: Yup.string('Account selection is required')
+          .nullable()
+          .required('Account selection is required'),
+        increase: Yup.number().moreThan(0, 'Must be greater than 0'),
+        decrease: Yup.number()
+          .moreThan(0, 'Must be greater than 0')
+          .test(
+            'validate-only-one',
+            'Only one of increase or decrease is allowed per account line item',
+            async function validateOnlyOneIncreaseOrDecrease() {
+              if (
+                !isNil(this.parent.increase) &&
+                !isNil(this.parent.decrease)
+              ) {
+                return false;
+              }
+
+              if (isNil(this.parent.increase) && isNil(this.parent.decrease)) {
+                return false;
+              }
+
+              return true;
+            },
+          ),
+      }),
+    )
+    .test(
+      'validate-transaction-balances',
+      'Transaction must balance; all amounts must add up to zero.',
+      async function validateNotExists(data) {
+        return (
+          data.reduce((sum, row) => {
+            if ('increase' in row) {
+              return sum + row.increase;
+            }
+
+            return sum - row.decrease;
+          }, 0) === 0
+        );
+      },
+    ),
+});
 
 export default function AddTransactionForm({ account, onClose }) {
   const [createTransaction] = useCreateTransaction();
@@ -51,6 +99,8 @@ export default function AddTransactionForm({ account, onClose }) {
         <>
           <Formik
             initialValues={initialValues}
+            validateOnBlur={false}
+            validationSchema={AddTransactionSchema}
             onSubmit={(
               { date, description, splits },
               { setSubmitting, resetForm },
@@ -62,7 +112,7 @@ export default function AddTransactionForm({ account, onClose }) {
                   : Math.abs(parseFloat(split.decrease)) * -1,
               }));
               return createTransaction(
-                moment(date).format('YYYY-MM-DD'),
+                formatIsoDate(date),
                 description,
                 preparedSplits,
               )

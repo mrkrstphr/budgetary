@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { useDeleteTransaction } from 'mutation';
 import EditTransactionForm from './EditTransactionForm';
-import { ToastContext } from './ToastContext';
+import { AppContext } from '../App/Context';
 
 export default function TransactionActions({ transaction }) {
   const [editTransaction, setEditTransaction] = React.useState(null);
@@ -18,8 +18,8 @@ export default function TransactionActions({ transaction }) {
   const [deleteTransaction] = useDeleteTransaction();
 
   return (
-    <ToastContext.Consumer>
-      {toaster => (
+    <AppContext.Consumer>
+      {({ notify }) => (
         <>
           <Alert
             cancelButtonText="Cancel"
@@ -31,11 +31,7 @@ export default function TransactionActions({ transaction }) {
             onConfirm={() =>
               deleteTransaction(confirmDeleteItem.id).then(() => {
                 setConfirmDeleteItem(false);
-                toaster.show({
-                  icon: 'trash',
-                  intent: 'success',
-                  message: `Transaction Deleted`,
-                });
+                notify('Transaction Deleted');
               })
             }
           >
@@ -86,7 +82,7 @@ export default function TransactionActions({ transaction }) {
           </Popover>
         </>
       )}
-    </ToastContext.Consumer>
+    </AppContext.Consumer>
   );
 }
 

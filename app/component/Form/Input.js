@@ -3,14 +3,8 @@ import { InputGroup, Label } from '@blueprintjs/core';
 import { Field, ErrorMessage } from 'formik';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-function FakeLabel({ children }) {
-  return <div>{children}</div>;
-}
-
-FakeLabel.propTypes = {
-  children: PropTypes.element.isRequired,
-};
+import { FakeLabel } from './FakeLabel';
+import { FieldError } from './FieldError';
 
 export function Input({ label, name, ...props }) {
   const FieldLabel = label ? Label : FakeLabel;
@@ -23,7 +17,7 @@ export function Input({ label, name, ...props }) {
             {label}
             <InputGroup id={field.name} {...field} {...props} />
           </FieldLabel>
-          <ErrorMessage name={field.name} component="div" />
+          <ErrorMessage name={field.name} component={FieldError} />
         </>
       )}
     </Field>
@@ -32,5 +26,5 @@ export function Input({ label, name, ...props }) {
 
 Input.propTypes = {
   name: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
 };

@@ -1,11 +1,11 @@
 /* eslint-disable react/no-array-index-key */
 import { Button } from '@blueprintjs/core';
 import { addDays } from 'date-fns';
-import { Form } from 'formik';
+import { ErrorMessage, Form } from 'formik';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { AccountSelect, TransactionTable } from 'component';
-import { DatePicker, Input } from 'component/Form';
+import { DatePicker, FieldError, Input } from 'component/Form';
 import { useCounter } from 'lib';
 
 export default function TransactionForm({ initialTransactionCount = 2 }) {
@@ -63,21 +63,23 @@ export default function TransactionForm({ initialTransactionCount = 2 }) {
                   />
                 )}
               </td>
-              {/* <ErrorMessage name={`splits[${index}]`}>
-                          {msg => (
-                            <Callout intent="danger" minimal>
-                              {msg}
-                            </Callout>
-                          )}
-                        </ErrorMessage> */}
             </tr>
           ))}
         </tbody>
       </TransactionTable>
+
+      <ErrorMessage
+        name="splits"
+        render={(...messages) =>
+          messages
+            .filter(message => typeof message === 'string')
+            .map(error => <FieldError key={error}>{error}</FieldError>)
+        }
+      />
     </Form>
   );
 }
 
 TransactionForm.propTypes = {
-  initialTransactionCount: PropTypes.number.isRequired,
+  initialTransactionCount: PropTypes.number,
 };

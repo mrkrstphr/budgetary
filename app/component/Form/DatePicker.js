@@ -4,15 +4,9 @@ import { DateInput } from '@blueprintjs/datetime';
 import { Field, ErrorMessage, useFormikContext } from 'formik';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { formatDate } from 'lib';
+import { FakeLabel } from './FakeLabel';
 import { FieldError } from './FieldError';
-
-function FakeLabel({ children }) {
-  return <div>{children}</div>;
-}
-
-FakeLabel.propTypes = {
-  children: PropTypes.element.isRequired,
-};
 
 export function DatePicker({ label, name, ...props }) {
   const { setFieldValue } = useFormikContext();
@@ -29,7 +23,7 @@ export function DatePicker({ label, name, ...props }) {
               name={name}
               defaultValue={value}
               fill
-              formatDate={date => date.toLocaleDateString()}
+              formatDate={date => formatDate(date)}
               parseDate={str => new Date(str)}
               placeholder="M/D/YYYY"
               onChange={newValue => setFieldValue(name, newValue)}

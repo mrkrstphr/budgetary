@@ -1,5 +1,4 @@
 const makeUuid = require('uuid/v4');
-const moment = require('moment');
 const { desnakeify, pickFirst, snakeify } = require('../lib');
 
 const handlers = { between: betweenHandler, or: orHandler };
@@ -121,8 +120,14 @@ class Reconciliation {
               accountId,
               status: 'Open',
               ...details,
-              startDate: moment(details.startDate).toISOString(),
-              endDate: moment(details.endDate).toISOString(),
+              startDate: (details.startDate instanceof Date
+                ? details.startDate
+                : new Date(details.startDate)
+              ).toISOString(),
+              endDate: (details.startDate instanceof Date
+                ? details.endDate
+                : new Date(details.endDate)
+              ).toISOString(),
             }),
           )
           .returning('*'),

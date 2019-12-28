@@ -8,6 +8,7 @@ import { highlightText, useToggle } from 'lib';
 import { useAccounts } from 'query';
 import styled from 'styled-components';
 import AddAccountForm from './AddAccountForm';
+import { FakeLabel } from './Form/FakeLabel';
 
 function renderAccount(account, { handleClick, modifiers, query }) {
   if (!modifiers.matchesPredicate) {
@@ -33,14 +34,6 @@ const WrappedButton = styled(Button)`
     width: 150px;
   }
 `;
-
-function FakeLabel({ children }) {
-  return <div>{children}</div>;
-}
-
-FakeLabel.propTypes = {
-  children: PropTypes.element.isRequired,
-};
 
 export function AccountSelect({ label, name }) {
   const { loading, error, accounts, refetch } = useAccounts();
@@ -113,5 +106,5 @@ export function AccountSelect({ label, name }) {
 
 AccountSelect.propTypes = {
   name: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
 };

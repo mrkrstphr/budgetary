@@ -1,9 +1,9 @@
 import { Button } from '@blueprintjs/core';
 import { Formik } from 'formik';
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Dialog } from 'component';
+import { formatIsoDate } from 'lib';
 import { useUpdateTransaction } from 'mutation';
 import { useAccounts } from 'query';
 import TransactionForm from './TransactionForm';
@@ -77,7 +77,7 @@ export default function EditTransactionForm({ onClose, transaction }) {
 
               return updateTransaction(
                 transaction.id,
-                moment(date).format('YYYY-MM-DD'),
+                formatIsoDate(date),
                 description,
                 preparedSplits,
               ).then(() => {

@@ -45,14 +45,16 @@ export default function TransactionsList({ transactions }) {
 TransactionsList.propTypes = {
   transactions: PropTypes.arrayOf(
     PropTypes.shape({
-      account: PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        account: PropTypes.shape({
+      accounts: PropTypes.arrayOf(
+        PropTypes.shape({
           id: PropTypes.string.isRequired,
-          name: PropTypes.string.isRequired,
-        }).isRequired,
-        amount: PropTypes.number.isRequired,
-      }).isRequired,
+          account: PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+          }).isRequired,
+          amount: PropTypes.number.isRequired,
+        }),
+      ).isRequired,
       date: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
     }),

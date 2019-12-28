@@ -1,14 +1,9 @@
 import { Button, HTMLTable, NonIdealState } from '@blueprintjs/core';
-import moment from 'moment';
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { useReconciliations } from 'query';
-import { useToggle } from 'lib';
+import { formatDate, useToggle } from 'lib';
 import AddReconciliationForm from './AddReconciliationForm';
-
-function formatDate(date) {
-  return moment(date).format('M/D/YYYY');
-}
 
 export default withRouter(function Reconciliations({ accountId, history }) {
   const [addOpen, toggleAddOpen] = useToggle();

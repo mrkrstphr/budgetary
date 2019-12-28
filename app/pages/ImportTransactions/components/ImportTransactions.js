@@ -7,7 +7,6 @@ import {
   HTMLTable,
   Intent,
 } from '@blueprintjs/core';
-import moment from 'moment';
 import Papa from 'papaparse';
 import PropTypes from 'prop-types';
 import React, { useReducer } from 'react';
@@ -15,10 +14,11 @@ import { FieldColumn, FieldRow, Label } from 'component/Form';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import { useHistory } from 'react-router-dom';
+import { formatIsoDate } from 'lib';
 import { initialState, reducer } from '../reducer';
 import SelectCategory from '../../../component/SelectCategory';
 import ImportTarget from './ImportTarget';
-import { ToastContext } from '../../../component/ToastContext';
+import { AppContext } from '../../../App/Context';
 
 function getMappingOptionsFor(state, columnName) {
   const columns = state.columns.filter(column => {
@@ -168,9 +168,9 @@ ImportOptions.propTypes = {
 
 function getTransactionsToImport(state) {
   const transactions = state.selectedRows.map(index => ({
-    date: moment(
+    date: formatIsoDate(
       state.rows[index][state.columns.indexOf(state.columnMappings.date)],
-    ).format('YYYY-MM-DD'),
+    ),
     description:
       state.rows[index][
         state.columns.indexOf(state.columnMappings.description)
@@ -221,8 +221,8 @@ function TransactionsTable({ dispatch, state }) {
   const history = useHistory();
 
   return (
-    <ToastContext.Consumer>
-      {toaster => (
+    <AppContext.Consumer>
+      {({ notify }) => (
         <BulkImport>
           {bulkImport => (
             <div>
@@ -299,13 +299,11 @@ function TransactionsTable({ dispatch, state }) {
                   const transactions = getTransactionsToImport(state);
                   await bulkImport(transactions);
                   dispatch({ type: 'toggleConfirmFinish' });
-                  toaster.show({
-                    icon: 'tick-circle',
-                    intent: 'success',
-                    message: `(${
+                  notify(
+                    `(${
                       transactions.length
                     }) Transactions Imported Successfully`,
-                  });
+                  );
                   history.push('/transactions');
                 }}
               >
@@ -324,7 +322,7 @@ function TransactionsTable({ dispatch, state }) {
           )}
         </BulkImport>
       )}
-    </ToastContext.Consumer>
+    </AppContext.Consumer>
   );
 }
 

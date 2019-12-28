@@ -1,10 +1,9 @@
 import { Button, ButtonGroup, MenuItem } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { highlightText } from 'lib';
+import { formatMonthAndYear, highlightText } from 'lib';
 
 function itemPredicate(query, month, _index, exactMatch) {
   const normalizedTitle = month.name.toLowerCase();
@@ -30,10 +29,6 @@ function itemRenderer(month, { handleClick, modifiers, query }) {
       text={highlightText(month.name, query)}
     />
   );
-}
-
-function formatMonth(month) {
-  return moment(`${month}-01`).format('MMMM YYYY');
 }
 
 function hasPreviousMonth(months, selected) {
@@ -83,7 +78,7 @@ export default function MonthSwitcher({ months, selectedMonth }) {
       >
         <Button
           icon="calendar"
-          text={formatMonth(selectedMonth.name)}
+          text={formatMonthAndYear(selectedMonth.name)}
           rightIcon="double-caret-vertical"
         />
       </Select>

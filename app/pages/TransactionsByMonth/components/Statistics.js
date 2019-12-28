@@ -28,5 +28,8 @@ export default function Statistics({ month }) {
 }
 
 Statistics.propTypes = {
-  month: PropTypes.string.isRequired,
+  month: PropTypes.shape({
+    totalExpenses: PropTypes.number.isRequired,
+    totalIncome: PropTypes.number.isRequired,
+  }).isRequired,
 };

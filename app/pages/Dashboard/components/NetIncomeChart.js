@@ -51,6 +51,9 @@ export default function NetIncomeChart({ months }) {
 
 NetIncomeChart.propTypes = {
   months: PropTypes.arrayOf(
-    PropTypes.shape({ amount: PropTypes.number.isRequired }),
+    PropTypes.shape({
+      totalExpenses: PropTypes.number.isRequired,
+      totalIncome: PropTypes.number.isRequired,
+    }),
   ).isRequired,
 };

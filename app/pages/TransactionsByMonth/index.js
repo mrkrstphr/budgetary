@@ -1,4 +1,3 @@
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useParams } from 'react-router-dom';
@@ -7,6 +6,7 @@ import MonthSwitcher from 'component/MonthSwitcher';
 import { TabPanel } from 'component/TabPanel';
 import AddImportTransactionButton from 'component/AddImportTransactionButton';
 import TransactionsList from 'component/TransactionList';
+import { formatMonthAndYear } from 'lib';
 import { useMonths, useTransactions } from 'query';
 import SpendBreakdown from './components/SpendBreakdown';
 import Statistics from './components/Statistics';
@@ -66,8 +66,8 @@ function TransactionsPage() {
   return (
     <div>
       <BrowserTitle
-        title={`${moment(`${`${selectedMonth.name}-01`}`).format(
-          'MMMM YYYY',
+        title={`${formatMonthAndYear(
+          `${`${selectedMonth.name}-01`}`,
         )} Transactions`}
       />
       <div
@@ -80,7 +80,7 @@ function TransactionsPage() {
         }}
       >
         <h2 style={{ flex: 1, margin: 0 }}>
-          {moment(`${`${selectedMonth.name}-01`}`).format('MMMM YYYY')}
+          {formatMonthAndYear(`${`${selectedMonth.name}-01`}`)}
         </h2>
 
         <MonthSwitcher months={months} selectedMonth={selectedMonth} />

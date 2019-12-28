@@ -1,4 +1,3 @@
-const moment = require('moment');
 const makeUuid = require('uuid/v4');
 const Account = require('./Account');
 const { applyPaging, desnakeify, pickFirst } = require('../lib');
@@ -294,7 +293,7 @@ class Transaction {
         this.conn('transactions').insert(
           {
             id: makeUuid(),
-            date: moment(date).toISOString(),
+            date: (date instanceof date ? date : new Date(date)).toISOString(),
             description,
             amount: splits.reduce((sum, split) => sum + split.amount, 0),
           },
@@ -341,7 +340,10 @@ class Transaction {
 
   update(id, date, description, accounts) {
     const update = this.conn('transactions')
-      .update({ date: moment(date).toISOString(), description })
+      .update({
+        date: (date instanceof date ? date : new Date(date)).toISOString(),
+        description,
+      })
       .where({ id })
       .returning('*');
 

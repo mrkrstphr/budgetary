@@ -1,7 +1,6 @@
 const yup = require('yup');
 
-function validateCreateTransaction(context) {
-  // throw new Error('yellow');
+function validateCreateTransaction() {
   return yup.object().shape({
     transaction: yup
       .object()

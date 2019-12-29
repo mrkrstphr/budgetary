@@ -1,5 +1,6 @@
 const account = require('./account');
 const accounts = require('./accounts');
+const goals = require('./goals');
 const me = require('./me');
 const months = require('./months');
 const netIncomeStats = require('./netIncomeStats');
@@ -11,6 +12,7 @@ const transactions = require('./transactions');
 module.exports = {
   account,
   accounts,
+  goals,
   me,
   months,
   netIncomeStats,

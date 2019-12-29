@@ -64,6 +64,15 @@ const schema = gql`
     showInMenu: Boolean
   }
 
+  type Goal {
+    id: ID!
+    account: Account!
+    description: String!
+    startingBalance: Float!
+    goalBalance: Float!
+    created: DateTime!
+  }
+
   type Transaction {
     id: ID!
     date: Date!
@@ -181,6 +190,7 @@ const schema = gql`
   type Query {
     account(id: ID!): Account
     accounts(filter: String): [Account]
+    goals: [Goal]
     me: User
     months: [Month]
     reconciliations(accountId: ID!): [Reconciliation]!

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { BrowserTitle } from 'component';
+import { PageTitle } from 'component';
 import MonthSwitcher from 'component/MonthSwitcher';
 import { TabPanel } from 'component/TabPanel';
 import AddImportTransactionButton from 'component/AddImportTransactionButton';
@@ -65,26 +65,12 @@ function TransactionsPage() {
 
   return (
     <div>
-      <BrowserTitle
+      <PageTitle
         title={`${formatMonthAndYear(
           `${`${selectedMonth.name}-01`}`,
         )} Transactions`}
+        action={<MonthSwitcher months={months} selectedMonth={selectedMonth} />}
       />
-      <div
-        style={{
-          borderBottom: '1px solid #eee',
-          alignItems: 'center',
-          display: 'flex',
-          marginBottom: 10,
-          paddingBottom: 10,
-        }}
-      >
-        <h2 style={{ flex: 1, margin: 0 }}>
-          {formatMonthAndYear(`${`${selectedMonth.name}-01`}`)}
-        </h2>
-
-        <MonthSwitcher months={months} selectedMonth={selectedMonth} />
-      </div>
 
       <Statistics month={selectedMonth} />
 

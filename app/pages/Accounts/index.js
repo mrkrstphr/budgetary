@@ -1,7 +1,7 @@
 import { HTMLTable, InputGroup } from '@blueprintjs/core';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BrowserTitle } from 'component';
+import { PageTitle } from 'component';
 import { currencyFormatter, ucfirst } from 'lib';
 import { useAccounts } from 'query';
 
@@ -26,23 +26,16 @@ function Accounts() {
 
   return (
     <div>
-      <BrowserTitle title="Accounts" />
-
-      <div
-        style={{
-          alignItems: 'center',
-          display: 'flex',
-          padding: '10px 0',
-        }}
-      >
-        <h2 style={{ flex: 1, margin: '0 0 10px 0' }}>Accounts</h2>
-
-        <InputGroup
-          type="search"
-          leftIcon="search"
-          onChange={e => setFilter(e.target.value)}
-        />
-      </div>
+      <PageTitle
+        title="Accounts"
+        action={
+          <InputGroup
+            type="search"
+            leftIcon="search"
+            onChange={e => setFilter(e.target.value)}
+          />
+        }
+      />
 
       {groupedAccounts && (
         <>

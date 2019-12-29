@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { BrowserTitle } from 'component';
+import { PageTitle } from 'component';
 import AddImportTransactionButton from 'component/AddImportTransactionButton';
 import { TabPanel } from 'component/TabPanel';
 import TransactionList from 'component/TransactionList';
@@ -22,8 +22,7 @@ function AccountDetails({ id }) {
 
   return (
     <div>
-      <BrowserTitle title={account.name} />
-      <h2>{account.name}</h2>
+      <PageTitle title={account.name} />
       <Statistics account={account} />
       <p>Balance: ${account.currentBalance}</p>
 

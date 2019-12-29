@@ -1,5 +1,6 @@
 import React from 'react';
 import { useMonths } from 'query';
+import { PageTitle } from 'component';
 import NetIncomeChart from './components/NetIncomeChart';
 import Statistics from './components/Statistics';
 
@@ -12,8 +13,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <h2 style={{ flex: 1, margin: '0 0 10px 0' }}>Dashboard</h2>
-
+      <PageTitle title="Dashboard" />
       <Statistics statistics={{}} />
 
       <h3>Net Income by Month</h3>

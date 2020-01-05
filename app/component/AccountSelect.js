@@ -35,7 +35,15 @@ const WrappedButton = styled(Button)`
   }
 `;
 
-export function AccountSelect({ label, name }) {
+function filterAccounts(accounts, allowedTypes) {
+  return allowedTypes.length === 0
+    ? accounts
+    : accounts.filter(account =>
+        allowedTypes.includes(account.type.toLowerCase()),
+      );
+}
+
+export function AccountSelect({ allowedTypes = [], label, name }) {
   const { loading, error, accounts, refetch } = useAccounts();
   const { setFieldValue } = useFormikContext();
   const [isAddOpen, toggleAddOpen] = useToggle();
@@ -63,7 +71,9 @@ export function AccountSelect({ label, name }) {
             <FieldLabel htmlFor={name}>
               {label}
               <Select
-                items={loading || error ? [] : accounts}
+                items={
+                  loading || error ? [] : filterAccounts(accounts, allowedTypes)
+                }
                 onItemSelect={selectedValue =>
                   setFieldValue(name, selectedValue)
                 }
@@ -105,6 +115,7 @@ export function AccountSelect({ label, name }) {
 }
 
 AccountSelect.propTypes = {
+  allowedTypes: PropTypes.arrayOf(PropTypes.string),
   name: PropTypes.string.isRequired,
   label: PropTypes.string,
 };

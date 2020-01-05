@@ -36,11 +36,13 @@ const WrappedButton = styled(Button)`
 `;
 
 function filterAccounts(accounts, allowedTypes) {
-  return allowedTypes.length === 0
-    ? accounts
-    : accounts.filter(account =>
-        allowedTypes.includes(account.type.toLowerCase()),
-      );
+  if (allowedTypes.length === 0) {
+    return accounts;
+  }
+
+  return accounts.filter(account =>
+    allowedTypes.includes(account.type.toLowerCase()),
+  );
 }
 
 export function AccountSelect({ allowedTypes = [], label, name }) {

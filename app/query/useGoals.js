@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
-const fetchGoalsQuery = gql`
+export const fetchGoalsQuery = gql`
   query fetchAllGoals {
     goals {
       id

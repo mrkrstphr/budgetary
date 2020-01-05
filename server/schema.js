@@ -73,6 +73,18 @@ const schema = gql`
     created: DateTime!
   }
 
+  type GoalPayload {
+    errors: [ErrorDetails]
+    goal: Goal
+  }
+
+  input CreateGoalInput {
+    accountId: ID!
+    description: String!
+    dueDate: Date!
+    goalBalance: Float!
+  }
+
   type Transaction {
     id: ID!
     date: Date!
@@ -215,6 +227,8 @@ const schema = gql`
     createAccount(account: CreateAccountInput!): AccountPayload!
     reopenAccount(id: ID!): AccountPayload!
     updateAccount(id: ID!, account: UpdateAccountInput!): AccountPayload!
+
+    createGoal(goal: CreateGoalInput!): GoalPayload!
 
     createToken(email: String!, password: String): TokenPayload
 

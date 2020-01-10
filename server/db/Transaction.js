@@ -341,7 +341,7 @@ class Transaction {
   update(id, date, description, accounts) {
     const update = this.conn('transactions')
       .update({
-        date: (date instanceof date ? date : new Date(date)).toISOString(),
+        date: (date instanceof Date ? date : new Date(date)).toISOString(),
         description,
       })
       .where({ id })

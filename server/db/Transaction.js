@@ -293,7 +293,7 @@ class Transaction {
         this.conn('transactions').insert(
           {
             id: makeUuid(),
-            date: (date instanceof date ? date : new Date(date)).toISOString(),
+            date: (date instanceof Date ? date : new Date(date)).toISOString(),
             description,
             amount: splits.reduce((sum, split) => sum + split.amount, 0),
           },

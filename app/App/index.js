@@ -11,6 +11,7 @@ import Login from './component/Login';
 import Router from './Router';
 import Context, { AppContext } from './Context';
 import AppSidebar from './component/Sidebar';
+import { AppLoading } from '../component/AppLoading';
 
 const AppContainer = styled.div`
   background-color: ${({ theme }) => theme.appBgColor};
@@ -87,7 +88,7 @@ function renderApp(error, loading, user) {
     return <div>ERROR TODO FIXME</div>;
   }
 
-  return <div>LOADING</div>;
+  return <AppLoading />;
 }
 
 export default function App() {

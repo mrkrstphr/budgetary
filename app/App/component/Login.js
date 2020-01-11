@@ -67,6 +67,7 @@ export default function Login() {
                     <div>
                       <Button
                         intent="primary"
+                        type="submit"
                         onClick={handleSubmit}
                         disabled={isSubmitting}
                       >

@@ -1,3 +1,4 @@
+export * from './useCloseAccount';
 export * from './useCreateAccount';
 export * from './useCreateReconciliation';
 export * from './useCreateTransaction';
@@ -6,4 +7,6 @@ export * from './useFinishReconciliation';
 export * from './useLogin';
 export * from './useLogout';
 export * from './useMarkReconciled';
+export * from './useReopenAccount';
+export * from './useUpdateAccount';
 export * from './useUpdateTransaction';

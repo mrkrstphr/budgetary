@@ -1,17 +1,11 @@
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import { accountDetailsFragment } from './fragment';
 
 export const fetchAccountDetailsQuery = gql`
   query fetchAccountDetails($id: ID!) {
     account(id: $id) {
-      id
-      name
-      type
-      currentBalance
-      thisMonth
-      lastMonth
-      thisYear
-      total
+      ${accountDetailsFragment}
     }
   }
 `;

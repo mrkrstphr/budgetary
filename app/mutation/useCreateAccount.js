@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import { accountDetailsFragment } from '../query/fragment';
 
 export const createAccountMutation = gql`
   mutation createAccount($account: CreateAccountInput!) {
@@ -9,13 +10,7 @@ export const createAccountMutation = gql`
         details
       }
       account {
-        id
-        parent {
-          id
-          name
-        }
-        type
-        name
+        ${accountDetailsFragment}
       }
     }
   }

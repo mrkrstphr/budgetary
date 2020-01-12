@@ -1,5 +1,5 @@
 const makeUuid = require('uuid/v4');
-const { desnakeify, pickFirst } = require('../lib');
+const { desnakeify, pickFirst, snakeify } = require('../lib');
 
 class Account {
   constructor(conn) {
@@ -26,6 +26,17 @@ class Account {
     return desnakeify(
       pickFirst(
         this.conn('accounts').insert({ id: makeUuid(), type, name }, '*'),
+      ),
+    );
+  }
+
+  update(id, accountDetails) {
+    return desnakeify(
+      pickFirst(
+        this.conn('accounts')
+          .update(snakeify(accountDetails))
+          .where({ id })
+          .returning('*'),
       ),
     );
   }

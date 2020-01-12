@@ -5,9 +5,9 @@ import { useReconciliations } from 'query';
 import { formatDate, useToggle } from 'lib';
 import AddReconciliationForm from './AddReconciliationForm';
 
-export default withRouter(function Reconciliations({ accountId, history }) {
+export default withRouter(function Reconciliations({ account, history }) {
   const [addOpen, toggleAddOpen] = useToggle();
-  const { error, loading, reconciliations } = useReconciliations(accountId);
+  const { error, loading, reconciliations } = useReconciliations(account.id);
 
   if (error || loading) {
     return null;
@@ -18,7 +18,7 @@ export default withRouter(function Reconciliations({ accountId, history }) {
         <AddReconciliationForm
           onClose={toggleAddOpen}
           initialValues={{
-            accountId,
+            accountId: account.id,
             details: {
               startingBalance: '',
               endingBalance: '',
@@ -36,9 +36,11 @@ export default withRouter(function Reconciliations({ accountId, history }) {
       >
         <h3 style={{ flex: 1, margin: 0 }}>Reconciliations</h3>
 
-        <Button icon="plus" intent="success" onClick={toggleAddOpen}>
-          Create Reconciliation
-        </Button>
+        {account.isOpen && (
+          <Button icon="plus" intent="success" onClick={toggleAddOpen}>
+            Create Reconciliation
+          </Button>
+        )}
       </div>
 
       {reconciliations.length > 0 ? (

@@ -6,6 +6,7 @@ import { TabPanel } from 'component/TabPanel';
 import TransactionList from 'component/TransactionList';
 import { mapParamIdToId } from 'lib';
 import { useAccountDetails, useTransactions } from 'query';
+import { Tag } from '@blueprintjs/core';
 import Statistics from './components/Statistics';
 import Reconciliations from './components/Reconciliations';
 
@@ -22,7 +23,27 @@ function AccountDetails({ id }) {
 
   return (
     <div>
-      <PageTitle title={account.name} />
+      <PageTitle
+        title={account.name}
+        tag={
+          !account.isOpen && (
+            <Tag intent="danger" style={{ marginLeft: 10 }}>
+              Closed
+            </Tag>
+          )
+        }
+      >
+        <>
+          <h2 className="title">
+            {account.name}
+            {!account.isOpen && (
+              <Tag intent="danger" style={{ marginLeft: 10 }}>
+                Closed
+              </Tag>
+            )}
+          </h2>
+        </>
+      </PageTitle>
       <Statistics account={account} />
       <p>Balance: ${account.currentBalance}</p>
 
@@ -39,17 +60,19 @@ function AccountDetails({ id }) {
             >
               <h3 style={{ flex: 1, margin: 0 }}>Transactions</h3>
 
-              <AddImportTransactionButton
-                account={account}
-                onAddTransaction={() => null}
-              />
+              {account.isOpen && (
+                <AddImportTransactionButton
+                  account={account}
+                  onAddTransaction={() => null}
+                />
+              )}
             </div>
             <TransactionList
               filters={{ accountId: id }}
               transactions={transactionsLoading ? [] : transactions.items}
             />
           </div>,
-          <Reconciliations accountId={id} />,
+          <Reconciliations account={account} />,
         ]}
         style={{ marginTop: 20 }}
       />

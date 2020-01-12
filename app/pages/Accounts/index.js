@@ -1,9 +1,17 @@
-import { HTMLTable, InputGroup } from '@blueprintjs/core';
+import {
+  HTMLTable,
+  InputGroup,
+  Button,
+  ControlGroup,
+  Tag,
+} from '@blueprintjs/core';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PageTitle } from 'component';
-import { currencyFormatter, ucfirst } from 'lib';
+import { currencyFormatter, ucfirst, useToggle } from 'lib';
 import { useAccounts } from 'query';
+import AddAccountForm from '../../component/AddAccountForm';
+import AccountActions from './AccountActions';
 
 function groupAccounts(accounts, filter = '') {
   const filteredAccounts = accounts.filter(account =>
@@ -18,22 +26,38 @@ function groupAccounts(accounts, filter = '') {
     }));
 }
 
-function Accounts() {
-  const { accounts } = useAccounts();
+export default function Accounts() {
+  const { accounts, refetch } = useAccounts();
   const [filter, setFilter] = useState('');
+  const [isAddOpen, toggleAddOpen] = useToggle();
 
   const groupedAccounts = groupAccounts(accounts, filter);
 
   return (
     <div>
+      {isAddOpen && (
+        <AddAccountForm onClose={toggleAddOpen} onSave={() => refetch()} />
+      )}
+
       <PageTitle
         title="Accounts"
         action={
-          <InputGroup
-            type="search"
-            leftIcon="search"
-            onChange={e => setFilter(e.target.value)}
-          />
+          <>
+            <ControlGroup>
+              <InputGroup
+                placeholder="Search..."
+                leftIcon="search"
+                onChange={e => setFilter(e.target.value)}
+              />
+              <Button
+                intent="primary"
+                icon="small-plus"
+                onClick={toggleAddOpen}
+              >
+                Add New
+              </Button>
+            </ControlGroup>
+          </>
         }
       />
 
@@ -46,22 +70,27 @@ function Accounts() {
                 <thead>
                   <tr>
                     <th>Name</th>
-                    <th style={{ textAlign: 'right' }}>Balance</th>
+                    <th className="right">Balance</th>
+                    <th style={{ width: 40 }}> </th>
                   </tr>
                 </thead>
                 <tbody>
                   {group.accounts.map(account => (
                     <tr key={`accounts-${account.id}`}>
-                      <td>
+                      <td className="middle">
                         <Link to={`/accounts/${account.id}`}>
                           {account.name}
-                        </Link>
+                        </Link>{' '}
+                        {!account.isOpen && <Tag intent="danger">Closed</Tag>}
                       </td>
-                      <td style={{ textAlign: 'right' }}>
+                      <td className="middle right">
                         {currencyFormatter(account.currentBalance, {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         })}
+                      </td>
+                      <td className="middle right">
+                        <AccountActions account={account} />
                       </td>
                     </tr>
                   ))}
@@ -74,5 +103,3 @@ function Accounts() {
     </div>
   );
 }
-
-export default Accounts;

@@ -8,7 +8,6 @@ import { FieldError } from './FieldError';
 
 export function Input({ label, name, ...props }) {
   const FieldLabel = label ? Label : FakeLabel;
-
   return (
     <Field name={name}>
       {({ field }) => (

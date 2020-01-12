@@ -1,19 +1,11 @@
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import { accountDetailsFragment } from './fragment';
 
 export const filterAccountsQuery = gql`
   query fetchAllAccounts($filter: String) {
     accounts(filter: $filter) {
-      id
-      parent {
-        id
-        name
-      }
-      type
-      name
-      currentBalance
-      isOpen
-      showInMenu
+      ${accountDetailsFragment}
     }
   }
 `;

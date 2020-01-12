@@ -2,29 +2,32 @@ import { Button } from '@blueprintjs/core';
 import { Formik, Form } from 'formik';
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
-import { Input, Select } from 'component/Form';
-import { useCreateAccount } from 'mutation';
-import { Dialog } from './Dialog';
-import { AppContext } from '../App/Context';
+import { Checkbox, Input, Select } from 'component/Form';
+import { useUpdateAccount } from 'mutation';
+import { Dialog } from '../../component/Dialog';
+import { AppContext } from '../../App/Context';
 
-function AddAccountForm({ initialValues = { name: '' }, onClose, onSave }) {
-  const [createAccount] = useCreateAccount();
+const defaultInitialValues = { name: '', initialBalance: 0, showInMenu: false };
+
+function EditAccount({
+  initialValues = defaultInitialValues,
+  onClose,
+  onSave,
+}) {
+  const [updateAccount] = useUpdateAccount();
   const { notify } = useContext(AppContext);
 
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={(newAccount, { setSubmitting }) =>
-        createAccount(newAccount)
+      onSubmit={({ id, ...accountDetails }, { setSubmitting }) =>
+        updateAccount(id, accountDetails)
           .then(({ account }) => {
             setSubmitting(false);
-
             if (onSave) {
               onSave(account);
             }
-
-            notify(`Account "${newAccount.name}" Created`);
-
+            notify(`Account "${account.name}" Update`);
             onClose();
             return { account };
           })
@@ -35,9 +38,9 @@ function AddAccountForm({ initialValues = { name: '' }, onClose, onSave }) {
     >
       {({ handleSubmit, isSubmitting }) => (
         <Dialog
-          icon="plus"
+          icon="edit"
           isOpen
-          title="Add Account"
+          title="Edit Account"
           onClose={onClose}
           footer={
             <>
@@ -54,12 +57,19 @@ function AddAccountForm({ initialValues = { name: '' }, onClose, onSave }) {
         >
           <Form>
             <Input label="Name" name="name" autoFocus />
+            <Input
+              type="number"
+              label="Initial Balance"
+              name="initialBalance"
+            />
+            <Checkbox label="Show In Sidebar?" name="showInMenu" />
 
             <Select
               name="type"
               label="Type"
               options={[
                 { value: 'bank', label: 'Bank' },
+                { value: 'credit', label: 'Credit' },
                 { value: 'expense', label: 'Expense' },
                 { value: 'income', label: 'Income' },
                 { value: 'liabilities', label: 'Liability' },
@@ -72,10 +82,10 @@ function AddAccountForm({ initialValues = { name: '' }, onClose, onSave }) {
   );
 }
 
-AddAccountForm.propTypes = {
+EditAccount.propTypes = {
   initialValues: PropTypes.object,
   onClose: PropTypes.func.isRequired,
-  onSave: PropTypes.func.isRequired,
+  onSave: PropTypes.func,
 };
 
-export default AddAccountForm;
+export default EditAccount;

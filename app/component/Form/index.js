@@ -1,3 +1,4 @@
+export * from './Checkbox';
 export * from './DatePicker';
 export * from './FieldColumn';
 export * from './FieldError';

@@ -34,6 +34,7 @@ const schema = gql`
     isOpen: Boolean!
     showInMenu: Boolean!
 
+    initialBalance: Float!
     currentBalance: Float!
 
     thisMonth: Float!
@@ -59,6 +60,8 @@ const schema = gql`
     parentId: ID
     name: String
     type: String
+    initialBalance: Float
+    showInMenu: Boolean
   }
 
   type Transaction {
@@ -198,7 +201,10 @@ const schema = gql`
   type Mutation {
     bulkImport(transactions: [CreateTransactionInput]!): Boolean
 
+    closeAccount(id: ID!): AccountPayload!
     createAccount(account: CreateAccountInput!): AccountPayload!
+    reopenAccount(id: ID!): AccountPayload!
+    updateAccount(id: ID!, account: UpdateAccountInput!): AccountPayload!
 
     createToken(email: String!, password: String): TokenPayload
 
@@ -216,9 +222,6 @@ const schema = gql`
     logout: Boolean
 
     markReconciled(accountId: ID!, reconciliationId: ID): AccountTransaction!
-
-    updateAccount(id: ID!, account: UpdateAccountInput!): AccountPayload!
-
     updateTransaction(
       id: ID!
       transaction: UpdateTransactionInput

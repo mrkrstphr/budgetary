@@ -44,7 +44,10 @@ export function useCreateTransaction() {
         },
         { query: fetchMonthsQuery },
       ],
-    });
+    }).then(({ data: { createTransaction: { errors, transaction } } }) => ({
+      errors,
+      transaction,
+    }));
   };
 
   return [createTransaction, { data }];

@@ -45,6 +45,10 @@ export default createGlobalStyle`
 }
 
 .bp3-html-table {
+  th.middle, td.middle {
+    vertical-align: middle;
+  }
+
   th.right, td.right {
     text-align: right;
   }

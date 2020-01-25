@@ -1,3 +1,4 @@
+const Decimal = require('decimal.js');
 const yup = require('yup');
 
 function validateCreateTransaction() {
@@ -10,6 +11,13 @@ function validateCreateTransaction() {
         'Transaction must balance; all amounts must add up to zero.',
         async function validateNotExists(data) {
           if ('accounts' in data) {
+            const difference = data.accounts.reduce(
+              (sum, row) => sum.plus(row.amount),
+              new Decimal(0),
+            );
+
+            return difference.equals(0);
+
             const total = data.accounts.reduce(
               (prevTotal, { amount = 0 }) => prevTotal + amount,
               0,

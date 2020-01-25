@@ -1,4 +1,5 @@
 import { Button } from '@blueprintjs/core';
+import Decimal from 'decimal.js';
 import { Formik } from 'formik';
 import { isNil } from 'lodash';
 import PropTypes from 'prop-types';
@@ -60,15 +61,19 @@ const AddTransactionSchema = Yup.object().shape({
       'validate-transaction-balances',
       'Transaction must balance; all amounts must add up to zero.',
       async function validateNotExists(data) {
-        return (
-          data.reduce((sum, row) => {
-            if ('increase' in row) {
-              return sum + row.increase;
-            }
+        const difference = data.reduce((sum, row) => {
+          if (!row.increase && !row.decrease) {
+            return sum;
+          }
 
-            return sum - row.decrease;
-          }, 0) === 0
-        );
+          if (row.increase) {
+            return sum.plus(row.increase);
+          }
+
+          return sum.minus(row.decrease);
+        }, new Decimal(0));
+
+        return difference.equals(0);
       },
     ),
 });

@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/Goal for account type = liabilities should render 0% when the current balance matches the goal balance that is not 0 1`] = `
+<div
+  className="Goal__GoalStyles-sc-1afoxc-0 jJbUAz"
+>
+  <h3
+    className="title"
+  >
+    Pay off (most of) student loans
+  </h3>
+  <div
+    className="bar green"
+  >
+    <div
+      className="progress"
+      style={
+        Object {
+          "width": "5%",
+        }
+      }
+    />
+  </div>
+  <div
+    className="details"
+  >
+    <div
+      className="account"
+    >
+      Account: 
+      Student Loan Y
+    </div>
+    <div
+      className="amount"
+    >
+      Goal:
+       
+      500.00
+    </div>
+  </div>
+</div>
+`;

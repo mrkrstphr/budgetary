@@ -11,13 +11,17 @@ import Statistics from './components/Statistics';
 import Reconciliations from './components/Reconciliations';
 
 function AccountDetails({ id }) {
-  const { account, loading } = useAccountDetails(id);
-  const { transactions, loading: transactionsLoading } = useTransactions({
+  const { account, refetch: refetchAccount } = useAccountDetails(id);
+  const {
+    transactions,
+    loading: transactionsLoading,
+    refetch: refetchTransactions,
+  } = useTransactions({
     filters: { accountId: id },
     paging: { perPage: 150 },
   });
 
-  if (loading) {
+  if (transactionsLoading) {
     return null;
   }
 
@@ -63,13 +67,21 @@ function AccountDetails({ id }) {
               {account.isOpen && (
                 <AddImportTransactionButton
                   account={account}
-                  onAddTransaction={() => null}
+                  refetchQueries={[]}
+                  onAddTransaction={() => {
+                    refetchAccount();
+                    refetchTransactions();
+                  }}
                 />
               )}
             </div>
             <TransactionList
               filters={{ accountId: id }}
               transactions={transactionsLoading ? [] : transactions.items}
+              onRemoveTransaction={() => {
+                refetchAccount();
+                refetchTransactions();
+              }}
             />
           </div>,
           <Reconciliations account={account} />,

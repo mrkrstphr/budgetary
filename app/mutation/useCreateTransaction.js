@@ -1,6 +1,5 @@
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import { fetchMonthsQuery, fetchTransactionsQuery } from 'query';
 
 export const createTransactionMutation = gql`
   mutation addTransaction($transaction: CreateTransactionInput!) {
@@ -32,23 +31,12 @@ export function useCreateTransaction() {
     createTransactionMutation,
   );
 
-  const createTransaction = (date, description, accounts) => {
-    const month = date.replace(/([0-9]{4})-([0-9]{2})-([0-9]{2})/, '$1-$2');
-
-    return createTransactionFunc({
+  const createTransaction = (date, description, accounts) =>
+    createTransactionFunc({
       variables: { transaction: { date, description, accounts } },
-      refetchQueries: [
-        {
-          query: fetchTransactionsQuery,
-          variables: { filters: { month } },
-        },
-        { query: fetchMonthsQuery },
-      ],
     }).then(({ data: { createTransaction: { errors, transaction } } }) => ({
       errors,
       transaction,
     }));
-  };
-
   return [createTransaction, { data }];
 }

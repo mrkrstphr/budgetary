@@ -11,8 +11,13 @@ import { useMonths, useTransactions } from 'query';
 import SpendBreakdown from './components/SpendBreakdown';
 import Statistics from './components/Statistics';
 
-function TransactionsTab({ month }) {
-  const { error, loading, transactions } = useTransactions({
+function TransactionsTab({ month, onRefetch = () => null }) {
+  const {
+    error,
+    loading,
+    refetch: refetchTransactions,
+    transactions,
+  } = useTransactions({
     filters: { month },
   });
 
@@ -31,21 +36,34 @@ function TransactionsTab({ month }) {
       >
         <h3 style={{ flex: 1, margin: 0 }}>Transactions</h3>
 
-        <AddImportTransactionButton />
+        <AddImportTransactionButton
+          onTransactionAdded={() => {
+            refetchTransactions();
+            onRefetch();
+          }}
+        />
       </div>
 
-      <TransactionsList transactions={transactions.items} filters={{ month }} />
+      <TransactionsList
+        transactions={transactions.items}
+        filters={{ month }}
+        onRemoveTransaction={() => {
+          refetchTransactions();
+          onRefetch();
+        }}
+      />
     </div>
   );
 }
 
 TransactionsTab.propTypes = {
   month: PropTypes.string.isRequired,
+  onRefetch: PropTypes.func,
 };
 
 function TransactionsPage() {
   const { month } = useParams();
-  const { loading, months } = useMonths();
+  const { loading, months, refetch: refetchMonths } = useMonths();
 
   if (loading) {
     return null;
@@ -77,7 +95,10 @@ function TransactionsPage() {
       <TabPanel
         tabs={[{ label: 'Transactions' }, { label: 'Spending Breakdown' }]}
         contents={[
-          <TransactionsTab month={selectedMonth.name} />,
+          <TransactionsTab
+            month={selectedMonth.name}
+            onRefetch={() => refetchMonths()}
+          />,
           <SpendBreakdown month={selectedMonth.name} />,
         ]}
         style={{ marginTop: 20 }}

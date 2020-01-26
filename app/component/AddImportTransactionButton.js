@@ -11,7 +11,10 @@ import { useHistory } from 'react-router-dom';
 import AddTransactionForm from 'component/AddTransactionForm';
 import { useToggle } from 'lib';
 
-export default function AddImportTransactionButton({ account }) {
+export default function AddImportTransactionButton({
+  account,
+  onAddTransaction,
+}) {
   const history = useHistory();
   const [addOpen, toggleAddOpen] = useToggle(false);
 
@@ -36,7 +39,11 @@ export default function AddImportTransactionButton({ account }) {
         </Popover>
       </ButtonGroup>
       {addOpen && (
-        <AddTransactionForm account={account} onClose={toggleAddOpen} />
+        <AddTransactionForm
+          account={account}
+          onClose={toggleAddOpen}
+          onAddTransaction={onAddTransaction}
+        />
       )}
     </>
   );
@@ -47,4 +54,5 @@ AddImportTransactionButton.propTypes = {
     id: PropTypes.string,
     name: PropTypes.string,
   }),
+  onAddTransaction: PropTypes.func,
 };

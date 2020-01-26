@@ -31,7 +31,11 @@ export const fetchTransactionsQuery = gql`
   }
 `;
 
-export function useTransactions({ filters = {}, paging = {}, options = {} }) {
+export function useTransactions({
+  filters = {},
+  paging = {},
+  options = { fetchPolicy: 'no-cache' },
+}) {
   const { loading, error, data, ...etc } = useQuery(fetchTransactionsQuery, {
     variables: { filters, paging },
     ...options,
@@ -43,5 +47,9 @@ export function useTransactions({ filters = {}, paging = {}, options = {} }) {
     transactions:
       loading || error ? { items: [], paging: {} } : data.transactions,
     ...etc,
+    refetchQuery: {
+      query: fetchTransactionsQuery,
+      variables: { filters, paging },
+    },
   };
 }

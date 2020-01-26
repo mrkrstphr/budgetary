@@ -36,7 +36,7 @@ function calculateReconciledBalance(reconciliation) {
 }
 
 function ReconciliationDetailsPage({ id }) {
-  const { error, loading, reconciliation } = useReconciliation(id);
+  const { error, loading, reconciliation, refetch } = useReconciliation(id);
   const [markReconciled] = useMarkReconciled();
 
   if (loading || error) return null;
@@ -52,7 +52,10 @@ function ReconciliationDetailsPage({ id }) {
       />
 
       <div style={{ textAlign: 'right' }}>
-        <AddImportTransactionButton account={reconciliation.account} />
+        <AddImportTransactionButton
+          account={reconciliation.account}
+          onAddTransaction={() => refetch()}
+        />
       </div>
 
       <HTMLTable interactive striped style={{ width: '100%' }}>
@@ -93,7 +96,10 @@ function ReconciliationDetailsPage({ id }) {
                 <td className="right">{account.amount.toFixed(2)}</td>
                 <td>
                   {reconciliation.status.toLowerCase() === 'open' && (
-                    <TransactionActions transaction={trans} />
+                    <TransactionActions
+                      transaction={trans}
+                      onRemoveTransaction={() => refetch()}
+                    />
                   )}
                 </td>
               </tr>

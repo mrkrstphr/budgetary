@@ -5,7 +5,10 @@ import { Link } from 'react-router-dom';
 import { formatDate } from 'lib';
 import TransactionActions from './TransactionActions';
 
-export default function TransactionsList({ transactions }) {
+export default function TransactionsList({
+  onRemoveTransaction,
+  transactions,
+}) {
   return (
     <HTMLTable style={{ width: '100%' }} className="valignMiddle">
       <thead>
@@ -31,7 +34,10 @@ export default function TransactionsList({ transactions }) {
               <td className="right">{account.amount.toFixed(2)}</td>
               <td className="center">
                 {accountIndex === 0 && (
-                  <TransactionActions transaction={transaction} />
+                  <TransactionActions
+                    onRemoveTransaction={onRemoveTransaction}
+                    transaction={transaction}
+                  />
                 )}
               </td>
             </tr>
@@ -43,6 +49,7 @@ export default function TransactionsList({ transactions }) {
 }
 
 TransactionsList.propTypes = {
+  onRemoveTransaction: PropTypes.func,
   transactions: PropTypes.arrayOf(
     PropTypes.shape({
       accounts: PropTypes.arrayOf(

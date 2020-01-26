@@ -17,15 +17,6 @@ function validateCreateTransaction() {
             );
 
             return difference.equals(0);
-
-            const total = data.accounts.reduce(
-              (prevTotal, { amount = 0 }) => prevTotal + amount,
-              0,
-            );
-
-            if (total !== 0) {
-              return false;
-            }
           }
 
           return true;

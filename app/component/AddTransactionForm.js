@@ -78,7 +78,11 @@ const AddTransactionSchema = Yup.object().shape({
     ),
 });
 
-export default function AddTransactionForm({ account, onClose }) {
+export default function AddTransactionForm({
+  account,
+  onClose,
+  onAddTransaction = () => null,
+}) {
   const [createTransaction] = useCreateTransaction();
 
   const initialValues = {
@@ -121,8 +125,14 @@ export default function AddTransactionForm({ account, onClose }) {
                 description,
                 preparedSplits,
               )
-                .then(() => {
+                .then(({ errors, transaction }) => {
                   setSubmitting(false);
+                  if (errors) {
+                    // TODO FIXME properly parse the errors
+                    notify('Failed to Save Transaction', 'danger');
+                    return;
+                  }
+                  onAddTransaction(transaction);
                   resetForm({ ...initialValues, date });
                   notify('Transaction Created');
                 })
@@ -171,4 +181,5 @@ AddTransactionForm.propTypes = {
     name: PropTypes.string,
   }),
   onClose: PropTypes.func.isRequired,
+  onAddTransaction: PropTypes.func,
 };

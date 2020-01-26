@@ -12,7 +12,10 @@ import { useDeleteTransaction } from 'mutation';
 import EditTransactionForm from './EditTransactionForm';
 import { AppContext } from '../App/Context';
 
-export default function TransactionActions({ transaction }) {
+export default function TransactionActions({
+  onRemoveTransaction = () => null,
+  transaction,
+}) {
   const [editTransaction, setEditTransaction] = React.useState(null);
   const [confirmDeleteItem, setConfirmDeleteItem] = React.useState(false);
   const [deleteTransaction] = useDeleteTransaction();
@@ -32,6 +35,7 @@ export default function TransactionActions({ transaction }) {
               deleteTransaction(confirmDeleteItem.id).then(() => {
                 setConfirmDeleteItem(false);
                 notify('Transaction Deleted');
+                onRemoveTransaction();
               })
             }
           >
@@ -87,5 +91,6 @@ export default function TransactionActions({ transaction }) {
 }
 
 TransactionActions.propTypes = {
+  onRemoveTransaction: PropTypes.func,
   transaction: PropTypes.object.isRequired,
 };

@@ -21,7 +21,7 @@ export function DatePicker({ label, name, ...props }) {
             {label}
             <DateInput
               name={name}
-              defaultValue={value}
+              value={value}
               fill
               formatDate={date => formatDate(date)}
               parseDate={str => new Date(str)}

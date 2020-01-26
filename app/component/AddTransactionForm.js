@@ -133,7 +133,7 @@ export default function AddTransactionForm({
                     return;
                   }
                   onAddTransaction(transaction);
-                  resetForm({ ...initialValues, date });
+                  resetForm({ values: { ...initialValues, date } });
                   notify('Transaction Created');
                 })
                 .catch(() => {

@@ -64,10 +64,13 @@ function reducer(state, action) {
           ? state.selectedRows.filter(r => r !== action.value)
           : [...state.selectedRows, action.value],
       };
+
     case 'toggleConfirmReset':
       return { ...state, confirmResetOpen: !state.confirmResetOpen };
+
     case 'toggleConfirmFinish':
       return { ...state, confirmFinishOpen: !state.confirmFinishOpen };
+
     case 'mapColumn':
       return {
         ...state,
@@ -76,6 +79,7 @@ function reducer(state, action) {
           [action.field]: action.value,
         },
       };
+
     case 'mapTransaction':
       return {
         ...state,
@@ -84,8 +88,10 @@ function reducer(state, action) {
           [action.index]: action.value,
         },
       };
+
     case 'reset':
       return initialState;
+
     default:
       throw new Error();
   }

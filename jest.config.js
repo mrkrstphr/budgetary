@@ -6,15 +6,17 @@ module.exports = {
     '!app/app.js',
     '!app/global-styles.js',
     '!app/*/*/Loadable.{js,jsx}',
+    'server/**/*.js',
+    '!server/db/migrations/*.js',
   ],
-  coverageThreshold: {
-    global: {
-      statements: 98,
-      branches: 91,
-      functions: 98,
-      lines: 98,
-    },
-  },
+  // coverageThreshold: {
+  //   global: {
+  //     statements: 98,
+  //     branches: 91,
+  //     functions: 98,
+  //     lines: 98,
+  //   },
+  // },
   moduleDirectories: ['node_modules', 'app'],
   moduleNameMapper: {
     '.*\\.(css|less|styl|scss|sass)$': '<rootDir>/internals/mocks/cssModule.js',
@@ -23,6 +25,6 @@ module.exports = {
   },
   setupFilesAfterEnv: ['react-testing-library/cleanup-after-each'],
   setupFiles: ['raf/polyfill'],
-  testRegex: 'tests/.*\\.test\\.js$',
+  testRegex: '.*\\.spec\\.js$',
   snapshotSerializers: [],
 };

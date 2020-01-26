@@ -1,6 +1,7 @@
 const bulkImport = require('./bulkImport');
 const closeAccount = require('./closeAccount');
 const createAccount = require('./createAccount');
+const createGoal = require('./createGoal');
 const createReconciliation = require('./createReconciliation');
 const createToken = require('./createToken');
 const createTransaction = require('./createTransaction');
@@ -17,6 +18,7 @@ module.exports = {
   closeAccount,
   createAccount,
   createReconciliation,
+  createGoal,
   createToken,
   createTransaction,
   deleteTransaction,

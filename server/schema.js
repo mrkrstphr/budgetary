@@ -64,6 +64,27 @@ const schema = gql`
     showInMenu: Boolean
   }
 
+  type Goal {
+    id: ID!
+    account: Account!
+    description: String!
+    startingBalance: Float!
+    goalBalance: Float!
+    created: DateTime!
+  }
+
+  type GoalPayload {
+    errors: [ErrorDetails]
+    goal: Goal
+  }
+
+  input CreateGoalInput {
+    accountId: ID!
+    description: String!
+    dueDate: Date!
+    goalBalance: Float!
+  }
+
   type Transaction {
     id: ID!
     date: Date!
@@ -181,6 +202,7 @@ const schema = gql`
   type Query {
     account(id: ID!): Account
     accounts(filter: String): [Account]
+    goals: [Goal]
     me: User
     months: [Month]
     reconciliations(accountId: ID!): [Reconciliation]!
@@ -205,6 +227,8 @@ const schema = gql`
     createAccount(account: CreateAccountInput!): AccountPayload!
     reopenAccount(id: ID!): AccountPayload!
     updateAccount(id: ID!, account: UpdateAccountInput!): AccountPayload!
+
+    createGoal(goal: CreateGoalInput!): GoalPayload!
 
     createToken(email: String!, password: String): TokenPayload
 

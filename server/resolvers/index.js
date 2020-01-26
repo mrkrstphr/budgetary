@@ -7,6 +7,7 @@ const Query = require('./query');
 
 const Account = require('./Account');
 const AccountTransaction = require('./AccountTransaction');
+const Goal = require('./Goal');
 const Month = require('./Month');
 const NetIncomeStats = require('./NetIncomeStats');
 const Reconciliation = require('./Reconciliation');
@@ -20,6 +21,7 @@ module.exports = {
   Query,
   Account,
   AccountTransaction,
+  Goal,
   Month,
   NetIncomeStats,
   Reconciliation,

@@ -1,5 +1,6 @@
 export * from './useCloseAccount';
 export * from './useCreateAccount';
+export * from './useCreateGoal';
 export * from './useCreateReconciliation';
 export * from './useCreateTransaction';
 export * from './useDeleteTransaction';

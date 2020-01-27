@@ -2,7 +2,6 @@ const initialState = {
   firstRowAsHeaders: false,
   columns: [],
   rows: [],
-  selectedFile: null,
   selectedRows: [],
   selectAll: true,
   confirmResetOpen: false,
@@ -19,7 +18,6 @@ function reducer(state, action) {
         ...state,
         columns: Array.from(action.data[0].keys()).map(i => `Column ${i + 1}`),
         rows: action.data,
-        selectedFile: action.file,
         selectedRows: Array.from(action.data.keys()),
       };
 

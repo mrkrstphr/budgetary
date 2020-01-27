@@ -263,10 +263,12 @@ function TransactionsTable({ dispatch, state }) {
                           }
                         />
                       </td>
-                      {csvRow.map(column => (
+                      {csvRow.map((column, columnIndex) => (
                         <td
                           className="right"
-                          key={`transaction-${csvRowIndex}-${column}`}
+                          key={`transaction-${csvRowIndex}-${
+                            state.columns[columnIndex]
+                          }`}
                         >
                           {column}
                         </td>
@@ -277,7 +279,7 @@ function TransactionsTable({ dispatch, state }) {
                           onChange={category => {
                             dispatch({
                               type: 'mapTransaction',
-                              csvRowIndex,
+                              index: csvRowIndex,
                               value: category,
                             });
                           }}
@@ -352,7 +354,7 @@ export default function ImportTransactions() {
       const csv = Papa.parse(reader.result, { skipEmptyLines: true });
       // TODO: FIXME: check - csv.errors
       // TODO: FIXME: check - csv.meta.truncated, csv.meta.aborted
-      dispatch({ type: 'pickFile', data: csv.data, file: csv });
+      dispatch({ type: 'pickFile', data: csv.data });
     };
     reader.readAsText(details.target.files[0]);
   }

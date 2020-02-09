@@ -23,9 +23,7 @@
     "migrate:latest": "knex migrate:latest --knexfile=server/knexfile.js",
     "migrations:make": "knex migrate:make --knexfile=server/knexfile.js",
     "migrate:rollback": "knex migrate:rollback --knexfile=server/knexfile.js",
-    "pretest": "npm run test:clean",
-    "test:clean": "rimraf ./coverage",
-    "test": "cross-env NODE_ENV=test jest --coverageReporters=text-lcov --coverage",
+    "test": "cross-env NODE_ENV=test jest --coverageReporters=lcov --coverage",
     "test:watch": "cross-env NODE_ENV=test jest --watchAll",
     "prettify": "prettier --write"
   },

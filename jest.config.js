@@ -17,6 +17,7 @@ module.exports = {
   //     lines: 98,
   //   },
   // },
+  coverageDirectory: 'coverage/',
   moduleDirectories: ['node_modules', 'app'],
   moduleNameMapper: {
     '.*\\.(css|less|styl|scss|sass)$': '<rootDir>/internals/mocks/cssModule.js',

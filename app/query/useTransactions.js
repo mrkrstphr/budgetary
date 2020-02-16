@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import { transactionFragment } from 'query/fragment';
 
 export const fetchTransactionsQuery = gql`
   query filterTransactions(
@@ -14,18 +15,7 @@ export const fetchTransactionsQuery = gql`
         totalRecords
       }
       items {
-        id
-        date
-        description
-        amount
-        accounts {
-          id
-          account {
-            id
-            name
-          }
-          amount
-        }
+        ${transactionFragment}
       }
     }
   }

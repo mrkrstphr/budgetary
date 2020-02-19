@@ -1,13 +1,13 @@
 import { Button } from '@blueprintjs/core';
 import { Formik } from 'formik';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Dialog } from 'component';
 import { formatIsoDate } from 'lib';
 import { useUpdateTransaction } from 'mutation';
 import { useAccounts } from 'query';
 import TransactionForm from './TransactionForm';
-import { ToastContext } from './ToastContext';
+import { AppContext } from '../App/Context';
 
 // yup.addMethod(yup.object, 'onlyOneOf', function(
 //   list,
@@ -28,6 +28,7 @@ import { ToastContext } from './ToastContext';
 export default function EditTransactionForm({ onClose, transaction }) {
   const { accounts } = useAccounts();
   const [updateTransaction] = useUpdateTransaction();
+  const { notify } = useContext(AppContext);
 
   const initialValues = {
     date: new Date(transaction.date),
@@ -51,74 +52,65 @@ export default function EditTransactionForm({ onClose, transaction }) {
   };
 
   return (
-    <ToastContext.Consumer>
-      {toaster => (
-        <>
-          <Formik
-            initialValues={initialValues}
-            // validationSchema={AddTransactionSchema}
-            // validate={values => {
-            //   console.log({ values });
-            //   AddTransactionSchema.validate(values, { abortEarly: false })
-            //     .then(v => {
-            //       console.log(v);
-            //     })
-            //     .catch(ex => {
-            //       console.error(ex);
-            //     });
-            // }}
-            onSubmit={({ date, description, splits }, { setSubmitting }) => {
-              const preparedSplits = splits.map(split => ({
-                accountId: split.accountId ? split.accountId.id : null,
-                amount: split.increase
-                  ? Math.abs(parseFloat(split.increase))
-                  : Math.abs(parseFloat(split.decrease)) * -1,
-              }));
+    <Formik
+      initialValues={initialValues}
+      // validationSchema={AddTransactionSchema}
+      // validate={values => {
+      //   console.log({ values });
+      //   AddTransactionSchema.validate(values, { abortEarly: false })
+      //     .then(v => {
+      //       console.log(v);
+      //     })
+      //     .catch(ex => {
+      //       console.error(ex);
+      //     });
+      // }}
+      onSubmit={({ date, description, splits }, { setSubmitting }) => {
+        const preparedSplits = splits.map(split => ({
+          accountId: split.accountId ? split.accountId.id : null,
+          amount: split.increase
+            ? Math.abs(parseFloat(split.increase))
+            : Math.abs(parseFloat(split.decrease)) * -1,
+          id: split.id,
+        }));
 
-              return updateTransaction(
-                transaction.id,
-                formatIsoDate(date),
-                description,
-                preparedSplits,
-              ).then(() => {
-                setSubmitting(false);
-                toaster.show({
-                  icon: 'tick-circle',
-                  intent: 'success',
-                  message: `Transaction Updated`,
-                });
-                onClose();
-              });
-            }}
-          >
-            {({ handleSubmit, isSubmitting }) => (
-              <Dialog
-                icon="edit"
-                title="Edit Transaction"
-                isOpen
-                onClose={onClose}
-                footer={
-                  <>
-                    <Button onClick={onClose}>Close</Button>
-                    <Button
-                      intent="primary"
-                      onClick={handleSubmit}
-                      disabled={isSubmitting}
-                    >
-                      Save
-                    </Button>
-                  </>
-                }
+        return updateTransaction(
+          transaction.id,
+          formatIsoDate(date),
+          description,
+          preparedSplits,
+        ).then(() => {
+          setSubmitting(false);
+          notify('Transaction Updated');
+          onClose();
+        });
+      }}
+    >
+      {({ handleSubmit, isSubmitting }) => (
+        <Dialog
+          icon="edit"
+          title="Edit Transaction"
+          isOpen
+          onClose={onClose}
+          footer={
+            <>
+              <Button onClick={onClose}>Close</Button>
+              <Button
+                intent="primary"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
               >
-                <TransactionForm
-                  initialTransactionCount={transaction.accounts.length}
-                />
-              </Dialog>
-            )}
-          </Formik>
-        </>
+                Save
+              </Button>
+            </>
+          }
+        >
+          <TransactionForm
+            initialTransactionCount={transaction.accounts.length}
+          />
+        </Dialog>
       )}
-    </ToastContext.Consumer>
+    </Formik>
   );
 }
 

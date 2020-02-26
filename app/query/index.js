@@ -1,5 +1,6 @@
 export * from './useAccountDetails';
 export * from './useAccounts';
+export * from './useAccountSnapshot';
 export * from './useMonths';
 export * from './useNetIncomeStats';
 export * from './useReconciliation';

@@ -15,3 +15,7 @@ export function formatIsoDate(date) {
 export function formatMonthAndYear(date) {
   return format(date, 'MMMM YYYY');
 }
+
+export function formatShortMonthAndYear(date) {
+  return format(date, 'MMM YYYY');
+}

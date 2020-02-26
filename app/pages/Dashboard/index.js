@@ -17,7 +17,20 @@ export default function Dashboard() {
       <Statistics statistics={{}} />
 
       <h3>Net Income by Month</h3>
-      <div style={{ width: '100%', height: 320 }}>
+      <p
+        style={{
+          borderLeft: '3px solid #ccc',
+          fontStyle: 'italic',
+          color: '#bbb',
+          marginBottom: 15,
+          marginTop: 0,
+          paddingLeft: 10,
+        }}
+      >
+        Displays net income (income - expenses) by Month.
+      </p>
+
+      <div style={{ height: 420, width: '100%' }}>
         <NetIncomeChart months={months} />
       </div>
     </>

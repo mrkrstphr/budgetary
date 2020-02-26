@@ -10,6 +10,8 @@ const Styles = styled(Callout)`
   padding: 10px;
   text-align: right;
   width: 320px;
+  flex-grow: 1;
+  flex-basis: 0;
 
   .title {
     margin: 0;

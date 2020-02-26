@@ -1,22 +1,13 @@
+import { ResponsiveBar } from '@nivo/bar';
+import { patternLinesDef } from '@nivo/core';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {
-  BarChart,
-  Bar,
-  Cell,
-  ReferenceLine,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts';
-import { currencyFormatter } from 'lib';
+import { currencyFormatter, formatShortMonthAndYear } from 'lib';
 
-function mapMonths(months) {
-  const chartValues = months.map(month => ({
-    name: month.name,
-    amount: (month.totalIncome - month.totalExpenses).toFixed(2),
+function mapValues(values) {
+  const chartValues = values.slice(0, 18).map(month => ({
+    month: month.name,
+    netIncome: month.totalIncome - month.totalExpenses,
   }));
 
   chartValues.reverse();
@@ -26,26 +17,59 @@ function mapMonths(months) {
 
 export default function NetIncomeChart({ months }) {
   return (
-    <ResponsiveContainer>
-      <BarChart
-        data={mapMonths(months)}
-        margin={{ top: 10, right: 30, left: 20, bottom: 5 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis tickFormatter={currencyFormatter} />
-        <ReferenceLine y={0} stroke="#000" />
-        <Tooltip
-          cursor={{ fill: 'rgba(240, 240, 240, .6)' }}
-          formatter={currencyFormatter}
-        />
-        <Bar dataKey="amount">
-          {mapMonths(months).map(point => (
-            <Cell key={point} fill={point.amount > 0 ? '#38c072' : '#e2342f'} />
-          ))}
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
+    <ResponsiveBar
+      colors={v => (v.value >= 0 ? '#66bd63' : '#d6604d')}
+      data={mapValues(months)}
+      keys={['netIncome']}
+      indexBy="month"
+      margin={{ top: 0, right: 20, bottom: 50, left: 80 }}
+      padding={0.3}
+      defs={[
+        patternLinesDef('positive', {
+          spacing: 5,
+          rotation: -45,
+          lineWidth: 2,
+          background: 'inherit',
+          color: '#52b44e',
+        }),
+        patternLinesDef('negative', {
+          spacing: 5,
+          rotation: -45,
+          lineWidth: 2,
+          background: 'inherit',
+          color: '#d04a35',
+        }),
+      ]}
+      fill={[
+        {
+          match: ({ data: { value } }) => value >= 0,
+          id: 'positive',
+        },
+        {
+          match: ({ data: { value } }) => value < 0,
+          id: 'negative',
+        },
+      ]}
+      tooltip={({ indexValue, value, color }) => (
+        <strong style={{ color }}>
+          {formatShortMonthAndYear(indexValue)}: {currencyFormatter(value)}
+        </strong>
+      )}
+      borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+      axisTop={null}
+      axisBottom={{
+        format: v => formatShortMonthAndYear(new Date(`${v}-01`)),
+        tickRotation: -45,
+      }}
+      axisRight={null}
+      axisLeft={{
+        format: v => currencyFormatter(v, { minimumFractionDigits: 0 }),
+      }}
+      enableLabel={false}
+      animate
+      motionStiffness={90}
+      motionDamping={15}
+    />
   );
 }
 

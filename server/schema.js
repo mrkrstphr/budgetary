@@ -45,6 +45,13 @@ const schema = gql`
     transactions: [Transaction]
   }
 
+  type AccountSnapshot {
+    id: ID!
+    account: Account!
+    snapshotDate: Date!
+    balance: Float!
+  }
+
   type AccountPayload {
     errors: [ErrorDetails]
     account: Account
@@ -181,6 +188,7 @@ const schema = gql`
   type Query {
     account(id: ID!): Account
     accounts(filter: String): [Account]
+    accountSnapshot(accountId: ID!): [AccountSnapshot]
     me: User
     months: [Month]
     reconciliations(accountId: ID!): [Reconciliation]!

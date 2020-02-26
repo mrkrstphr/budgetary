@@ -6,6 +6,7 @@ const Mutation = require('./mutation');
 const Query = require('./query');
 
 const Account = require('./Account');
+const AccountSnapshot = require('./AccountSnapshot');
 const AccountTransaction = require('./AccountTransaction');
 const Month = require('./Month');
 const NetIncomeStats = require('./NetIncomeStats');
@@ -19,6 +20,7 @@ module.exports = {
   Mutation,
   Query,
   Account,
+  AccountSnapshot,
   AccountTransaction,
   Month,
   NetIncomeStats,

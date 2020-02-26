@@ -4,8 +4,6 @@ import '@blueprintjs/icons/lib/css/blueprint-icons.css';
 import '@blueprintjs/datetime/lib/css/blueprint-datetime.css';
 
 export default createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css?family=Lato:300,400,700|Lora:400,700&display=swap');
-
   * {
     box-sizing: border-box;
   }

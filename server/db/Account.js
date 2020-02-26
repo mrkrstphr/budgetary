@@ -66,6 +66,15 @@ class Account {
         .whereIn('id', ids),
     );
   }
+
+  fetchSnapshot(id) {
+    return desnakeify(
+      this.conn('account_snapshots')
+        .select('*')
+        .where('account_id', id)
+        .orderBy('snapshot_date', 'ASC'),
+    );
+  }
 }
 
 module.exports = Account;

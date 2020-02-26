@@ -9,9 +9,14 @@ import { useAccountDetails, useTransactions } from 'query';
 import { Tag } from '@blueprintjs/core';
 import Statistics from './components/Statistics';
 import Reconciliations from './components/Reconciliations';
+import TrendChart from './components/TrendChart';
 
 function AccountDetails({ id }) {
-  const { account, refetch: refetchAccount } = useAccountDetails(id);
+  const {
+    account,
+    refetch: refetchAccount,
+    loading: accountLoading,
+  } = useAccountDetails(id);
   const {
     transactions,
     loading: transactionsLoading,
@@ -22,6 +27,10 @@ function AccountDetails({ id }) {
   });
 
   if (transactionsLoading) {
+    return null;
+  }
+
+  if (accountLoading) {
     return null;
   }
 
@@ -50,6 +59,23 @@ function AccountDetails({ id }) {
       </PageTitle>
       <Statistics account={account} />
       <p>Balance: ${account.currentBalance}</p>
+
+      <h3>Account Balance over Time</h3>
+      <p
+        style={{
+          borderLeft: '3px solid #ccc',
+          fontStyle: 'italic',
+          color: '#bbb',
+          marginBottom: 15,
+          marginTop: 0,
+          paddingLeft: 10,
+        }}
+      >
+        By snapshots taken at the end of each month.
+      </p>
+      <div style={{ height: 320, width: '100%' }}>
+        <TrendChart account={account} />
+      </div>
 
       <TabPanel
         tabs={[{ label: 'Transactions' }, { label: 'Reconcilations' }]}

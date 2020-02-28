@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { ResponsiveLine } from '@nivo/line';
 import { useAccountSnapshot } from '../../../query';
@@ -66,3 +67,10 @@ export default function TrendChart({ account }) {
     />
   );
 }
+
+TrendChart.propTypes = {
+  account: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+  }).isRequired,
+};

@@ -266,9 +266,7 @@ function TransactionsTable({ dispatch, state }) {
                       {csvRow.map((column, columnIndex) => (
                         <td
                           className="right"
-                          key={`transaction-${csvRowIndex}-${
-                            state.columns[columnIndex]
-                          }`}
+                          key={`transaction-${csvRowIndex}-${state.columns[columnIndex]}`}
                         >
                           {column}
                         </td>
@@ -302,9 +300,7 @@ function TransactionsTable({ dispatch, state }) {
                   await bulkImport(transactions);
                   dispatch({ type: 'toggleConfirmFinish' });
                   notify(
-                    `(${
-                      transactions.length
-                    }) Transactions Imported Successfully`,
+                    `(${transactions.length}) Transactions Imported Successfully`,
                   );
                   history.push('/transactions');
                 }}

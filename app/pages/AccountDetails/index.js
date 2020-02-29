@@ -2,9 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { PageTitle } from 'component';
 import AddImportTransactionButton from 'component/AddImportTransactionButton';
+import { StatisticTile } from 'component/StatisticTile';
 import { TabPanel } from 'component/TabPanel';
 import TransactionList from 'component/TransactionList';
-import { mapParamIdToId } from 'lib';
+import { currencyFormatter, mapParamIdToId } from 'lib';
 import { useAccountDetails, useTransactions } from 'query';
 import { Tag } from '@blueprintjs/core';
 import Statistics from './components/Statistics';
@@ -57,25 +58,37 @@ function AccountDetails({ id }) {
           </h2>
         </>
       </PageTitle>
-      <Statistics account={account} />
+
+      {['expense', 'income'].includes(account.type.toLowerCase()) && (
+        <Statistics account={account} />
+      )}
       <p>Balance: ${account.currentBalance}</p>
 
-      <h3>Account Balance over Time</h3>
-      <p
-        style={{
-          borderLeft: '3px solid #ccc',
-          fontStyle: 'italic',
-          color: '#bbb',
-          marginBottom: 15,
-          marginTop: 0,
-          paddingLeft: 10,
-        }}
-      >
-        By snapshots taken at the end of each month.
-      </p>
-      <div style={{ height: 320, width: '100%' }}>
-        <TrendChart account={account} />
-      </div>
+      {['liabilities', 'bank'].includes(account.type.toLowerCase()) && (
+        <>
+          <StatisticTile
+            title="Balance"
+            value={currencyFormatter(account.currentBalance)}
+            intent={account.currentBalance > 0 ? 'success' : 'danger'}
+          />
+          <h3>Account Balance over Time</h3>
+          <p
+            style={{
+              borderLeft: '3px solid #ccc',
+              fontStyle: 'italic',
+              color: '#bbb',
+              marginBottom: 15,
+              marginTop: 0,
+              paddingLeft: 10,
+            }}
+          >
+            By snapshots taken at the end of each month.
+          </p>
+          <div style={{ height: 320, width: '100%' }}>
+            <TrendChart account={account} />
+          </div>
+        </>
+      )}
 
       <TabPanel
         tabs={[{ label: 'Transactions' }, { label: 'Reconcilations' }]}

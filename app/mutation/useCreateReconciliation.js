@@ -44,7 +44,7 @@ export function useCreateReconciliation() {
           variables: { accountId },
         },
       ],
-    }).then(result => {
+    }).then((result) => {
       if (result.data && result.data.createReconciliation) {
         return result.data.createReconciliation;
       }

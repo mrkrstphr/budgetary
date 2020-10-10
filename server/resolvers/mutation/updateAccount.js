@@ -6,5 +6,5 @@ module.exports = async function updateAccount(
   await context.requireAuthorization();
   return context.dbal.accounts
     .update(id, accountDetails)
-    .then(account => ({ account }));
+    .then((account) => ({ account }));
 };

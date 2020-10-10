@@ -10,7 +10,7 @@ export function highlightText(text, query) {
   let lastIndex = 0;
   const words = query
     .split(/\s+/)
-    .filter(word => word.length > 0)
+    .filter((word) => word.length > 0)
     .map(escapeRegExpChars);
 
   if (words.length === 0) {

@@ -7,7 +7,7 @@
  * @return {Array|Object}
  */
 module.exports = function pickFirst(data) {
-  return Promise.resolve(data).then(results => {
+  return Promise.resolve(data).then((results) => {
     if (Array.isArray(results) && results.length > 0) {
       return results[0];
     }

@@ -5,7 +5,7 @@ import React from 'react';
 import { currencyFormatter, formatShortMonthAndYear } from 'lib';
 
 function mapValues(values) {
-  const chartValues = values.slice(0, 18).map(month => ({
+  const chartValues = values.slice(0, 18).map((month) => ({
     month: month.name,
     netIncome: month.totalIncome - month.totalExpenses,
   }));
@@ -18,7 +18,7 @@ function mapValues(values) {
 export default function NetIncomeChart({ months }) {
   return (
     <ResponsiveBar
-      colors={v => (v.value >= 0 ? '#66bd63' : '#d6604d')}
+      colors={(v) => (v.value >= 0 ? '#66bd63' : '#d6604d')}
       data={mapValues(months)}
       keys={['netIncome']}
       indexBy="month"
@@ -58,12 +58,12 @@ export default function NetIncomeChart({ months }) {
       borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
       axisTop={null}
       axisBottom={{
-        format: v => formatShortMonthAndYear(new Date(`${v}-01`)),
+        format: (v) => formatShortMonthAndYear(new Date(`${v}-01`)),
         tickRotation: -45,
       }}
       axisRight={null}
       axisLeft={{
-        format: v => currencyFormatter(v, { minimumFractionDigits: 0 }),
+        format: (v) => currencyFormatter(v, { minimumFractionDigits: 0 }),
       }}
       enableLabel={false}
       animate

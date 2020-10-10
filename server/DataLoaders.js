@@ -2,8 +2,8 @@ const DL = require('dataloader');
 
 function organizeMultipleResultsById(results, ids, idColumn = 'id') {
   const organizedResults = [];
-  ids.forEach(id => {
-    const idCollection = results.filter(result => result[idColumn] === id);
+  ids.forEach((id) => {
+    const idCollection = results.filter((result) => result[idColumn] === id);
     organizedResults.push(idCollection);
   });
 
@@ -11,32 +11,34 @@ function organizeMultipleResultsById(results, ids, idColumn = 'id') {
 }
 
 function organizeResultsById(results, ids, idColumn = 'id') {
-  return ids.map(id => {
-    const record = results.find(result => result[idColumn] === id);
+  return ids.map((id) => {
+    const record = results.find((result) => result[idColumn] === id);
     return record || null;
   });
 }
 
 class DataLoaders {
   constructor(dbal) {
-    this.accountById = new DL(ids =>
-      dbal.accounts.findByIds(ids).then(data => organizeResultsById(data, ids)),
+    this.accountById = new DL((ids) =>
+      dbal.accounts
+        .findByIds(ids)
+        .then((data) => organizeResultsById(data, ids)),
     );
 
-    this.reconciliationById = new DL(ids =>
+    this.reconciliationById = new DL((ids) =>
       dbal.reconciliation
         .findByIds(ids)
-        .then(data => organizeResultsById(data, ids)),
+        .then((data) => organizeResultsById(data, ids)),
     );
 
-    this.calculateExpensesByMonth = new DL(months =>
+    this.calculateExpensesByMonth = new DL((months) =>
       dbal.transactions
         .calculateExpensesForMonths(months)
-        .then(data => organizeResultsById(data, months, 'month')),
+        .then((data) => organizeResultsById(data, months, 'month')),
     );
 
-    this.calculateIncomeByMonth = new DL(months =>
-      dbal.transactions.calculateSumForMonths(months, 'income').then(data => {
+    this.calculateIncomeByMonth = new DL((months) =>
+      dbal.transactions.calculateSumForMonths(months, 'income').then((data) => {
         const negated = data.map(({ month, total }) => ({
           month,
           total: total * -1,
@@ -45,16 +47,18 @@ class DataLoaders {
       }),
     );
 
-    this.findCategoriesForTransaction = new DL(ids =>
+    this.findCategoriesForTransaction = new DL((ids) =>
       dbal.transactions
         .findCategoriesForTransactionByIds(ids)
-        .then(data => organizeMultipleResultsById(data, ids, 'transactionId')),
+        .then((data) =>
+          organizeMultipleResultsById(data, ids, 'transactionId'),
+        ),
     );
 
-    this.findUserById = new DL(ids =>
+    this.findUserById = new DL((ids) =>
       dbal.users
         .findUserByIds(ids)
-        .then(data => organizeResultsById(data, ids)),
+        .then((data) => organizeResultsById(data, ids)),
     );
   }
 }

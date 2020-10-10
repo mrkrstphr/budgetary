@@ -12,12 +12,12 @@ class Account {
         .select('initial_balance')
         .where({ id: accountId })
         .then(pickFirst)
-        .then(v => v.initial_balance),
+        .then((v) => v.initial_balance),
       this.conn('transaction_accounts')
         .select(this.conn.raw('COALESCE(SUM(amount), 0) AS sum'))
         .where({ account_id: accountId })
         .then(pickFirst)
-        .then(v => v.sum),
+        .then((v) => v.sum),
     ]);
     return parseFloat(initialBalance) + parseFloat(transactions);
   }
@@ -42,29 +42,17 @@ class Account {
   }
 
   fetchAccounts() {
-    return desnakeify(
-      this.conn('accounts')
-        .select('*')
-        .orderBy('name', 'ASC'),
-    );
+    return desnakeify(this.conn('accounts').select('*').orderBy('name', 'ASC'));
   }
 
   fetchById(id) {
     return desnakeify(
-      pickFirst(
-        this.conn('accounts')
-          .select('*')
-          .where('id', id),
-      ),
+      pickFirst(this.conn('accounts').select('*').where('id', id)),
     );
   }
 
   findByIds(ids) {
-    return desnakeify(
-      this.conn('accounts')
-        .select('*')
-        .whereIn('id', ids),
-    );
+    return desnakeify(this.conn('accounts').select('*').whereIn('id', ids));
   }
 
   fetchSnapshot(id) {

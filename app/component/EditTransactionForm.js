@@ -33,9 +33,9 @@ export default function EditTransactionForm({ onClose, transaction }) {
   const initialValues = {
     date: new Date(transaction.date),
     description: transaction.description,
-    splits: transaction.accounts.map(account => {
+    splits: transaction.accounts.map((account) => {
       const accountDetails = accounts
-        ? accounts.find(a => a.id === account.account.id)
+        ? accounts.find((a) => a.id === account.account.id)
         : null;
 
       return {
@@ -66,7 +66,7 @@ export default function EditTransactionForm({ onClose, transaction }) {
       //     });
       // }}
       onSubmit={({ date, description, splits }, { setSubmitting }) => {
-        const preparedSplits = splits.map(split => ({
+        const preparedSplits = splits.map((split) => ({
           accountId: split.accountId ? split.accountId.id : null,
           amount: split.increase
             ? Math.abs(parseFloat(split.increase))

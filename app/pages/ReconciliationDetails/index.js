@@ -13,7 +13,7 @@ import Title from './Title';
 
 function findAccount(reconciliation, transaction) {
   return transaction.accounts.find(
-    a => a.account.id === reconciliation.account.id,
+    (a) => a.account.id === reconciliation.account.id,
   );
 }
 
@@ -71,7 +71,7 @@ function ReconciliationDetailsPage({ id }) {
           </tr>
         </thead>
         <tbody>
-          {reconciliation.transactions.map(trans => {
+          {reconciliation.transactions.map((trans) => {
             const account = findAccount(reconciliation, trans);
             return (
               <tr key={`transaction-${trans.id}`}>
@@ -82,7 +82,7 @@ function ReconciliationDetailsPage({ id }) {
                         account.reconciliation !== null &&
                         account.reconciliation.id === reconciliation.id
                       }
-                      onChange={e =>
+                      onChange={(e) =>
                         markReconciled(
                           account.id,
                           e.target.checked ? reconciliation.id : null,

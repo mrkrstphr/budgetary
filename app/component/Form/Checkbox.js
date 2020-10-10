@@ -13,7 +13,7 @@ export function Checkbox({ label, name }) {
           <BpCheckbox
             checked={value === true}
             label={label}
-            onChange={e => setFieldValue(name, e.target.checked)}
+            onChange={(e) => setFieldValue(name, e.target.checked)}
           />
           <ErrorMessage name={name} component={FieldError} />
         </>

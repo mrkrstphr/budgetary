@@ -18,7 +18,7 @@ module.exports = async function Mutation(resolve, root, args, context, info) {
     } catch (error) {
       if (error instanceof yup.ValidationError) {
         return {
-          errors: error.inner.map(inner => ({
+          errors: error.inner.map((inner) => ({
             field: inner.path,
             message: inner.message,
             details: inner.errors,

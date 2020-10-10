@@ -15,5 +15,5 @@ export function useDeleteTransaction({ refetchVariables = {} } = {}) {
     ],
   });
 
-  return [id => deleteTransaction({ variables: { id } }), other];
+  return [(id) => deleteTransaction({ variables: { id } }), other];
 }

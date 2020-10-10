@@ -108,7 +108,7 @@ class Transaction {
       // do nothing...
     }
 
-    return query.then(v => (v.length ? v[0].total : 0));
+    return query.then((v) => (v.length ? v[0].total : 0));
   }
 
   countTransactionsForPeriod(period) {
@@ -128,7 +128,7 @@ class Transaction {
 
     switch (period.toLowerCase()) {
       case 'thismonth':
-        [expenseQuery, incomeQuery].forEach(query =>
+        [expenseQuery, incomeQuery].forEach((query) =>
           query.where(function whereThisMonth() {
             this.where(
               't.date',
@@ -146,7 +146,7 @@ class Transaction {
         break;
 
       case 'lastmonth':
-        [expenseQuery, incomeQuery].forEach(query =>
+        [expenseQuery, incomeQuery].forEach((query) =>
           query.where(function whereLastMonth() {
             this.where(
               't.date',
@@ -160,7 +160,7 @@ class Transaction {
         break;
 
       case 'lastthree':
-        [expenseQuery, incomeQuery].forEach(query =>
+        [expenseQuery, incomeQuery].forEach((query) =>
           query.where(function whereLastThreeMonths() {
             this.where(
               't.date',
@@ -174,7 +174,7 @@ class Transaction {
         break;
 
       case 'lasttwelve':
-        [expenseQuery, incomeQuery].forEach(query =>
+        [expenseQuery, incomeQuery].forEach((query) =>
           query.where(function whereLastTwelveMonths() {
             this.where(
               't.date',
@@ -196,7 +196,7 @@ class Transaction {
       `SELECT COALESCE((inc.total * -1) - exp.total, 0) AS total FROM (${incomeQuery}) inc CROSS JOIN (${expenseQuery}) exp`,
     );
 
-    return pickFirst(query.then(r => r.rows)).then(({ total }) => total);
+    return pickFirst(query.then((r) => r.rows)).then(({ total }) => total);
   }
 
   fetchUniqueMonths() {
@@ -268,7 +268,7 @@ class Transaction {
       ])
       .whereIn('ta.transaction_id', ids)
       .then(desnakeify)
-      .then(results =>
+      .then((results) =>
         results.map(
           ({
             transAccountId,
@@ -303,7 +303,7 @@ class Transaction {
     );
 
     await Promise.all(
-      splits.map(async split =>
+      splits.map(async (split) =>
         // const account = await this.account.fetchById(split.accountId);
         this.createSplit(
           transaction.id,
@@ -333,9 +333,7 @@ class Transaction {
   }
 
   delete(id) {
-    return this.conn('transactions')
-      .delete()
-      .where({ id });
+    return this.conn('transactions').delete().where({ id });
   }
 
   update(id, date, description, accounts) {
@@ -351,16 +349,16 @@ class Transaction {
     const deletePromise = this.conn('transaction_accounts')
       .select('*')
       .where('transaction_id', id)
-      .then(splits =>
+      .then((splits) =>
         Promise.all(
           splits
             .filter(
-              split =>
+              (split) =>
                 !accounts
                   .map(({ id: accountId }) => accountId)
                   .includes(split.id),
             )
-            .map(split =>
+            .map((split) =>
               this.conn('transaction_accounts')
                 .delete()
                 .where({ id: split.id }),

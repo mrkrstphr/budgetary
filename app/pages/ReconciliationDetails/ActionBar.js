@@ -32,7 +32,7 @@ export default function ActionBar({ reconciliation, balance }) {
 
   return (
     <ToastContext.Consumer>
-      {toaster => (
+      {(toaster) => (
         <ActionBarStyles>
           <Alert
             icon="help"

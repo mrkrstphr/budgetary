@@ -72,8 +72,8 @@ export default function TransactionForm({ initialTransactionCount = 2 }) {
         name="splits"
         render={(...messages) =>
           messages
-            .filter(message => typeof message === 'string')
-            .map(error => <FieldError key={error}>{error}</FieldError>)
+            .filter((message) => typeof message === 'string')
+            .map((error) => <FieldError key={error}>{error}</FieldError>)
         }
       />
     </Form>

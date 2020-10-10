@@ -10,7 +10,7 @@ export const logoutMutation = gql`
 export function useLogout() {
   const [logoutFunc, { client, ...etc }] = useMutation(logoutMutation);
 
-  const logout = account =>
+  const logout = (account) =>
     logoutFunc({
       variables: { account },
     }).then(() => {

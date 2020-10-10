@@ -19,10 +19,10 @@ export const createAccountMutation = gql`
 export function useCreateAccount() {
   const [createAccountFunc, { data }] = useMutation(createAccountMutation);
 
-  const createAccount = account =>
+  const createAccount = (account) =>
     createAccountFunc({
       variables: { account },
-    }).then(result => {
+    }).then((result) => {
       if (result.data && result.data.createAccount) {
         return result.data.createAccount;
       }

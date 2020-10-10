@@ -16,7 +16,7 @@ export function Select({ label, name, options = [], ...props }) {
             {label}
             <HTMLSelect fill {...field} {...props}>
               <option value=""> </option>
-              {options.map(option => (
+              {options.map((option) => (
                 <option
                   key={`${field.name}_${option.value}`}
                   value={option.value}

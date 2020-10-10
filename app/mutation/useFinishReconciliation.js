@@ -32,9 +32,9 @@ export function useFinishReconciliation() {
   );
 
   return [
-    id =>
+    (id) =>
       finishReconciliation({ variables: { id } }).then(
-        data => data.finishReconciliation,
+        (data) => data.finishReconciliation,
       ),
     ...other,
   ];

@@ -74,7 +74,7 @@ const createReconciliation = {
     await context.requireAuthorization();
     return context.dbal.reconciliation
       .create(accountId, details)
-      .then(reconciliation => ({ reconciliation }));
+      .then((reconciliation) => ({ reconciliation }));
   },
 };
 

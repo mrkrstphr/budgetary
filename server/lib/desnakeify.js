@@ -33,7 +33,7 @@ function convertObject(object) {
  * @return {Array|Object}
  */
 module.exports = function desnakeify(input) {
-  return Promise.resolve(input).then(resolved => {
+  return Promise.resolve(input).then((resolved) => {
     if (Array.isArray(resolved)) {
       return resolved.map(convertObject);
     }

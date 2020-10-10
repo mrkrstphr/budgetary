@@ -11,7 +11,7 @@ class Context {
     this.dbal = dbal;
   }
 
-  setUser = user => {
+  setUser = (user) => {
     this.request.session.user = user;
   };
 

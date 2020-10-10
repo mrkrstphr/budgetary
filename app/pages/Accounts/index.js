@@ -14,15 +14,15 @@ import AddAccountForm from '../../component/AddAccountForm';
 import AccountActions from './AccountActions';
 
 function groupAccounts(accounts, filter = '') {
-  const filteredAccounts = accounts.filter(account =>
+  const filteredAccounts = accounts.filter((account) =>
     account.name.toLowerCase().includes(filter.toLowerCase()),
   );
 
-  return [...new Set(filteredAccounts.map(account => account.type))]
+  return [...new Set(filteredAccounts.map((account) => account.type))]
     .sort()
-    .map(group => ({
+    .map((group) => ({
       name: group,
-      accounts: filteredAccounts.filter(a => a.type === group),
+      accounts: filteredAccounts.filter((a) => a.type === group),
     }));
 }
 
@@ -47,7 +47,7 @@ export default function Accounts() {
               <InputGroup
                 placeholder="Search..."
                 leftIcon="search"
-                onChange={e => setFilter(e.target.value)}
+                onChange={(e) => setFilter(e.target.value)}
               />
               <Button
                 intent="primary"
@@ -63,7 +63,7 @@ export default function Accounts() {
 
       {groupedAccounts && (
         <>
-          {groupedAccounts.map(group => (
+          {groupedAccounts.map((group) => (
             <div key={`account-group-${group.name}`}>
               <h3>{ucfirst(group.name)}</h3>
               <HTMLTable striped interactive style={{ width: '100%' }}>
@@ -75,7 +75,7 @@ export default function Accounts() {
                   </tr>
                 </thead>
                 <tbody>
-                  {group.accounts.map(account => (
+                  {group.accounts.map((account) => (
                     <tr key={`accounts-${account.id}`}>
                       <td className="middle">
                         <Link to={`/accounts/${account.id}`}>

@@ -19,7 +19,7 @@ const themes = {
 class Context extends React.Component {
   toaster = null;
 
-  toasterRef = ref => {
+  toasterRef = (ref) => {
     this.toaster = ref;
   };
 
@@ -39,13 +39,13 @@ class Context extends React.Component {
     this.persist();
   }
 
-  setUser = user => {
+  setUser = (user) => {
     this.setState({ user });
     this.persist();
   };
 
   toggleTheme = () =>
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       theme: prevState.theme.name === 'dark' ? 'light' : 'dark',
     }));
 

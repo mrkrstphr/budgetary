@@ -7,11 +7,13 @@ import AccountTypeList from './AccountTypeList';
 import Logo from './Logo';
 
 function accountType(accounts, types) {
-  return accounts.filter(account => types.includes(account.type.toLowerCase()));
+  return accounts.filter((account) =>
+    types.includes(account.type.toLowerCase()),
+  );
 }
 
 function visibleOnly(accounts) {
-  return accounts.filter(account => account.isOpen && account.showInMenu);
+  return accounts.filter((account) => account.isOpen && account.showInMenu);
 }
 
 const SidebarStyles = styled.div`

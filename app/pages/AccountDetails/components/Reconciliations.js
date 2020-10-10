@@ -61,7 +61,7 @@ export default withRouter(function Reconciliations({ account, history }) {
             </tr>
           </thead>
           <tbody>
-            {reconciliations.map(reconciliation => (
+            {reconciliations.map((reconciliation) => (
               <tr key={`reconciliation-${reconciliation.id}`}>
                 <td>{formatDate(reconciliation.startDate)}</td>
                 <td>{formatDate(reconciliation.endDate)}</td>

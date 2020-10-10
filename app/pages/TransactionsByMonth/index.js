@@ -71,7 +71,7 @@ function TransactionsPage() {
 
   let selectedMonth = months[0];
   if (month) {
-    const matchedMonths = months.filter(m => m.name === month);
+    const matchedMonths = months.filter((m) => m.name === month);
     if (matchedMonths.length) {
       selectedMonth = {
         ...matchedMonths[0],

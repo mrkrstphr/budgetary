@@ -11,7 +11,7 @@ class Context extends React.Component {
   }
 
   refHandlers = {
-    toaster: toaster => this.setState({ toaster }),
+    toaster: (toaster) => this.setState({ toaster }),
   };
 
   render() {

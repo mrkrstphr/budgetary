@@ -22,33 +22,31 @@ class User {
         },
         '*',
       )
-      .then(v => v[0]);
+      .then((v) => v[0]);
   }
 
   findUserByIds(ids) {
-    return this.conn('users')
-      .select('*')
-      .whereIn('id', ids);
+    return this.conn('users').select('*').whereIn('id', ids);
   }
 
   findTokenBy(where) {
     const query = this.conn('user_tokens AS t');
 
-    Object.keys(where).forEach(key => {
+    Object.keys(where).forEach((key) => {
       query.whereRaw(`LOWER(${key}) = ?`, [where[key].toLowerCase()]);
     });
 
-    return query.then(v => v[0]);
+    return query.then((v) => v[0]);
   }
 
   findOneBy(where) {
     const query = this.conn('users').select('*');
 
-    Object.keys(where).forEach(key => {
+    Object.keys(where).forEach((key) => {
       query.whereRaw(`LOWER(${key}) = ?`, [where[key].toLowerCase()]);
     });
 
-    return query.then(v => v[0]);
+    return query.then((v) => v[0]);
   }
 }
 

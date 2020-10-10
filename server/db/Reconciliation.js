@@ -43,7 +43,7 @@ function betweenHandler(query, condition) {
 function orHandler(query, condition) {
   if (condition.value && Array.isArray(condition.value)) {
     query.where(function orWhereHandler() {
-      condition.value.forEach(clause => {
+      condition.value.forEach((clause) => {
         if (clause.type && clause.type in handlers) {
           handlers[clause.type](this, { ...clause, _clause: 'OR' });
         }
@@ -53,7 +53,7 @@ function orHandler(query, condition) {
 }
 
 function whereBuilder(query, conditions) {
-  conditions.forEach(condition => {
+  conditions.forEach((condition) => {
     if (condition.type && condition.type in handlers) {
       handlers[condition.type](query, condition);
     }
@@ -87,18 +87,14 @@ class Reconciliation {
   fetchById(id) {
     return pickFirst(
       desnakeify(
-        this.conn('account_reconciliation')
-          .select('*')
-          .where('id', id),
+        this.conn('account_reconciliation').select('*').where('id', id),
       ),
     );
   }
 
   findByIds(ids) {
     return desnakeify(
-      this.conn('account_reconciliation')
-        .select('*')
-        .whereIn('id', ids),
+      this.conn('account_reconciliation').select('*').whereIn('id', ids),
     );
   }
 

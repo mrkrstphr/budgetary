@@ -16,7 +16,9 @@ function reducer(state, action) {
     case 'pickFile':
       return {
         ...state,
-        columns: Array.from(action.data[0].keys()).map(i => `Column ${i + 1}`),
+        columns: Array.from(action.data[0].keys()).map(
+          (i) => `Column ${i + 1}`,
+        ),
         rows: action.data,
         selectedRows: Array.from(action.data.keys()),
       };
@@ -27,7 +29,7 @@ function reducer(state, action) {
         : [state.columns, ...state.rows];
       const columns = action.value
         ? rows.shift()
-        : Array.from(state.rows[0].keys()).map(i => `Column ${i + 1}`);
+        : Array.from(state.rows[0].keys()).map((i) => `Column ${i + 1}`);
 
       return {
         ...state,
@@ -59,7 +61,7 @@ function reducer(state, action) {
         ...state,
         selectAll: false,
         selectedRows: state.selectedRows.includes(action.value)
-          ? state.selectedRows.filter(r => r !== action.value)
+          ? state.selectedRows.filter((r) => r !== action.value)
           : [...state.selectedRows, action.value],
       };
 

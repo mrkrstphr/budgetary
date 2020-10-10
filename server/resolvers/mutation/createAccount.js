@@ -8,5 +8,5 @@ module.exports = async function createAccount(
   const { type, name } = accountInput;
   return context.dbal.accounts
     .createAccount(type, name)
-    .then(account => ({ account }));
+    .then((account) => ({ account }));
 };

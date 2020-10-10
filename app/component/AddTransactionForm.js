@@ -21,8 +21,8 @@ Yup.addMethod(Yup.object, 'onlyOneOf', function validateOnlyOneOf(
     message,
     exclusive: true,
     params: { keys: list.join(', ') },
-    test: value =>
-      value == null || list.filter(f => !isNil(value[f])).length === 1,
+    test: (value) =>
+      value == null || list.filter((f) => !isNil(value[f])).length === 1,
   });
 });
 
@@ -114,7 +114,7 @@ export default function AddTransactionForm({
               { date, description, splits },
               { setSubmitting, resetForm },
             ) => {
-              const preparedSplits = splits.map(split => ({
+              const preparedSplits = splits.map((split) => ({
                 accountId: split.accountId ? split.accountId.id : null,
                 amount: split.increase
                   ? Math.abs(parseFloat(split.increase))

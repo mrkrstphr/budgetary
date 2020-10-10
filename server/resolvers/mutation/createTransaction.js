@@ -35,7 +35,7 @@ const createTransaction = {
     await context.requireAuthorization();
     return context.dbal.transactions
       .createTransaction(date, description, splits)
-      .then(transaction => ({ transaction }));
+      .then((transaction) => ({ transaction }));
   },
 };
 

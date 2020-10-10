@@ -32,25 +32,25 @@ function itemRenderer(month, { handleClick, modifiers, query }) {
 }
 
 function hasPreviousMonth(months, selected) {
-  const monthIndex = months.findIndex(m => m.name === selected.name);
+  const monthIndex = months.findIndex((m) => m.name === selected.name);
   return monthIndex > 0;
 }
 
 function gotoPreviousMonth(history, months, selected) {
   if (hasPreviousMonth(months, selected)) {
-    const monthIndex = months.findIndex(m => m.name === selected.name);
+    const monthIndex = months.findIndex((m) => m.name === selected.name);
     history.push(`/transactions/${months[monthIndex - 1].name}`);
   }
 }
 
 function hasNextMonth(months, selected) {
-  const monthIndex = months.findIndex(m => m.name === selected.name);
+  const monthIndex = months.findIndex((m) => m.name === selected.name);
   return monthIndex < months.length - 1;
 }
 
 function gotoNextMonth(history, months, selected) {
   if (hasNextMonth(months, selected)) {
-    const monthIndex = months.findIndex(m => m.name === selected.name);
+    const monthIndex = months.findIndex((m) => m.name === selected.name);
     history.push(`/transactions/${months[monthIndex + 1].name}`);
   }
 }
@@ -72,7 +72,7 @@ export default function MonthSwitcher({ months, selectedMonth }) {
         itemPredicate={itemPredicate}
         itemRenderer={itemRenderer}
         noResults={<MenuItem disabled text="No results." />}
-        onItemSelect={selected => {
+        onItemSelect={(selected) => {
           history.push(`/transactions/${selected.name}`);
         }}
       >

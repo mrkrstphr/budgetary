@@ -40,7 +40,7 @@ const finishReconciliation = {
     await context.requireAuthorization();
     return context.dbal.reconciliation
       .update(id, { status: 'Complete' })
-      .then(reconciliation => ({ reconciliation }));
+      .then((reconciliation) => ({ reconciliation }));
   },
 };
 

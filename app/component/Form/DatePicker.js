@@ -23,10 +23,10 @@ export function DatePicker({ label, name, ...props }) {
               name={name}
               value={value}
               fill
-              formatDate={date => formatDate(date)}
-              parseDate={str => new Date(str)}
+              formatDate={(date) => formatDate(date)}
+              parseDate={(str) => new Date(str)}
               placeholder="M/D/YYYY"
-              onChange={newValue => setFieldValue(name, newValue)}
+              onChange={(newValue) => setFieldValue(name, newValue)}
               {...props}
             />
           </FieldLabel>

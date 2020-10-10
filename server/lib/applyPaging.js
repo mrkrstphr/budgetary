@@ -8,10 +8,7 @@ module.exports = async function applyPaging(
   const countQuery = query.clone();
 
   // eslint-disable-next-line no-underscore-dangle
-  countQuery
-    .clearSelect()
-    .count('* AS total')
-    ._clearGrouping('order');
+  countQuery.clearSelect().count('* AS total')._clearGrouping('order');
 
   query.limit(limit).offset((currentPage - 1) * limit);
   const [count, items] = await Promise.all([countQuery, query]);

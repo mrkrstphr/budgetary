@@ -11,7 +11,7 @@ function makeData(account, snapshots) {
     {
       id: 'balance',
       color: '#d6604d',
-      data: snapshots.slice(start, snapshots.length).map(month => ({
+      data: snapshots.slice(start, snapshots.length).map((month) => ({
         x: formatShortMonthAndYear(month.snapshotDate),
         y: month.balance * (account.type === 'liabilities' ? -1 : 1),
       })),

@@ -6,7 +6,7 @@ module.exports = function snakeify(input) {
   }
 
   if (Array.isArray(input)) {
-    return input.map(row => snakeify(row));
+    return input.map((row) => snakeify(row));
   }
 
   const data = {};

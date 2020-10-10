@@ -21,7 +21,7 @@ import ImportTarget from './ImportTarget';
 import { AppContext } from '../../../App/Context';
 
 function getMappingOptionsFor(state, columnName) {
-  const columns = state.columns.filter(column => {
+  const columns = state.columns.filter((column) => {
     const isNotMapped = !Object.values(state.columnMappings).includes(column);
     const isMappedToCurrentColumn =
       columnName in state.columnMappings &&
@@ -33,7 +33,7 @@ function getMappingOptionsFor(state, columnName) {
   return (
     <>
       <option> </option>
-      {columns.map(column => (
+      {columns.map((column) => (
         <option key={`trans-account-option-${column}`} value={column}>
           {column}
         </option>
@@ -51,7 +51,7 @@ const ImportOptions = ({ dispatch, state }) => (
         <Label>Offset Account:</Label>
         <SelectCategory
           value={state.offsetAccount}
-          onChange={account => {
+          onChange={(account) => {
             dispatch({
               type: 'setOffsetAccount',
               value: account,
@@ -87,7 +87,7 @@ const ImportOptions = ({ dispatch, state }) => (
           <td>Transaction Date</td>
           <td>
             <HTMLSelect
-              onChange={e =>
+              onChange={(e) =>
                 dispatch({
                   type: 'mapColumn',
                   field: 'date',
@@ -103,7 +103,7 @@ const ImportOptions = ({ dispatch, state }) => (
           <td>Description</td>
           <td>
             <HTMLSelect
-              onChange={e =>
+              onChange={(e) =>
                 dispatch({
                   type: 'mapColumn',
                   field: 'description',
@@ -119,7 +119,7 @@ const ImportOptions = ({ dispatch, state }) => (
           <td>Amount</td>
           <td>
             <HTMLSelect
-              onChange={e =>
+              onChange={(e) =>
                 dispatch({
                   type: 'mapColumn',
                   field: 'amount',
@@ -167,7 +167,7 @@ ImportOptions.propTypes = {
 };
 
 function getTransactionsToImport(state) {
-  const transactions = state.selectedRows.map(index => ({
+  const transactions = state.selectedRows.map((index) => ({
     date: formatIsoDate(
       state.rows[index][state.columns.indexOf(state.columnMappings.date)],
     ),
@@ -206,8 +206,8 @@ const bulkImportQuery = gql`
 function BulkImport({ children }) {
   return (
     <Mutation mutation={bulkImportQuery}>
-      {bulkImport =>
-        children(transactions => bulkImport({ variables: { transactions } }))
+      {(bulkImport) =>
+        children((transactions) => bulkImport({ variables: { transactions } }))
       }
     </Mutation>
   );
@@ -224,7 +224,7 @@ function TransactionsTable({ dispatch, state }) {
     <AppContext.Consumer>
       {({ notify }) => (
         <BulkImport>
-          {bulkImport => (
+          {(bulkImport) => (
             <div>
               <HTMLTable style={{ width: '100%' }} striped interactive>
                 <thead>
@@ -240,7 +240,7 @@ function TransactionsTable({ dispatch, state }) {
                         }
                       />
                     </th>
-                    {state.columns.map(column => (
+                    {state.columns.map((column) => (
                       <th key={`header-${column}`}>{column}</th>
                     ))}
                     <th>Account Mapping</th>
@@ -274,7 +274,7 @@ function TransactionsTable({ dispatch, state }) {
                       <td>
                         <SelectCategory
                           value={state.transactionAccountMappings[csvRowIndex]}
-                          onChange={category => {
+                          onChange={(category) => {
                             dispatch({
                               type: 'mapTransaction',
                               index: csvRowIndex,

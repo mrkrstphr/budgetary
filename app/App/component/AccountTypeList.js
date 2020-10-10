@@ -11,7 +11,7 @@ export default function AccountList({
 }) {
   return (
     <>
-      {accounts.map(account => (
+      {accounts.map((account) => (
         <div className="menuItem" key={`account-sidebar-${account.id}`}>
           <Link
             to={`/accounts/${account.id}`}

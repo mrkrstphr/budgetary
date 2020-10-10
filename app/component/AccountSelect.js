@@ -49,7 +49,7 @@ export function AccountSelect({ label, name }) {
         <AddAccountForm
           initialValues={{ name: addQuery }}
           onClose={toggleAddOpen}
-          onSave={account =>
+          onSave={(account) =>
             refetch().then(() => {
               setFieldValue(name, account);
               toggleAddOpen();
@@ -64,7 +64,7 @@ export function AccountSelect({ label, name }) {
               {label}
               <Select
                 items={loading || error ? [] : accounts}
-                onItemSelect={selectedValue =>
+                onItemSelect={(selectedValue) =>
                   setFieldValue(name, selectedValue)
                 }
                 itemRenderer={renderAccount}
@@ -78,7 +78,7 @@ export function AccountSelect({ label, name }) {
                   return normalizedAccount.indexOf(normalizedQuery) >= 0;
                 }}
                 createNewItemFromQuery={() => null}
-                createNewItemRenderer={query => (
+                createNewItemRenderer={(query) => (
                   <MenuItem
                     icon="add"
                     text={`Create ${query}...`}

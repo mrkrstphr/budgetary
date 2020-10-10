@@ -24,7 +24,7 @@ module.exports = {
     '.*\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
       '<rootDir>/internals/mocks/image.js',
   },
-  setupFilesAfterEnv: ['react-testing-library/cleanup-after-each'],
+  // setupFilesAfterEnv: ['@testing-library/react/cleanup-after-each'],
   setupFiles: ['raf/polyfill'],
   testRegex: '.*\\.spec\\.js$',
   snapshotSerializers: [],

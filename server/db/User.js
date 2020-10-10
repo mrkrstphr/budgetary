@@ -1,5 +1,5 @@
 const randToken = require('rand-token');
-const makeUuid = require('uuid/v4');
+const { v4: makeUuid } = require('uuid');
 
 const TOKEN_LIFETIME = 60 * 60 * 8;
 

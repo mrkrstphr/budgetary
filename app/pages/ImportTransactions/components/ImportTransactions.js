@@ -11,7 +11,7 @@ import Papa from 'papaparse';
 import PropTypes from 'prop-types';
 import React, { useReducer } from 'react';
 import { FieldColumn, FieldRow, Label } from 'component/Form';
-import { Mutation } from 'react-apollo';
+import { Mutation } from '@apollo/client/react/components';
 import gql from 'graphql-tag';
 import { useHistory } from 'react-router-dom';
 import { formatIsoDate } from 'lib';

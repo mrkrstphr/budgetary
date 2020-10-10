@@ -1,4 +1,4 @@
-async function up(db) {
+module.exports.up = async function up(db) {
   await Promise.all([
     db.schema.createTable('accounts', table => {
       table.uuid('id').primary();
@@ -34,14 +34,14 @@ async function up(db) {
       .onDelete('CASCADE');
     table.decimal('amount', 20, 2).notNullable();
   });
-}
+};
 
-async function down(db) {
+module.exports.down = async function down(db) {
   await db.schema.dropTable('transaction_accounts');
   return Promise.all([
     db.schema.dropTable('accounts'),
     db.schema.dropTable('transactions'),
   ]);
-}
+};
 
-export { down, up };
+// export { down, up };

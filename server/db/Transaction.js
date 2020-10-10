@@ -1,4 +1,4 @@
-const makeUuid = require('uuid/v4');
+const { v4: makeUuid } = require('uuid');
 const Account = require('./Account');
 const { applyPaging, desnakeify, pickFirst } = require('../lib');
 

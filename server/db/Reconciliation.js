@@ -1,4 +1,4 @@
-const makeUuid = require('uuid/v4');
+const { v4: makeUuid } = require('uuid');
 const { desnakeify, pickFirst, snakeify } = require('../lib');
 
 const handlers = { between: betweenHandler, or: orHandler };

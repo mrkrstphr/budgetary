@@ -27,16 +27,20 @@
 
 // render();
 
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import ApolloClient from 'apollo-client';
-import { setContext } from 'apollo-link-context';
-import { ApolloLink } from 'apollo-link';
-import { createHttpLink } from 'apollo-link-http';
+import {
+  ApolloClient,
+  ApolloProvider,
+  InMemoryCache,
+  createHttpLink,
+} from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import React from 'react';
-import { ApolloProvider } from 'react-apollo';
+// import { ApolloProvider } from 'react-apollo';
 import 'regenerator-runtime/runtime';
 import { render } from 'react-dom';
 import App from './App';
+
+// import { ApolloClient, InMemoryCache } from '@apollo/client';
 
 // const appContext = localStorage.getItem('appContext');
 
@@ -47,19 +51,33 @@ import App from './App';
 //     return { headers: { Authorization: `Bearer ${context.token.token}` } };
 //   }
 // }
-const authorization = setContext(() => ({}));
+// const authorization = setContext(() => ({}));
 
-const baseUrl = createHttpLink({
+const authLink = setContext((_, { headers }) => {
+  // get the authentication token from local storage if it exists
+  const appContext = localStorage.getItem('appContext');
+  // return the headers to the context so httpLink can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: appContext?.token?.token
+        ? `Bearer ${appContext.token.token}`
+        : '',
+    },
+  };
+});
+
+const httpLink = createHttpLink({
   uri: '/graphql',
   credentials: 'same-origin',
 });
 
-const authLink = ApolloLink.from([authorization, baseUrl]);
+// const authLink = ApolloLink.from([authorization, baseUrl]);
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
   credentials: 'include',
-  link: authLink,
+  link: authLink.concat(httpLink),
 });
 
 render(

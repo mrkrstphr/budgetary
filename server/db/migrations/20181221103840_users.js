@@ -1,4 +1,4 @@
-async function up(db) {
+module.exports.up = async function up(db) {
   await db.schema.createTable('users', table => {
     table.uuid('id').primary();
     table.string('email').notNullable();
@@ -18,11 +18,11 @@ async function up(db) {
     table.timestamp('expires').notNullable();
     table.timestamps(false, true);
   });
-}
+};
 
-async function down(db) {
+module.exports.down = async function down(db) {
   await db.schema.dropTable('user_tokens');
   return db.schema.dropTable('users');
-}
+};
 
-export { down, up };
+// export { down, up };

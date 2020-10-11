@@ -70,9 +70,7 @@ function AuthenticatedApp() {
 }
 
 function isAuthError(error) {
-  return (
-    error && error.message.toLowerCase() === 'graphql error: unauthenticated'
-  );
+  return error && error.message.toLowerCase().includes('unauthenticated');
 }
 
 function renderApp(error, loading, user) {

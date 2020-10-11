@@ -8,6 +8,7 @@ const deleteTransaction = require('./deleteTransaction');
 const finishReconciliation = require('./finishReconciliation');
 const logout = require('./logout');
 const markReconciled = require('./markReconciled');
+const massReconciliation = require('./massReconciliation');
 const reopenAccount = require('./reopenAccount');
 const updateAccount = require('./updateAccount');
 const updateTransaction = require('./updateTransaction');
@@ -23,6 +24,7 @@ module.exports = {
   finishReconciliation,
   logout,
   markReconciled,
+  massReconciliation,
   reopenAccount,
   updateAccount,
   updateTransaction,

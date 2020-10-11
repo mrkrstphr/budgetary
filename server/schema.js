@@ -161,6 +161,11 @@ const schema = gql`
     created: DateTime!
   }
 
+  input MassReconciliationInput {
+    transactionAccountId: ID!
+    reconciliationId: ID
+  }
+
   type User {
     id: ID!
     email: String!
@@ -230,6 +235,10 @@ const schema = gql`
     logout: Boolean
 
     markReconciled(accountId: ID!, reconciliationId: ID): AccountTransaction!
+    massReconciliation(
+      transactionAccounts: [MassReconciliationInput]!
+    ): [AccountTransaction]!
+
     updateTransaction(
       id: ID!
       transaction: UpdateTransactionInput

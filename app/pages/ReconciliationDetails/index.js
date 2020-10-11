@@ -1,12 +1,13 @@
 import { Checkbox, HTMLTable } from '@blueprintjs/core';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserTitle } from 'component';
 import { formatDate, mapParamIdToId } from 'lib';
-import { useMarkReconciled } from 'mutation';
+import { useMarkReconciled, useMassReconciliation } from 'mutation';
 import { useReconciliation } from 'query';
 import TransactionActions from 'component/TransactionActions';
 import AddImportTransactionButton from 'component/AddImportTransactionButton';
+import { isNil } from 'lodash';
 import ActionBar from './ActionBar';
 import Summary from './Summary';
 import Title from './Title';
@@ -35,9 +36,37 @@ function calculateReconciledBalance(reconciliation) {
   ).toFixed(2);
 }
 
+function mapAndFilterTransactionsForReconciliation(
+  transactions,
+  reconciliation,
+  filter = () => true,
+) {
+  return transactions
+    .map((trans) =>
+      trans.accounts.find((a) => a.account.id === reconciliation.account.id),
+    )
+    .filter(filter);
+}
+
 function ReconciliationDetailsPage({ id }) {
   const { error, loading, reconciliation, refetch } = useReconciliation(id);
   const [markReconciled] = useMarkReconciled();
+  const [massReconciliation] = useMassReconciliation();
+  const [checkAll, setCheckAll] = useState(false);
+
+  useEffect(() => {
+    if (reconciliation) {
+      const unreconciled = mapAndFilterTransactionsForReconciliation(
+        reconciliation.transactions,
+        reconciliation,
+        (trans) => isNil(trans.reconciliation),
+      );
+
+      if (unreconciled.length === 0) {
+        setCheckAll(true);
+      }
+    }
+  }, [reconciliation, setCheckAll]);
 
   if (loading || error) return null;
 
@@ -62,7 +91,38 @@ function ReconciliationDetailsPage({ id }) {
         <thead>
           <tr>
             {reconciliation.status.toLowerCase() === 'open' ? (
-              <th style={{ width: 20 }}> </th>
+              <th style={{ width: 20 }}>
+                <Checkbox
+                  checked={checkAll}
+                  onChange={(e) => {
+                    setCheckAll(e.target.checked);
+                    if (e.target.checked) {
+                      massReconciliation(
+                        mapAndFilterTransactionsForReconciliation(
+                          reconciliation.transactions,
+                          reconciliation,
+                          (trans) => isNil(trans.reconciliation),
+                        ).map((trans) => ({
+                          transactionAccountId: trans.id,
+                          reconciliationId: reconciliation.id,
+                        })),
+                      );
+                    } else {
+                      massReconciliation(
+                        mapAndFilterTransactionsForReconciliation(
+                          reconciliation.transactions,
+                          reconciliation,
+                          (trans) =>
+                            trans.reconciliation?.id === reconciliation.id,
+                        ).map((trans) => ({
+                          transactionAccountId: trans.id,
+                          reconciliationId: null,
+                        })),
+                      );
+                    }
+                  }}
+                />
+              </th>
             ) : null}
             <th>Date</th>
             <th>Description</th>

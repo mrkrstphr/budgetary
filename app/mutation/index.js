@@ -7,6 +7,7 @@ export * from './useFinishReconciliation';
 export * from './useLogin';
 export * from './useLogout';
 export * from './useMarkReconciled';
+export * from './useMassReconciliation';
 export * from './useReopenAccount';
 export * from './useUpdateAccount';
 export * from './useUpdateTransaction';

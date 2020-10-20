@@ -2,6 +2,8 @@ const DataLoaders = require('./DataLoaders');
 const createDbal = require('./db');
 const conn = require('./db/conn');
 
+const transactionUpdate = require('./services/transactionUpdateService');
+
 class Context {
   constructor(request, response) {
     const dbal = createDbal(conn);
@@ -9,6 +11,9 @@ class Context {
     this.response = response;
     this.dataloaders = new DataLoaders(dbal);
     this.dbal = dbal;
+    this.service = {
+      transactionUpdate,
+    };
   }
 
   setUser = (user) => {

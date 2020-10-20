@@ -1,4 +1,4 @@
-import { Button } from '@blueprintjs/core';
+import { Button, Intent } from '@blueprintjs/core';
 import { Formik } from 'formik';
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
@@ -79,11 +79,16 @@ export default function EditTransactionForm({ onClose, transaction }) {
           formatIsoDate(date),
           description,
           preparedSplits,
-        ).then(() => {
-          setSubmitting(false);
-          notify('Transaction Updated');
-          onClose();
-        });
+        )
+          .then(() => {
+            setSubmitting(false);
+            notify('Transaction Updated');
+            onClose();
+          })
+          .catch(() => {
+            setSubmitting(false);
+            notify('An unexpected error has occurred', Intent.DANGER);
+          });
       }}
     >
       {({ handleSubmit, isSubmitting }) => (

@@ -28,7 +28,7 @@ export function useTransactions({
 }) {
   const { loading, error, data, ...etc } = useQuery(fetchTransactionsQuery, {
     variables: { filters, paging },
-    ...options,
+    // ...options,
   });
 
   return {

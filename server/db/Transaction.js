@@ -287,6 +287,14 @@ class Transaction {
       );
   }
 
+  findAccountTransactionsForTransaction(transactonId) {
+    return desnakeify(
+      this.conn('transaction_accounts')
+        .select()
+        .where({ transaction_id: transactonId }),
+    );
+  }
+
   async createTransaction(date, description, splits) {
     const transaction = await desnakeify(
       pickFirst(
@@ -336,53 +344,47 @@ class Transaction {
     return this.conn('transactions').delete().where({ id });
   }
 
-  update(id, date, description, accounts) {
-    const update = this.conn('transactions')
-      .update({
-        date: (date instanceof Date ? date : new Date(date)).toISOString(),
-        description,
-      })
-      .where({ id })
-      .returning('*');
-
-    // Delete any splits that are no longer in "accounts"
-    const deletePromise = this.conn('transaction_accounts')
-      .select('*')
-      .where('transaction_id', id)
-      .then((splits) =>
-        Promise.all(
-          splits
-            .filter(
-              (split) =>
-                !accounts
-                  .map(({ id: accountId }) => accountId)
-                  .includes(split.id),
-            )
-            .map((split) =>
-              this.conn('transaction_accounts')
-                .delete()
-                .where({ id: split.id }),
-            ),
-        ),
-      );
-
-    const bagOfPromises = accounts.map(({ id: splitId, accountId, amount }) => {
-      if (splitId) {
-        return this.conn('transaction_accounts')
+  update(id, date, description) {
+    return desnakeify(
+      pickFirst(
+        this.conn('transactions')
           .update({
-            account_id: accountId,
-            amount,
+            date: (date instanceof Date ? date : new Date(date)).toISOString(),
+            description,
           })
-          .where({ id: splitId });
-      }
+          .where({ id })
+          .returning('*'),
+      ),
+    );
+  }
 
-      return this.createSplit(id, accountId, amount);
-    });
+  createTransactionAccount(transactionId, accountTransaction) {
+    return desnakeify(
+      pickFirst(
+        this.conn('transaction_accounts')
+          .insert({
+            id: makeUuid(),
+            transaction_id: transactionId,
+            account_id: accountTransaction.accountId,
+            amount: accountTransaction.amount,
+          })
+          .returning('*'),
+      ),
+    );
+  }
 
-    return Promise.all([update, deletePromise, ...bagOfPromises])
-      .then(([transaction]) => transaction)
-      .then(pickFirst)
-      .then(desnakeify);
+  updateTransactionAccount(accountTransactionId, accountTransaction) {
+    return desnakeify(
+      pickFirst(
+        this.conn('transaction_accounts')
+          .update({
+            account_id: accountTransaction.accountId,
+            amount: accountTransaction.amount,
+          })
+          .where({ id: accountTransactionId })
+          .returning('*'),
+      ),
+    );
   }
 }
 

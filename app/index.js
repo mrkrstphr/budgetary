@@ -40,6 +40,8 @@ import 'regenerator-runtime/runtime';
 import { render } from 'react-dom';
 import App from './App';
 
+require('offline-plugin/runtime').install();
+
 // import { ApolloClient, InMemoryCache } from '@apollo/client';
 
 // const appContext = localStorage.getItem('appContext');

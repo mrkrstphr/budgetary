@@ -24,7 +24,7 @@ export const fetchTransactionsQuery = gql`
 export function useTransactions({
   filters = {},
   paging = {},
-  options = { fetchPolicy: 'no-cache' },
+  // options = { fetchPolicy: 'no-cache' },
 }) {
   const { loading, error, data, ...etc } = useQuery(fetchTransactionsQuery, {
     variables: { filters, paging },

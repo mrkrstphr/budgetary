@@ -6,9 +6,8 @@ module.exports = async function transactionUpdateService(
   accountTransactions,
 ) {
   // get a list of existing account transactions first...
-  const existingAccountTransactions = await transactionDbal.findAccountTransactionsForTransaction(
-    transactionId,
-  );
+  const existingAccountTransactions =
+    await transactionDbal.findAccountTransactionsForTransaction(transactionId);
 
   const updatedTransaction = await transactionDbal.update(
     transactionId,

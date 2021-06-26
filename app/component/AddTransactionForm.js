@@ -11,20 +11,24 @@ import { formatIsoDate } from 'lib';
 import TransactionForm from './TransactionForm';
 import { AppContext } from '../App/Context';
 
-Yup.addMethod(Yup.object, 'onlyOneOf', function validateOnlyOneOf(
-  list,
-  // eslint-disable-next-line no-template-curly-in-string
-  message = '${path} must have at least one of these keys: ${keys}',
-) {
-  return this.test({
-    name: 'onlyOneOf',
-    message,
-    exclusive: true,
-    params: { keys: list.join(', ') },
-    test: (value) =>
-      value == null || list.filter((f) => !isNil(value[f])).length === 1,
-  });
-});
+Yup.addMethod(
+  Yup.object,
+  'onlyOneOf',
+  function validateOnlyOneOf(
+    list,
+    // eslint-disable-next-line no-template-curly-in-string
+    message = '${path} must have at least one of these keys: ${keys}',
+  ) {
+    return this.test({
+      name: 'onlyOneOf',
+      message,
+      exclusive: true,
+      params: { keys: list.join(', ') },
+      test: (value) =>
+        value == null || list.filter((f) => !isNil(value[f])).length === 1,
+    });
+  },
+);
 
 const AddTransactionSchema = Yup.object().shape({
   description: Yup.string().required(),

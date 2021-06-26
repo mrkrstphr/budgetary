@@ -19,10 +19,16 @@ export function useLogin() {
   const login = (email, password) =>
     loginFunc({
       variables: { email, password },
-    }).then(({ data: { createToken: { errors, user } } }) => ({
-      errors,
-      user,
-    }));
+    }).then(
+      ({
+        data: {
+          createToken: { errors, user },
+        },
+      }) => ({
+        errors,
+        user,
+      }),
+    );
 
   return [login, ...etc];
 }

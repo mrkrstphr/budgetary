@@ -22,10 +22,16 @@ export function useUpdateAccount() {
   const myUpdateAccount = (id, accountDetails) =>
     updateAccountFunc({
       variables: { id, account: accountDetails },
-    }).then(({ data: { updateAccount: { account, errors } } }) => ({
-      account,
-      errors,
-    }));
+    }).then(
+      ({
+        data: {
+          updateAccount: { account, errors },
+        },
+      }) => ({
+        account,
+        errors,
+      }),
+    );
 
   return [myUpdateAccount, ...etc];
 }

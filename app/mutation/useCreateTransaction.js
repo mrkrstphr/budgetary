@@ -34,9 +34,15 @@ export function useCreateTransaction() {
   const createTransaction = (date, description, accounts) =>
     createTransactionFunc({
       variables: { transaction: { date, description, accounts } },
-    }).then(({ data: { createTransaction: { errors, transaction } } }) => ({
-      errors,
-      transaction,
-    }));
+    }).then(
+      ({
+        data: {
+          createTransaction: { errors, transaction },
+        },
+      }) => ({
+        errors,
+        transaction,
+      }),
+    );
   return [createTransaction, { data }];
 }

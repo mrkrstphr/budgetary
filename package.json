@@ -61,7 +61,7 @@
     "graphql-iso-date": "^3.6.1",
     "graphql-middleware": "^6.0.10",
     "hoist-non-react-statics": "^3.3.2",
-    "immer": "^9.0.3",
+    "immer": "^9.0.6",
     "invariant": "2.2.4",
     "ip": "1.1.5",
     "knex": "^0.21.6",

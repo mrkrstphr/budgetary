@@ -6,7 +6,7 @@ const defaults = {
   port: 11432,
   user: 'finances',
   password: 'finances',
-  name: 'finances',
+  name: 'finances2',
 };
 
 const dbConfig = { ...defaults /* ...config.db */ };

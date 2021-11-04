@@ -13,15 +13,6 @@ import Context, { AppContext } from './Context';
 import AppSidebar from './component/Sidebar';
 import { AppLoading } from '../component/AppLoading';
 
-const AppContainer = styled.div`
-  background-color: ${({ theme }) => theme.appBgColor};
-`;
-
-const BodyStyles = styled.div`
-  background-color: ${({ theme }) => theme.appBgColor};
-  padding: 0 20px;
-`;
-
 const meQuery = gql`
   query fetchMe {
     me {
@@ -45,25 +36,22 @@ function AuthenticatedApp() {
   return (
     <AppContext.Consumer>
       {({ theme }) => (
-        <AppContainer
-          theme={theme}
-          className={theme.name === 'dark' ? 'bp3-dark' : ''}
-        >
-          <Sidebar
+        <div>
+          {/* <Sidebar
             shadow={false}
             open
             docked
             onSetOpen={() => null}
             sidebar={<AppSidebar onToggle={() => null} />}
-          >
-            <BodyStyles>
-              <Header sidebarOpen onSetOpen={() => null} />
-              <Layout>
-                <Router />
-              </Layout>
-            </BodyStyles>
-          </Sidebar>
-        </AppContainer>
+          > */}
+          {/* <BodyStyles> */}
+          {/* <Header sidebarOpen onSetOpen={() => null} /> */}
+          <Layout>
+            <Router />
+          </Layout>
+          {/* </BodyStyles> */}
+          {/* </Sidebar> */}
+        </div>
       )}
     </AppContext.Consumer>
   );
@@ -94,10 +82,7 @@ export default function App() {
 
   return (
     <Context user={me}>
-      <BrowserRouter>
-        <AppStyles />
-        {renderApp(error, loading, me)}
-      </BrowserRouter>
+      <BrowserRouter>{renderApp(error, loading, me)}</BrowserRouter>
     </Context>
   );
 }

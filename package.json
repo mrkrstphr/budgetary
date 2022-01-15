@@ -133,7 +133,7 @@
     "react-app-polyfill": "^1.0.6",
     "react-test-renderer": "^16.13.1",
     "rimraf": "^3.0.2",
-    "shelljs": "^0.8.4",
+    "shelljs": "^0.8.5",
     "style-loader": "^2.0.0",
     "stylelint": "^13.7.2",
     "stylelint-config-recommended": "^3.0.0",
